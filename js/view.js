@@ -5,7 +5,6 @@ show();
 function show() {
 
     // Authentication
-    let requiresAuth = false;
     if (!currentUser) currentPage = 'login';
 
     switch (currentPage) {
@@ -73,7 +72,7 @@ function showChangeName() {}
  * Similar to the createElement function, but refactored for this app.
  * @param {string} tagName The name of an element.
  * @param {HTMLElement} parent Parent element for this new child element.
- * @param {string} attr Example: class red rectangle,id container
+ * @param {string} attr The first word in the beginning of a sentence before and after comma will be the attribute type, the following words (separated by empty spaces) before the optional next comma will be the attribute value(s). Example: class red rectangle,id header
  * @param {html} html HTML for innerHTML.
  * @returns {HTMLElement}
  */
