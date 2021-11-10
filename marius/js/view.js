@@ -36,46 +36,28 @@ function showLogin() {
 
     let wrapper = cr('div', app, 'class wrapper');
     
-    let loginWrapper = cr('div', wrapper, 'class login-container');
-
-    let logo = cr('div', loginWrapper, 'class logo');
+    let loginWrapper = cr('div', wrapper, 'class login-wrapper');
     
-    let header = cr('h6', loginWrapper, '', 'Velkommen til Aktivo - appen som foreslår din neste aktivitet!');
+    let header = cr('h1', loginWrapper, '', 'Logg inn');
+    
+    let subHeader = cr('h4', loginWrapper, '', 'Skriv inn ditt brukernavn og passord for å logge inn.');
     
     let form = cr('form', loginWrapper, 'class login-form');
 
     let usernameDiv = cr('div', form);
-    let usernameInput = cr('input', usernameDiv, 'type text');
+    let usernameInput = cr('input', usernameDiv, '', '');
+    usernameInput.setAttribute('type', 'text');
     usernameInput.before(cr('span', null, null, 'Brukernavn: '));
     
     let passwordDiv = cr('div', form);
-    let passwordInput = cr('input', passwordDiv, 'type password');
+    let passwordInput = cr('input', passwordDiv, '', '');
+    passwordInput.setAttribute('type', 'password');
     passwordInput.before(cr('span', null, null, 'Passord: '));
 
-    let showPasswordDiv = cr('div', form, 'class show-password');
-    let showPasswordText = cr('span', showPasswordDiv, '', 'Vis passord:');
-    let showPasswordLabel = cr('label', showPasswordDiv);
-    let showPassword = cr('input', showPasswordLabel, 'type checkbox');
-    let showPasswordMark = cr('span', showPasswordLabel, 'class checkmark');
-
-    showPassword.onchange = function() {
-        if (showPassword.checked) {
-            passwordInput.setAttribute("type", "text");
-        } else {
-            passwordInput.setAttribute("type", "password");
-        }
-    }
-
     let submitDiv = cr('div', form, 'class submit');
-    let submit = cr('input', submitDiv, 'class login-submit btn,type submit');
+    let submit = cr('input', submitDiv, 'class login-submit');
+    submit.setAttribute('type', 'submit');
     submit.value = 'Logg inn';
-
-    let registerDiv = cr('div', form, 'class submit');
-    let registerBtn = cr('button', registerDiv, 'class btn register-btn', 'Registrer deg');
-
-    registerBtn.onclick = function() {
-        show("register");
-    }
 
     // Login on submit
     submit.onclick = function(e) {

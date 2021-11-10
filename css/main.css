@@ -1,3 +1,11 @@
+:root {
+    --main-bg-color: #f8f9fa;
+    --dark-bg-color: #343a40;
+    --main-text-color: black;
+    --dark-text-color: white;
+    --main-border-color: rgb(118, 118, 118);
+}
+
 body, html {
     margin: 0;
     padding: 0;
@@ -5,56 +13,156 @@ body, html {
     height: 100%;
     display: grid;
     justify-content: center;
+    background: var(--main-bg-color);
+}
+
+.logo {
+    background: url('../img/aktivo-logo.png');
+    width: 292px;
+    height: 89px;
 }
 
 .wrapper {
     width: 960px;
+    max-width: 90vw;
     display: grid;
     justify-content: center;
+    position: relative;
 }
 
-.login-wrapper {
+.login-container {
     margin: 4vh 0 0 0;
-    text-align: center;
     display: grid;
     justify-content: center;
     justify-items: center;
 }
 
-.login-wrapper h1 {
+.login-container h1 {
     font-size: 1.8em;
+    text-align: center;
 }
 
-.login-form {
-    text-align: left;
+.login-container h6 {
+    font-size: 1em;
+    margin: 7% 0 3% 0;
+    padding: 0;
+    width: 60%;
+    line-height: 1.45em;
+    text-align: center;
 }
 
 .login-form div {
-    margin: 10px;
-    width: 160px;
+    margin: 20px 0 20px 0;
+    width: 100%;
 }
 
 .login-form input {
     width: 100%;
+    box-sizing: border-box;
 }
 
 .login-form span {
     font-weight: bold;
 }
 
+.login-form .show-password {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    margin-top: -10px;
+}
+
+.login-form .show-password label {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    margin-left: 3px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.login-form .show-password label input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+.login-form .show-password label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.login-form .show-password label input[type="checkbox"]::after {
+    content: "";
+}
+
+.login-form .show-password label .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #fff;
+    border: .3px solid rgb(118, 118, 118);
+    border-radius: 1px;
+}
+
+.login-form .show-password label .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.login-form .show-password label input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.login-form .show-password label .checkmark:after {
+    left: 6px;
+    top: 2.5px;
+    width: 3px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
 .login-form .error {
-    color: red;
+    color: rgb(255, 0, 0);
     font-weight: 400;
 }
 
 .login-form .submit {
+    margin: 10% 0 0 0;
     display: grid;
     justify-content: center;
 }
 
-.login-form .submit input {
-    padding: 5px 20px;
-    background: rgb(173, 173, 173);
-    color: rgb(0, 0, 0);
+.login-form .register-btn {
+    margin-top:50px;
+    font-size: .7em;
+}
+
+.btn {
     font-weight: bold;
+    background: linear-gradient(0deg, #dadada 0%, #d1d1d1 100%);
+    color: rgb(0, 0, 0);
+    border: .3px solid rgb(118, 118, 118);
+    border-radius: 1px;
+    padding: 5px 20px;
+}
+
+.login-form .btn {
+    width: 180px;
+    padding: 8px 20px;
+    border:none;
 }
