@@ -80,13 +80,18 @@ const aktivo = {
     activities: [
       {
         name: "",
-        description: ""
+        description: "",
+        travelOptions: [],
+        travelCost: "",
+        activityCost: "",
+        travelTime: "",
+        activityTime: ""
       },
     ],
     users: [
       {
-        userName: "",
-        password: "",
+        username: "demo",
+        password: "demo",
         email: "",
         fullName: "",
         people: [
@@ -150,21 +155,44 @@ const aktivo = {
 
     filters: [
       {
-        name: "dyrt",
+        name: "over 100kr",
         activities: [
             {
                 name: 'Restaurant',
-                match: 50
+                match: 100
             },
             {
                 name: 'Kebabsjappe',
-                match: 15
+                match: 50
             }
         ]
+      },
+      {
+        name: "under 100kr",
+        activities: [
+            {
+                name: 'Restaurant',
+                match: -100
+            },
+            {
+                name: 'Kebabsjappe',
+                match: 100
+            }
+        ]
+      },
+      {
+        name: "vil spise",
+        activities: [
+          {
+              name: 'Restaurant',
+              match: 100
+          },
+          {
+              name: 'Kebabsjappe',
+              match: 100
+          }
+      ]
       }
     ],
   },
 };
-
-let currentPage = aktivo.app.currentPage;
-let currentUser = aktivo.app.currentUser;
