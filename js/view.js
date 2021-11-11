@@ -2,13 +2,12 @@ let app = document.querySelector("#app");
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
 
-// could have a setPage('pageName') function that sets the currentPage based on a string parameter and then calls show()
 show("home");
 function show(page) {
     if (page) currentPage = page;
 
     // Authentication
-    isUserLoggedIn();
+    auth();
 
     app.innerHTML = '';
 
@@ -34,21 +33,19 @@ function show(page) {
 
 function showLogin() {
 
-    let wrapper = cr('div', app, 'class wrapper');
-    
-    let loginWrapper = cr('div', wrapper, 'class login-container');
+    let container = cr('div', app, 'class login-container');
 
-    let logo = cr('div', loginWrapper, 'class logo');
+    let logo = cr('div', container, 'class logo');
     
-    let header = cr('h6', loginWrapper, '', 'Velkommen til Aktivo - appen som foreslår din neste aktivitet!');
+    let header = cr('h6', container, '', 'Velkommen til Aktivo - appen som foreslår din neste aktivitet!');
     
-    let form = cr('form', loginWrapper, 'class login-form');
+    let form = cr('form', container, 'class login-form');
 
-    let usernameDiv = cr('div', form);
+    let usernameDiv = cr('div', form, 'class username-field');
     let usernameInput = cr('input', usernameDiv, 'type text');
     usernameInput.before(cr('span', null, null, 'Brukernavn: '));
     
-    let passwordDiv = cr('div', form);
+    let passwordDiv = cr('div', form, 'class password-field');
     let passwordInput = cr('input', passwordDiv, 'type password');
     passwordInput.before(cr('span', null, null, 'Passord: '));
 
@@ -85,12 +82,14 @@ function showLogin() {
 
 }
 
-function showRegister() {}
+function showRegister() {
+    
+}
 function showRecoverPassword() {}
 function showRecoverEmail() {}
 
 function showFrontPage() {
-    
+    console.log('test');
 }
 
 // new activity
@@ -124,7 +123,7 @@ function showChangeEmail() {}
 function showChangeName() {}
 
 // If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
-function isUserLoggedIn() {
+function auth() {
     let pageAuth = false;
     aktivo.data.pages.forEach(page => {
         if (page.name === currentPage) {
@@ -136,6 +135,7 @@ function isUserLoggedIn() {
     if (pageAuth) {
         console.log('Du må være logget inn for å få tilgang til denne siden!');
         show('login');
+        return;
     }
 }
 

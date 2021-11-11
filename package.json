@@ -1,0 +1,24 @@
+{
+  "name": "team1-aktivo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "node-sass": "^6.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "node-sass sass/main.scss css/main.css -w --output-style compressed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MariusTBjercke/team1-aktivo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MariusTBjercke/team1-aktivo/issues"
+  },
+  "homepage": "https://github.com/MariusTBjercke/team1-aktivo#readme"
+}
