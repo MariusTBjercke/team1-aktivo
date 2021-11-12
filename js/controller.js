@@ -17,12 +17,14 @@ function auth() {
 
 /**
  * 
- * @param {HTMLElement} username 
- * @param {HTMLElement} password 
+ * @param {HTMLElement} username Input field from form where value can be retrieved
+ * @param {HTMLElement} password Input field from form where value can be retrieved
  */
 function userLogin(username, password) {
 
-    for (x of [username, password]) validateInput(x, 'length');
+    let error = [];
+
+    for (x of [[username, 'username', 'Brukernavn mangler.'], [password, 'password', 'Feil passord.']]) validateInput(x[0], 'length', x[1], error, x[2]);
 
     let users = aktivo.data.users;
 
@@ -41,8 +43,8 @@ function userCreate(username, email, password, confirmPassword) {
 
     let error = [];
 
-    for (x of [[username, 'length'],[email, 'email']]) {
-        validateInput(x[0], x[1], error);
+    for (x of [[username, 'length', 'username', 'Brukernavn mangler.'],[email, 'email', 'email', 'Ugyldig epost-adresse.']]) {
+        validateInput(x[0], x[1], x[2], error, x[3]);
     };
 
     if (password != confirmPassword) {
@@ -130,32 +132,38 @@ function validatePassword(password, confirmPassword) {
  * @param {HTMLElement} input Form input field
  * @param {string} type length, etc.
  */
-function validateInput(input, type, errorList) {
+function validateInput(input, type, name, errorList, errorMsg) {
+
+    console.log(errorList);
 
     switch (type) {
         case 'length':
-            let usernameError = {
-                type: 'username',
-                message: 'Brukernavn mangler.'
+            let lengthError = {
+                name: name,
+                message: errorMsg
             }
-            
+
             if (input.value.length > 0) {
-                for (let i in errorList) {
-                    if (errorList[i].type === 'username') {
-                        errorList.splice(i, 1);
+                if (errorList) {
+                    for (let i in errorList) {
+                        if (errorList[i].name === name) {
+                            errorList.splice(i, 1);
+                        }
                     }
                 }
                 if (input.classList.contains('input-error')) {
                     input.classList.remove('input-error');
                 }
             } else {
-                
-                if (errorList.findIndex(x => x.type == "username") === -1) errorList.push(usernameError);
-                
+
+                if (errorList) {
+                    if (errorList.findIndex(x => x.name == name) === -1) errorList.push(lengthError);
+                }
+
                 if (!input.classList.contains('input-error')) {
                     input.classList.add('input-error');
-                    input.addEventListener('input', function() {
-                        validateInput(input, type, errorList);
+                    input.addEventListener('input', function () {
+                        validateInput(input, type, name, errorList, errorMsg);
                     });
                 }
             }
@@ -164,13 +172,13 @@ function validateInput(input, type, errorList) {
         case 'email':
             let pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
             let emailError = {
-                type: 'email',
-                message: 'E-post mangler.'
+                name: name,
+                message: errorMsg
             }
 
-            if (input.value.match(pattern)) {   
+            if (input.value.match(pattern)) {
                 for (let i in errorList) {
-                    if (errorList[i].type === 'email') {
+                    if (errorList[i].name === name) {
                         errorList.splice(i, 1);
                     }
                 }
@@ -179,17 +187,17 @@ function validateInput(input, type, errorList) {
                 }
             } else {
 
-                if (errorList.findIndex(x => x.type == "email") === -1) errorList.push(emailError);
+                if (errorList.findIndex(x => x.name == name) === -1) errorList.push(emailError);
 
                 if (!input.classList.contains('input-error')) {
                     input.classList.add('input-error');
-                    input.addEventListener('input', function() {
-                        validateInput(input, type, errorList);
+                    input.addEventListener('input', function () {
+                        validateInput(input, type, name, errorList, errorMsg);
                     });
                 }
             }
             break;
-    
+
         default:
             break;
     }
