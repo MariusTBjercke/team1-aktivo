@@ -1,13 +1,8 @@
-.logo {
-    background: url('../img/aktivo-logo.png');
-    width: 292px;
-    height: 89px;
-}
-
 .login-container {
     display: inherit;
     justify-content: inherit;
     justify-items: inherit;
+    width: 100%;
 
     h6 {
         font-size: 1em;
@@ -20,7 +15,7 @@
 }
 
 .login-form {
-    width:80%;
+    width: 80%;
     display: grid;
     grid-template-columns: auto;
     grid-template-rows: auto auto auto auto auto;
@@ -31,11 +26,6 @@
         display: grid;
         grid-template-columns: auto;
         grid-template-rows: auto auto;
-    }
-
-    input {
-        width: 100%;
-        box-sizing: border-box;
     }
 
     span {
@@ -112,18 +102,6 @@
 
         }
 
-    }
-
-    .username-field {
-        position: relative;
-    }
-
-    .password-field {
-        position: relative;
-    }
-    
-    .input-error {
-        border-color: rgb(255, 0, 0);
     }
 
     .submit {

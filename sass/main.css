@@ -1,0 +1,286 @@
+.login-container {
+  display: inherit;
+  -webkit-box-pack: inherit;
+      -ms-flex-pack: inherit;
+          justify-content: inherit;
+  justify-items: inherit;
+  width: 100%;
+}
+
+.login-container h6 {
+  font-size: 1em;
+  margin: 20px 0;
+  padding: 0;
+  width: 60%;
+  line-height: 1.45em;
+  text-align: center;
+}
+
+.login-form {
+  width: 80%;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto;
+      grid-template-columns: auto;
+  -ms-grid-rows: auto auto auto auto auto;
+      grid-template-rows: auto auto auto auto auto;
+}
+
+.login-form div {
+  margin: 0 0 20px 0;
+  width: 100%;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto;
+      grid-template-columns: auto;
+  -ms-grid-rows: auto auto;
+      grid-template-rows: auto auto;
+}
+
+.login-form span {
+  font-weight: bold;
+}
+
+.login-form .show-password {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: auto;
+      grid-template-rows: auto;
+  -ms-grid-columns: auto auto;
+      grid-template-columns: auto auto;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: start;
+}
+
+.login-form .show-password label {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  margin-left: 3px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.login-form .show-password label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.login-form .show-password label input[type="checkbox"]::after {
+  content: "";
+}
+
+.login-form .show-password label input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+.login-form .show-password label .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #fff;
+  border: 0.3px solid #767676;
+  border-radius: 1px;
+}
+
+.login-form .show-password label .checkmark::after {
+  left: 6px;
+  top: 2.5px;
+  width: 3px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.login-form .show-password label input:checked ~ .checkmark::after {
+  display: block;
+}
+
+.login-form .submit {
+  margin: 20px auto 0 auto;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+.login-form .register-btn {
+  margin-top: 50px;
+  font-size: .7em;
+}
+
+.login-form .btn {
+  width: 70%;
+  padding: 8px 20px;
+  border: none;
+}
+
+.register-container {
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+}
+
+.register-form {
+  width: 100%;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto;
+      grid-template-columns: auto;
+  -ms-grid-rows: auto auto auto auto auto;
+      grid-template-rows: auto auto auto auto auto;
+}
+
+.register-form div {
+  margin: 0 0 20px 0;
+  width: 100%;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto;
+      grid-template-columns: auto;
+  -ms-grid-rows: auto auto;
+      grid-template-rows: auto auto;
+}
+
+.register-form span {
+  font-weight: bold;
+}
+
+.register-form .submit {
+  margin: 20px auto 0 auto;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+.register-form .register-btn {
+  margin-top: 50px;
+  font-size: .7em;
+}
+
+.register-form .btn {
+  width: 70%;
+  padding: 8px 20px;
+  border: none;
+}
+
+.register-form .login-text {
+  text-align: center;
+}
+
+.register-form .login-text span {
+  cursor: pointer;
+}
+
+:root {
+  --main-bg-color: #f8f9fa;
+  --dark-bg-color: #343a40;
+  --main-text-color: black;
+  --dark-text-color: white;
+  --main-border-color: rgb(118, 118, 118);
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background: var(--main-bg-color);
+}
+
+#app {
+  margin: 4vh 0 0 0;
+  width: 375px;
+  height: 512px;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  justify-items: center;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding-bottom: 60px;
+  padding-top: 40px;
+}
+
+.logo {
+  background: url("../img/aktivo-logo.png");
+  width: 292px;
+  height: 89px;
+}
+
+.btn {
+  font-weight: bold;
+  background: -webkit-gradient(linear, left bottom, left top, from(#dadada), to(#d1d1d1));
+  background: linear-gradient(0deg, #dadada 0%, #d1d1d1 100%);
+  color: black;
+  border: 0.3px solid #767676;
+  border-radius: 1px;
+  padding: 5px 20px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: -webkit-gradient(linear, left bottom, left top, from(#c2c2c2), to(#cccccc));
+  background: linear-gradient(0deg, #c2c2c2 0%, #cccccc 100%);
+}
+
+input[type="text"], input[type="password"] {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  height: 22.5px;
+}
+
+.input-field {
+  position: relative;
+  height: 20px;
+  padding: 10px 0 20px 0;
+}
+
+.input-field span {
+  height: 22.5px;
+}
+
+.input-error {
+  border-color: red;
+}
+
+.password-error {
+  border-color: yellow;
+}
+
+.password-success {
+  border-color: green;
+}
+/*# sourceMappingURL=main.css.map */

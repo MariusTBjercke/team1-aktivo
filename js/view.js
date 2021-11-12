@@ -41,12 +41,12 @@ function showLogin() {
     
     let form = cr('form', container, 'class login-form');
 
-    let usernameDiv = cr('div', form, 'class username-field');
-    let usernameInput = cr('input', usernameDiv, 'type text');
+    let usernameField = cr('div', form, 'class input-field');
+    let usernameInput = cr('input', usernameField, 'type text');
     usernameInput.before(cr('span', null, null, 'Brukernavn: '));
     
-    let passwordDiv = cr('div', form, 'class password-field');
-    let passwordInput = cr('input', passwordDiv, 'type password');
+    let passwordField = cr('div', form, 'class input-field');
+    let passwordInput = cr('input', passwordField, 'type password');
     passwordInput.before(cr('span', null, null, 'Passord: '));
 
     let showPasswordDiv = cr('div', form, 'class show-password');
@@ -64,8 +64,7 @@ function showLogin() {
     }
 
     let submitDiv = cr('div', form, 'class submit');
-    let submit = cr('input', submitDiv, 'class login-submit btn,type submit');
-    submit.value = 'Logg inn';
+    let submit = cr('button', submitDiv, 'class login-submit btn,type submit', 'Logg inn');
 
     let registerDiv = cr('div', form, 'class submit');
     let registerBtn = cr('button', registerDiv, 'class btn register-btn', 'Registrer deg');
@@ -84,12 +83,53 @@ function showLogin() {
 
 function showRegister() {
 
+    let container = cr('div', app, 'class register-container');
+
+    let logo = cr('div', container, 'class logo');
+
+    let form = cr('form', container, 'class register-form');
+
+    let userNameDiv = cr('div', form, 'class input-field');
+    let userNameInput = cr('input', userNameDiv, 'type text');
+    userNameInput.before(cr('span', null, null, 'Brukernavn: '));
+    
+    let emailDiv = cr('div', form, 'class input-field');
+    let emailInput = cr('input', emailDiv, 'type text');
+    emailInput.before(cr('span', null, null, 'Epost-adresse: '));
+
+    let passwordDiv = cr('div', form, 'class input-field');
+    let passwordInput = cr('input', passwordDiv, 'type text');
+    passwordInput.before(cr('span', null, null, 'Velg passord: '));
+
+    let confirmPasswordDiv = cr('div', form, 'class input-field');
+    let confirmPasswordInput = cr('input', confirmPasswordDiv, 'type text');
+    confirmPasswordInput.before(cr('span', null, null, 'Bekreft passord: '));
+
+    confirmPasswordInput.addEventListener('input', function() {
+        validatePassword(passwordInput, confirmPasswordInput);
+    });
+
+    let submitDiv = cr('div', form, 'class submit');
+    let submit = cr('button', submitDiv, 'class register-submit btn', 'Registrer');
+
+    let loginText = cr('p', form, 'class login-text', 'Har du allerede en bruker? ');
+    let login = cr('span', loginText, '', 'Logg inn');
+
+    login.onclick = function() {
+        show('login');
+    }
+
+    submit.onclick = function(e) {
+        e.preventDefault();
+        userCreate(userNameInput, emailInput, passwordInput, confirmPasswordInput);
+    }
+
 }
 function showRecoverPassword() {}
 function showRecoverEmail() {}
 
 function showFrontPage() {
-    console.log('test');
+    console.log('Hvis denne dukker opp utenom forside så har vi muligens en sikkerhetsfeil.');
 }
 
 // new activity
@@ -121,23 +161,6 @@ function showProfile() {}
 function showChangePassword() {}
 function showChangeEmail() {}
 function showChangeName() {}
-
-// If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
-function auth() {
-    let pageAuth = false;
-    aktivo.data.pages.forEach(page => {
-        if (page.name === currentPage) {
-            if (page.requiresAuth && !currentUser) {
-                pageAuth = true;
-            }
-        }
-    });
-    if (pageAuth) {
-        console.log('Du må være logget inn for å få tilgang til denne siden!');
-        show('login');
-        return;
-    }
-}
 
 /**
  * Similar to the createElement function, but refactored for this app.
