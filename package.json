@@ -2,15 +2,22 @@
   "name": "team1-aktivo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "dependencies": {
-    "node-sass": "^6.0.1",
-    "rollup-plugin-includepaths": "^0.2.4"
+    "@fortawesome/fontawesome-free": "^5.15.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "css-loader": "^6.5.1",
+    "csv-loader": "^3.0.3",
+    "sass": "^1.43.4",
+    "sass-loader": "^12.3.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.64.0",
+    "webpack-cli": "^4.9.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "node-sass sass/main.scss css/main.css -w --output-style compressed"
+    "build": "webpack --mode development",
+    "watch": "webpack --mode development --watch"
   },
   "repository": {
     "type": "git",
