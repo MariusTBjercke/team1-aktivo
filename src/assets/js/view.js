@@ -5,8 +5,9 @@ let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
 
 show("home");
-function show(page) {
+function show(page, parameters) {
     if (page) currentPage = page;
+    console.log(aktivo.data.users);
 
     // Authentication
     auth();
@@ -100,11 +101,11 @@ function showRegister() {
     emailInput.before(cr('span', null, null, 'Epost-adresse: '));
 
     let passwordDiv = cr('div', form, 'class input-field');
-    let passwordInput = cr('input', passwordDiv, 'type text');
+    let passwordInput = cr('input', passwordDiv, 'type password');
     passwordInput.before(cr('span', null, null, 'Velg passord: '));
 
     let confirmPasswordDiv = cr('div', form, 'class input-field');
-    let confirmPasswordInput = cr('input', confirmPasswordDiv, 'type text');
+    let confirmPasswordInput = cr('input', confirmPasswordDiv, 'type password');
     confirmPasswordInput.before(cr('span', null, null, 'Bekreft passord: '));
 
     // confirmPasswordInput.addEventListener('input', function() {
@@ -125,13 +126,20 @@ function showRegister() {
         e.preventDefault();
         userCreate(userNameInput, emailInput, passwordInput, confirmPasswordInput);
     }
-
 }
 function showRecoverPassword() {}
 function showRecoverEmail() {}
 
 function showFrontPage() {
-    console.log('Hvis denne dukker opp utenom forside så har vi muligens en sikkerhetsfeil.');
+    
+    header();
+
+    let container = cr('div', app, 'class frontpage-container');
+
+    let logo = cr('div', container, 'class logo');
+
+    let newActivity = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> Ny aktivitet');
+
 }
 
 // new activity
@@ -163,6 +171,15 @@ function showProfile() {}
 function showChangePassword() {}
 function showChangeEmail() {}
 function showChangeName() {}
+
+function header() {
+    let header = cr('div', app, 'class header');
+    let row = cr('div', header, 'class row');
+    let btn = cr('div', row, 'class nav-btn');
+    let bars = cr('i', btn, 'class fa fa-bars');
+    let pageDescr = cr('div', row, 'class pageDescr', 'Forside');
+    let loggOut = cr('div', row, 'class logout', 'Logg ut');
+}
 
 /**
  * Similar to the createElement function, but refactored for this app.

@@ -1,0 +1,22 @@
+.frontpage-container {
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    width: 100%;
+    margin-top: $container-margin-top;
+    margin-bottom: $container-margin-bottom;
+
+    .btn {
+        padding: 12px 40px;
+        border: none;
+
+        &:hover {
+            font-weight: bold;
+        }
+
+        i {
+            font-weight: 400;
+        }
+    }
+
+}

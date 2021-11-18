@@ -1,9 +1,11 @@
 .login-container {
-    display: inherit;
-    justify-content: inherit;
-    justify-items: inherit;
+    display: grid;
+    justify-content: center;
+    justify-items: center;
     width: 100%;
-
+    margin-top: 40px;
+    margin-bottom: $container-margin-bottom;
+    
     h6 {
         font-size: 1em;
         margin: 20px 0;

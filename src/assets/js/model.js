@@ -3,37 +3,12 @@ const aktivo = {
     app: {
       history: [],
       currentPage: "",
-      currentUser: "",
+      currentUser: "demo",
     },
   
     // Input
     inputs: {
       showNavBar: false,
-      login: {
-        username: "",
-        password: "",
-      },
-      register: {
-        fullName: "",
-        email: "",
-        username: "",
-        password: "",
-        repeatPassword: "",
-      },
-      home: {
-        buttons: [
-          {
-            name: "Ny aktivitet",
-            function: "newActivity",
-            cssClasses: ["btn"],
-          },
-          {
-            name: "Knapp2",
-            function: "newActivity",
-            cssClasses: ["btn"],
-          },
-        ],
-      },
       newGroup: {
         name: "",
         search: "",

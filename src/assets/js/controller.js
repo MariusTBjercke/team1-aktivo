@@ -1,5 +1,6 @@
 import { aktivo } from './model';
-import { currentPage, currentUser, show, cr } from './view';
+import { show, cr, currentPage } from './view';
+let currentUser = aktivo.app.currentUser;
 // If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
 function auth() {
     let pageAuth = false;
@@ -24,9 +25,7 @@ function auth() {
  */
 function userLogin(username, password) {
 
-    let error = [];
-
-    for (let x of [username, password]) validateInput(x, 'empty');
+    for (let x of [[username, 'loginUsername'], [password, 'empty']]) validateInput(x[0], x[1]);
 
     let users = aktivo.data.users;
 
@@ -53,61 +52,27 @@ function userCreate(username, email, password, confirmPassword) {
             validateInput(x[0], x[1], error);
         };
 
-    if (!error) {
-        let userObject = { // er kun deklarert inne i if-setningen, må appendes..
+    if (error.length === 0) {
+        let userObject = {
             username: username.value,
             password: password.value,
             email: email.value,
+            people: [],
+            groups: [],
+            archive: [],
+            options: [
+                {
+                    theme: 0,
+                    virgin: true
+                }
+            ]
+        };
+        aktivo.data.users.push(userObject);
+        let parameters = {
+            success: true,
         }
+        show('login', parameters);
     }
-
-    // {
-    //     username: "demo",
-    //     password: "demo",
-    //     email: "",
-    //     fullName: "",
-    //     people: [
-    //       {
-    //         name: "", // unique name (functions as id)
-    //         born: null,
-    //         filter: [],
-    //       },
-    //     ],
-    //     groups: [
-    //       {
-    //         name: "", // unique name (functions as id)
-    //         members: ["name1", "name2", "name3"], // names function as ids...
-    //         // do we want to add a group specific filter? if so; add an "added" filter and a "removed" filter (same as archive.filters).
-    //       },
-    //     ],
-    //     archive: [
-    //       // can be limited to a number (for example the 20 most recently modified).
-    //       {
-    //         // needs conditional handling if it's an old search and changes have occured to members and/or their filters.
-    //         date: "", // date of last modification.
-    //         members: {
-    //           groups: [
-    //             {
-    //               name: "", // name of the group (to identify it from users[index].groups)
-    //               members: [], // perhaps only added if the group isn't whole..
-    //             },
-    //           ],
-    //           people: [], // people who aren't in the added groups.
-    //           list: [], // every member is listed here. updates whenever groups or people is changed. if old this list should perhaps be moved to members.people so that people don't disappear do to originating from groups they are no longer in.
-    //         },
-    //         filters: {
-    //           members: [], // collection of members' filters. is recreated when archive.members.list is modified (and (if old) also when reinitiated (or perhaps ask user if they want to update filters based on changes to members' filters)).
-    //           added: [], // added on the activity's filter page.
-    //           removed: [], // members' filters removed on the activity's filter page.
-    //           list: [], // list of all the active filters (members' filters + added filters - removed filters).
-    //         },
-    //       },
-    //     ],
-    //     options: {
-    //       theme: 0, // 0 for light, 1 for dark?
-    //     },
-    //   }
-
 }
 
 /**
@@ -124,7 +89,7 @@ function validateInput(input, type, errorList = []) {
     }
     
     switch (type) {
-        case 'empty': // må lages pga login-siden...
+        case 'empty':
 
             if (input.value.length === 0) {
                 if (!input.classList.contains('input-error')) {
@@ -152,11 +117,19 @@ function validateInput(input, type, errorList = []) {
             }
             else {
                 usernameError = false;
-                removeInputError(isErrorInList, errorList, errorIndex, input, error);
+                removeInputError(isErrorInList, errorList, errorIndex, input);
             }
             if (usernameError) {
                 addInputError(isErrorInList, errorList, errorIndex, input, error);
             }
+            break;
+
+        case 'loginUsername':
+            if (input.value.length === 0) {
+                error.message = 'Mangler brukernavn.';
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
+            }
+            else removeInputError(isErrorInList, errorList, errorIndex, input);
             break;
 
         case 'email':
@@ -164,7 +137,7 @@ function validateInput(input, type, errorList = []) {
             error.message = 'Ugyldig epost-adresse.';
 
             if (input.value.match(emailPattern)) {
-                removeInputError(isErrorInList, errorList, errorIndex, input, error);
+                removeInputError(isErrorInList, errorList, errorIndex, input);
             } else {
                 if (input.value === '') error.message = 'Mangler epost-adresse.';
                 addInputError(isErrorInList, errorList, errorIndex, input, error);
@@ -176,7 +149,7 @@ function validateInput(input, type, errorList = []) {
             error.message = 'Ugyldig passord.';
 
             if (input.value.match(passwordPattern)) {
-                removeInputError(isErrorInList, errorList, errorIndex, input, error);
+                removeInputError(isErrorInList, errorList, errorIndex, input);
             } else {
                 if (input.value === '') error.message = 'Mangler passord.';
                 addInputError(isErrorInList, errorList, errorIndex, input, error);
@@ -188,7 +161,7 @@ function validateInput(input, type, errorList = []) {
             error.message = 'Ulikt passord.';
             
             if (password.value === confirmPassword.value && password.value.length > 0) {
-                removeInputError(isErrorInList, errorList, errorIndex, confirmPassword, error);
+                removeInputError(isErrorInList, errorList, errorIndex, confirmPassword);
             } else {
                 if (confirmPassword.value === '') error.message = 'Mangler bekreftet passord.';
                 addInputError(isErrorInList, errorList, errorIndex, confirmPassword, error);
@@ -220,16 +193,18 @@ function addInputError(isErrorInList, errorList, errorIndex, input, error) {
     }
     document.querySelector(`#${errorList[errorIndex].type}`).innerHTML = error.message;
 }
-function removeInputError(isErrorInList, errorList, errorIndex, input, error) {
+
+function removeInputError(isErrorInList, errorList, errorIndex, input) {
     if (isErrorInList) {
         let e = document.querySelector(`#${errorList[errorIndex].type}`);
-        e.parentElement.removeChild(e);
-        errorList.splice(errorIndex, 1);
+        if (e) {
+            e.parentElement.removeChild(e);
+            errorList.splice(errorIndex, 1);
+        }
     }
     if (input.classList.contains('input-error')) {
         input.classList.remove('input-error');
     }
 }
-
 
 export { auth, userLogin, userCreate, validateInput }
