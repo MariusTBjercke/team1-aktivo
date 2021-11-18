@@ -188,4 +188,4 @@ function cr(tagName, parent, attr, html) {
     return element;
 }
 
-export { currentPage, currentUser, show }
+export { currentPage, currentUser, show, cr }

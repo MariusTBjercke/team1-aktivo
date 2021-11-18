@@ -1,5 +1,5 @@
 import { aktivo } from './model';
-import { currentPage, currentUser, show } from './view';
+import { currentPage, currentUser, show, cr } from './view';
 // If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
 function auth() {
     let pageAuth = false;
@@ -26,7 +26,7 @@ function userLogin(username, password) {
 
     let error = [];
 
-    for (let x of [[username, 'Brukernavn mangler.', 'username'], [password, 'Passord mangler.', 'password']]) validateInput(x[0], 'empty', error, x[1], x[2]);
+    for (let x of [username, password]) validateInput(x, 'empty');
 
     let users = aktivo.data.users;
 
@@ -46,19 +46,12 @@ function userCreate(username, email, password, confirmPassword) {
     let error = [];
 
     for (let x of [
-        [username, 'empty', 'Brukernavn mangler.'],
-        [email, 'empty', 'Epost mangler.'],
-        [password, 'empty', 'Passord mangler.'],
-        [confirmPassword, 'empty', 'Bekreft passord mangler.'],
-        [[password, confirmPassword], 'equal', 'Ulikt passord.'],
-        [email, 'email', 'Ugyldig epost-adresse.']]) {
-            validateInput(x[0], x[1], error, x[2], x[3]);
+        [username, 'username'],
+        [email, 'email'],
+        [password, 'password'],
+        [[password, confirmPassword], 'confirmPassword']]) {
+            validateInput(x[0], x[1], error);
         };
-    
-    // if (password !== confirmPassword) { // burde byttes med validateInput('equal')
-    //     console.log("Passordene var ikke like.");
-    //     return;
-    // }
 
     if (!error) {
         let userObject = { // er kun deklarert inne i if-setningen, må appendes..
@@ -117,124 +110,88 @@ function userCreate(username, email, password, confirmPassword) {
 
 }
 
-// function validatePassword(password, confirmPassword) {
-//     if (password.value === confirmPassword.value || confirmPassword.value === '') {
-//         if (confirmPassword.classList.contains('password-error')) {
-//             confirmPassword.classList.remove('password-error');
-//         }
-//         if (!confirmPassword.classList.contains('password-success') && password.value === confirmPassword.value) {
-//             confirmPassword.classList.add('password-success');
-//         }
-//     } else {
-//         if (!confirmPassword.classList.contains('password-error')) {
-//             confirmPassword.classList.add('password-error');
-//         }
-//         if (confirmPassword.classList.contains('password-success')) {
-//             confirmPassword.classList.remove('password-success');
-//         }
-//     }
-// }
-
 /**
  * Function for validating input fields in forms
  * @param {HTMLElement} input Form input field
  * @param {string} type length, etc.
  */
-function validateInput(input, type, errorList, errorMsg, name) {
-    if (errorList.length > 0){
-        let inputIndex = errorList.findIndex(x => x.input == input);
-        if (!inputIndex === -1 && !errorList[inputIndex].type === type) return;
-    }
-    
+function validateInput(input, type, errorList = []) {
+    let errorIndex = errorList.findIndex(x => x.input === input);
+    let isErrorInList = (errorIndex !== -1);
     let error = {
         type: type,
         input: input,
     }
-    if (errorMsg) error.message = errorMsg;
-    if (name) error.name = name;
     
     switch (type) {
-        case 'empty':
+        case 'empty': // må lages pga login-siden...
 
-            if (input.value.length > 0) {
-                if (errorList) {
-                    for (let i in errorList) {
-                        if (errorList[i].type === type) {
-                            errorList.splice(i, 1);
-                        }
-                    }
+            if (input.value.length === 0) {
+                if (!input.classList.contains('input-error')) {
+                    input.classList.add('input-error');
                 }
+                input.addEventListener('input', function () {
+                    validateInput(input, type);
+                });
+            }
+            else {
                 if (input.classList.contains('input-error')) {
                     input.classList.remove('input-error');
                 }
-            } else {
+            }
+            break;
 
-                if (errorList) {
-                    if (errorList.findIndex(x => x.input == input) === -1) errorList.push(error);
-                }
+        case 'username':
+            let usernameError = true;
 
-                if (!input.classList.contains('input-error')) {
-                    input.classList.add('input-error');
-                    input.addEventListener('input', function () {
-                        validateInput(input, type, errorList, errorMsg, name);
-                    });
-                }
+            if (input.value.length === 0) {
+                error.message = 'Mangler brukernavn.';
+            }
+            else if (aktivo.data.users.findIndex(x => x.username === input.value) !== -1) {
+                error.message = 'Brukernavnet er tatt.';
+            }
+            else {
+                usernameError = false;
+                removeInputError(isErrorInList, errorList, errorIndex, input, error);
+            }
+            if (usernameError) {
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
             }
             break;
 
         case 'email':
-            console.log(type);
-            let pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+            let emailPattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+            error.message = 'Ugyldig epost-adresse.';
 
-            if (input.value.match(pattern)) {
-                for (let i in errorList) {
-                    if (errorList[i].type === type) {
-                        errorList.splice(i, 1);
-                    }
-                }
-                if (input.classList.contains('input-error')) {
-                    input.classList.remove('input-error');
-                }
+            if (input.value.match(emailPattern)) {
+                removeInputError(isErrorInList, errorList, errorIndex, input, error);
             } else {
+                if (input.value === '') error.message = 'Mangler epost-adresse.';
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
+            }
+            break;
+        
+        case 'password':
+            let passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+            error.message = 'Ugyldig passord.';
 
-                if (errorList.findIndex(x => x.type == type) === -1) errorList.push(error);
-
-                if (!input.classList.contains('input-error')) {
-                    input.classList.add('input-error');
-                    input.addEventListener('input', function () {
-                        validateInput(input, type, errorList, errorMsg, name);
-                    });
-                }
+            if (input.value.match(passwordPattern)) {
+                removeInputError(isErrorInList, errorList, errorIndex, input, error);
+            } else {
+                if (input.value === '') error.message = 'Mangler passord.';
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
             }
             break;
 
-        case 'equal':
+        case 'confirmPassword':
             let password = input[0], confirmPassword = input[1]; // must be in this order!
-
-            if (password.value === confirmPassword.value || confirmPassword.value === '') {
-                for (let i in errorList) {
-                    if (errorList[i].type === type) {
-                        errorList.splice(i, 1);
-                    }
-                }
-                if (confirmPassword.classList.contains('password-error')) {
-                    confirmPassword.classList.remove('password-error');
-                }
-                if (!confirmPassword.classList.contains('password-success') && !confirmPassword.value === '') {
-                    confirmPassword.classList.add('password-success');
-                }
+            error.message = 'Ulikt passord.';
+            
+            if (password.value === confirmPassword.value && password.value.length > 0) {
+                removeInputError(isErrorInList, errorList, errorIndex, confirmPassword, error);
             } else {
-                if (errorList.findIndex(x => x.type === type) === -1) errorList.push(error);
-
-                if (!confirmPassword.classList.contains('password-error')) {
-                    confirmPassword.classList.add('password-error');
-                }
-                if (confirmPassword.classList.contains('password-success')) {
-                    confirmPassword.classList.remove('password-success');
-                }
-                confirmPassword.addEventListener('input', function () {
-                    validateInput(input, type, errorList, errorMsg, name);
-                });
+                if (confirmPassword.value === '') error.message = 'Mangler bekreftet passord.';
+                addInputError(isErrorInList, errorList, errorIndex, confirmPassword, error);
             }
             break;
 
@@ -243,5 +200,36 @@ function validateInput(input, type, errorList, errorMsg, name) {
     }
     if (errorList.length>0) console.log(errorList);
 }
+
+function addInputError(isErrorInList, errorList, errorIndex, input, error) {
+    if (isErrorInList) {
+        errorList[errorIndex].message = error.message;
+    }
+    else {
+        errorList.push(error);
+        errorIndex = errorList.length -1;
+        input.addEventListener('input', function () {
+            validateInput(error.input, error.type, errorList);
+        });
+    }
+    if (!input.classList.contains('input-error')) {
+        input.classList.add('input-error');
+    }
+    if (!document.querySelector(`#${errorList[errorIndex].type}`)) {
+        input.before(cr('span', null, `id ${errorList[errorIndex].type}, class errorMsg`, error.message));
+    }
+    document.querySelector(`#${errorList[errorIndex].type}`).innerHTML = error.message;
+}
+function removeInputError(isErrorInList, errorList, errorIndex, input, error) {
+    if (isErrorInList) {
+        let e = document.querySelector(`#${errorList[errorIndex].type}`);
+        e.parentElement.removeChild(e);
+        errorList.splice(errorIndex, 1);
+    }
+    if (input.classList.contains('input-error')) {
+        input.classList.remove('input-error');
+    }
+}
+
 
 export { auth, userLogin, userCreate, validateInput }
