@@ -1,6 +1,7 @@
 import { aktivo } from './model';
 import { show, cr, currentPage } from './view';
 let currentUser = aktivo.app.currentUser;
+let user = aktivo.data.users[aktivo.data.users.findIndex(x => x.username === currentUser)];
 // If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
 function auth() {
     let pageAuth = false;
@@ -48,9 +49,10 @@ function userCreate(username, email, password, confirmPassword) {
         [username, 'username'],
         [email, 'email'],
         [password, 'password'],
-        [[password, confirmPassword], 'confirmPassword']]) {
-            validateInput(x[0], x[1], error);
-        };
+        [[password, confirmPassword], 'confirmPassword']
+    ]) {
+        validateInput(x[0], x[1], error);
+    };
 
     if (error.length === 0) {
         let userObject = {
@@ -207,4 +209,18 @@ function removeInputError(isErrorInList, errorList, errorIndex, input) {
     }
 }
 
-export { auth, userLogin, userCreate, validateInput }
+function generateList(view, listContainer, next, search) {
+    listContainer.innerHTML = '';
+    let isGroups = view === 'groups';
+    let list = isGroups ? aktivo.inputs.chosenGroup : aktivo.inputs.chosenPeople; // the groups or people added to the memberlist.
+    let dataList = isGroups ? user.groups : user.people;
+    dataList.filter(x => x.name.toLowerCase().startsWith(search.value.toLowerCase())).forEach(x => {
+        let itemContainer = cr('div', listContainer, 'class list-item');
+        let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+        let item = cr('div', itemContainer, 'class item', x.name);
+    });
+    
+    // loop based on search.input, and cr for each object in dataList up to maybe 30 groups? user can search if a group isn't displayed...
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user }

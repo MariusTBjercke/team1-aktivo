@@ -32,7 +32,7 @@ const aktivo = {
       newActivity: {
         groupSearch: "",
         peopleSearch: "",
-        chosenGroup: [],
+        chosenGroups: [],
         chosenPeople: [],
         filter: {
           people: [],
@@ -71,16 +71,33 @@ const aktivo = {
           fullName: "",
           people: [
             {
-              name: "", // unique name (functions as id)
-              born: null,
+              name: "Turid",
+              born: '01.01.1970',
+              filter: [],
+            },
+            {
+              name: "Arne",
+              born: '01.01.1970',
+              filter: [],
+            },
+            {
+              name: "Rolf",
+              born: '01.01.1970',
               filter: [],
             },
           ],
           groups: [
             {
-              name: "", // unique name (functions as id)
-              members: ["name1", "name2", "name3"], // names function as ids...
-              // do we want to add a group specific filter? if so; add an "added" filter and a "removed" filter (same as archive.filters).
+              name: "Group1",
+              members: ["Turid", "Arne"],
+            },
+            {
+              name: "Group2",
+              members: ["Turid", "Rolf"],
+            },
+            {
+              name: "Group3",
+              members: ["Arne", "Rolf"],
             },
           ],
           archive: [

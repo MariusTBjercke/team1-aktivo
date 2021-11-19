@@ -19,6 +19,12 @@ body, html {
     border-radius: 5px;
 }
 
+.wrapper {
+    width: 100%;
+    display: grid;
+    justify-content: center;
+}
+
 .logo {
     background: url('../img/aktivo-logo.png');
     width: 292px;
@@ -33,6 +39,7 @@ body, html {
     border-radius: 1px;
     padding: 5px 20px;
     cursor: pointer;
+    user-select: none;
 
     &:hover {
         background: linear-gradient(0deg, #c2c2c2 0%, #cccccc 100%);

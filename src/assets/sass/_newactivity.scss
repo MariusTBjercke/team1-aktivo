@@ -1,0 +1,68 @@
+.new-activity-container {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    grid-template-rows: auto auto auto 1fr auto;
+    gap: 20px;
+    margin-top: $container-margin-top;
+    margin-bottom: $container-margin-bottom;
+
+    .btn-container {
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: space-between;
+        width: 100%;
+
+        .btn {
+            width: 135px;
+        }
+    }
+
+    .btn {
+        padding: 12px 0;
+        border: none;
+        font-size: 18px;
+        text-align: center;
+        width: 292px;
+
+        &:hover {
+            font-weight: bold;
+        }
+
+        i {
+            font-weight: 400;
+        }
+
+    }
+
+
+
+    .search {
+        width: 100%;
+    }
+
+    .list-container {
+        height: 100%;
+        width: 100%;
+        border: 1px solid;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-items: center;
+        align-items: center;
+
+        .list-item {
+            margin-top: 12px;
+            width: 90%;
+            border: 1px solid;
+            justify-items: center;
+            display: grid;
+            grid-template-columns: 20% auto;
+
+            .edit-btn {
+                cursor: pointer;
+            }
+        }
+    }
+}

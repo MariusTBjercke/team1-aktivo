@@ -1,10 +1,10 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
 
-show("home");
+show("newactivitygroups");
 function show(page, parameters) {
     if (page) currentPage = page;
     console.log(aktivo.data.users);
@@ -25,6 +25,14 @@ function show(page, parameters) {
 
         case 'home':
             showFrontPage();
+            break;
+
+        case 'newactivitygroups':
+            showNewActivity('groups');
+            break;
+        
+        case 'newactivitypeople':
+            showNewActivity('people');
             break;
     
         default:
@@ -138,13 +146,68 @@ function showFrontPage() {
 
     let logo = cr('div', container, 'class logo');
 
-    let newActivity = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> Ny aktivitet');
+    let btnContainer = cr('div', container, 'class btn-container');
+
+    let newActivity = cr('div', btnContainer, 'class btn', '<i class="fas fa-plus"></i> Ny aktivitet');
+    newActivity.onclick = function() {
+        show('newactivitygroups');
+    }
+
+    let newActivityFast = cr('div', btnContainer, 'class btn', '<i class="fas fa-plus"></i> Ny aktivitet<br>(hurtig registrering)');
+
+    let archive = cr('div', btnContainer, 'class btn', 'Arkiv');
+
+    let groups = cr('div', btnContainer, 'class btn', 'Administrer grupper');
+
+    let people = cr('div', btnContainer, 'class btn', 'Administrer personer');
 
 }
 
 // new activity
-function showNewActivityGroups() {}
-function showNewActivityPeople() {}
+function showNewActivity(view) {
+    let btn1;
+    let btn2;
+    let view2;
+    let searchText;
+    switch (view) {
+        case 'groups':
+            btn1 = 'Ny gruppe';
+            btn2 = 'Personer';
+            searchText = 'grupper';
+            view2 = 'newactivitypeople';
+            break;
+
+        case 'people':
+            btn1 = 'Ny person';
+            btn2 = 'Grupper';
+            searchText = 'personer';
+            view2 = 'newactivitygroups';
+            break;
+    
+        default:
+            break;
+    }
+
+    header();
+    let wrapper = cr('div', app, 'class wrapper');
+    let container = cr('div', wrapper, 'class new-activity-container');
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    let btnContainer = cr('div', container, 'class btn-container');
+    let newBtn = cr('div', btnContainer, 'class btn', '<i class="fa fa-plus"></i> ' + btn1);
+    let toggleView = cr('div', btnContainer, 'class btn', btn2);
+    toggleView.onclick = function() {
+        show(view2);
+    }
+    let search = cr('input',container, 'type text, class search, placeholder Søk i ' + searchText);
+    search.addEventListener('input', function () {
+        generateList(view, listContainer, next, search);
+    });
+    let listContainer = cr('div', container, 'class list-container');
+    let next = cr('div', container, 'class btn', 'Neste');
+    next.onclick = function() {}
+    generateList(view, listContainer, next, search);
+}
+
 function showNewActivityMembers() {}
 
 // new activity (fast/simple)
@@ -177,8 +240,12 @@ function header() {
     let row = cr('div', header, 'class row');
     let btn = cr('div', row, 'class nav-btn');
     let bars = cr('i', btn, 'class fa fa-bars');
-    let pageDescr = cr('div', row, 'class pageDescr', 'Forside');
-    let loggOut = cr('div', row, 'class logout', 'Logg ut');
+    let pageDescr = cr('div', row, 'class page-description', 'Forside');
+    let logOut = cr('div', row, 'class logout', 'Logg ut');
+    logOut.onclick = function() {
+        currentUser = '';
+        show('login');
+    }
 }
 
 /**
