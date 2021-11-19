@@ -214,7 +214,7 @@ function generateList(view, listContainer, next, search) {
     let isGroups = view === 'groups';
     let list = isGroups ? aktivo.inputs.chosenGroup : aktivo.inputs.chosenPeople; // the groups or people added to the memberlist.
     let dataList = isGroups ? user.groups : user.people;
-    dataList.filter(x => x.name.toLowerCase().startsWith(search.value.toLowerCase())).forEach(x => {
+    dataList.filter(x => x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1).forEach(x => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         let item = cr('div', itemContainer, 'class item', x.name);
