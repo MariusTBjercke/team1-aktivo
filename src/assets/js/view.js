@@ -140,7 +140,7 @@ function showRecoverEmail() {}
 
 function showFrontPage() {
     
-    header();
+    header('Forside');
 
     let container = cr('div', app, 'class frontpage-container');
 
@@ -188,7 +188,7 @@ function showNewActivity(view) {
             break;
     }
 
-    header();
+    header('Legg til gruppe(r)');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class new-activity-container');
     let back = cr('div', container, 'class btn', 'Tilbake');
@@ -200,12 +200,12 @@ function showNewActivity(view) {
     }
     let search = cr('input',container, 'type text, class search, placeholder Søk i ' + searchText);
     search.addEventListener('input', function () {
-        generateList(view, listContainer, next, search);
+        generateList(view, listContainer, search);
     });
     let listContainer = cr('div', container, 'class list-container');
     let next = cr('div', container, 'class btn', 'Neste');
     next.onclick = function() {}
-    generateList(view, listContainer, next, search);
+    generateList(view, listContainer, search);
 }
 
 function showNewActivityMembers() {}
@@ -235,12 +235,12 @@ function showChangePassword() {}
 function showChangeEmail() {}
 function showChangeName() {}
 
-function header() {
+function header(title) {
     let header = cr('div', app, 'class header');
     let row = cr('div', header, 'class row');
     let btn = cr('div', row, 'class nav-btn');
     let bars = cr('i', btn, 'class fa fa-bars');
-    let pageDescr = cr('div', row, 'class page-description', 'Forside');
+    let pageDescr = cr('div', row, 'class page-description', title);
     let logOut = cr('div', row, 'class logout', 'Logg ut');
     logOut.onclick = function() {
         currentUser = '';

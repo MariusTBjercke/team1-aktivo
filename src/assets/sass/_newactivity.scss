@@ -25,15 +25,6 @@
         font-size: 18px;
         text-align: center;
         width: 292px;
-
-        &:hover {
-            font-weight: bold;
-        }
-
-        i {
-            font-weight: 400;
-        }
-
     }
 
 
@@ -49,20 +40,40 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        justify-items: center;
         align-items: center;
+        border: .3px solid rgb(118, 118, 118);
+        border-radius: 1px;
+        overflow: scroll;
 
         .list-item {
-            margin-top: 12px;
-            width: 90%;
-            border: 1px solid;
+            margin-bottom: 20px;
+            width: 100%;
             justify-items: center;
             display: grid;
-            grid-template-columns: 20% auto;
+            gap: 20px;
+            grid-template-columns: 30px 1fr;
+            background: $btn-bg-color;
 
-            .edit-btn {
+            * {
+                width: 100%;
                 cursor: pointer;
             }
+
+            svg {
+                border: none;
+                font-size: 15px;
+            }
+
+            .item {
+                display: flex;
+                justify-content: start;
+                align-items: center;
+
+                svg {
+                    width: 30px;
+                }
+            }
+
         }
     }
 }

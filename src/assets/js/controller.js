@@ -209,7 +209,7 @@ function removeInputError(isErrorInList, errorList, errorIndex, input) {
     }
 }
 
-function generateList(view, listContainer, next, search) {
+function generateList(view, listContainer, search) {
     listContainer.innerHTML = '';
     let isGroups = view === 'groups';
     let list = isGroups ? aktivo.inputs.chosenGroup : aktivo.inputs.chosenPeople; // the groups or people added to the memberlist.
@@ -217,7 +217,7 @@ function generateList(view, listContainer, next, search) {
     dataList.filter(x => x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1).forEach(x => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
-        let item = cr('div', itemContainer, 'class item', x.name);
+        let item = cr('div', itemContainer, 'class item', '<i class="fas fa-plus"></i>' + x.name);
     });
     
     // loop based on search.input, and cr for each object in dataList up to maybe 30 groups? user can search if a group isn't displayed...

@@ -33,7 +33,7 @@ body, html {
 
 .btn {
     font-weight: bold;
-    background: linear-gradient(0deg, #dadada 0%, #d1d1d1 100%);
+    background: $btn-bg-color;
     color: rgb(0, 0, 0);
     border: .3px solid rgb(118, 118, 118);
     border-radius: 1px;
@@ -42,7 +42,7 @@ body, html {
     user-select: none;
 
     &:hover {
-        background: linear-gradient(0deg, #c2c2c2 0%, #cccccc 100%);
+        background: $btn-bg-hover-color;
     }
 }
 
