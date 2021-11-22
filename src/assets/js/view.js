@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -237,8 +237,15 @@ function showChangeName() {}
 
 function header(title) {
     let header = cr('div', app, 'class header');
+
+    let navbar = cr('div', header, 'class navbar');
+    let topRow = cr('div', navbar, 'class top-row');
+
     let row = cr('div', header, 'class row');
     let btn = cr('div', row, 'class nav-btn');
+    btn.onclick = function() {
+        toggleNav(navbar, btn);
+    }
     let bars = cr('i', btn, 'class fa fa-bars');
     let pageDescr = cr('div', row, 'class page-description', title);
     let logOut = cr('div', row, 'class logout', 'Logg ut');

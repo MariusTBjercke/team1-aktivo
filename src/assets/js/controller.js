@@ -223,4 +223,32 @@ function generateList(view, listContainer, search) {
     // loop based on search.input, and cr for each object in dataList up to maybe 30 groups? user can search if a group isn't displayed...
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user }
+function toggleNav(navbar, btn) {
+    let appHeight = app.clientHeight;
+
+    if (!aktivo.inputs.showNavbar) {
+        navbar.style.visibility = "visible";
+        navbar.style.height = appHeight + "px";
+        navbar.style.width = "60%";
+        btn.style.transform = "rotate(180deg)";
+        setTimeout(setHTML(btn, '<i class="fas fa-times"></i>'), 500);
+        aktivo.inputs.showNavbar = true;
+    } else {
+        navbar.style.visibility = "hidden";
+        navbar.style.width = "0";
+        btn.style.transform = "rotate(-180deg)";
+        setTimeout(setHTML(btn, '<i class="fa fa-bars"></i>'), 500);
+        aktivo.inputs.showNavbar = false;
+    }
+}
+
+/**
+ * Set innerHTML of element.
+ * @param {HTMLElement} element HTML Element
+ * @param {string} html HTML string for innerHTML
+ */
+function setHTML(element, html) {
+    element.innerHTML = html;
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user, toggleNav }
