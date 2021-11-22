@@ -169,12 +169,14 @@ function showNewActivity(view) {
     let btn2;
     let view2;
     let searchText;
+    let title;
     switch (view) {
         case 'groups':
             btn1 = 'Ny gruppe';
             btn2 = 'Personer';
             searchText = 'grupper';
             view2 = 'newactivitypeople';
+            title = 'Legg til gruppe(r)';
             break;
 
         case 'people':
@@ -182,13 +184,14 @@ function showNewActivity(view) {
             btn2 = 'Grupper';
             searchText = 'personer';
             view2 = 'newactivitygroups';
+            title = 'Legg til person(er)';
             break;
     
         default:
             break;
     }
 
-    header('Legg til gruppe(r)');
+    header(title);
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class new-activity-container');
     let back = cr('div', container, 'class btn', 'Tilbake');

@@ -212,12 +212,31 @@ function removeInputError(isErrorInList, errorList, errorIndex, input) {
 function generateList(view, listContainer, search) {
     listContainer.innerHTML = '';
     let isGroups = view === 'groups';
-    let list = isGroups ? aktivo.inputs.chosenGroup : aktivo.inputs.chosenPeople; // the groups or people added to the memberlist.
+    let addedGroups = aktivo.inputs.newActivity.chosenGroups;
+    let addedPeople = aktivo.inputs.newActivity.chosenPeople;
+    let list = isGroups ? addedGroups : addedPeople;
     let dataList = isGroups ? user.groups : user.people;
-    dataList.filter(x => x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1).forEach(x => {
+    dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1 && list.findIndex(L => L.name === x.name) === -1)).forEach(x => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         let item = cr('div', itemContainer, 'class item', '<i class="fas fa-plus"></i>' + x.name);
+        item.onclick = function() {
+            console.log('added ' + x.name);
+            list.push({name: x.name});
+            if (isGroups) {
+                x.members.forEach(name =>  {
+                    if (addedPeople.findIndex(m => m.name === name) === -1) {
+                        addedPeople.push({
+                            name: name,
+                            from: x.name
+                        });
+                    }
+                });
+            }
+            // else addedPeople.push({name: x.name});
+            console.log(addedGroups, addedPeople);
+            itemContainer.parentElement.removeChild(itemContainer);
+        };
     });
     
     // loop based on search.input, and cr for each object in dataList up to maybe 30 groups? user can search if a group isn't displayed...
