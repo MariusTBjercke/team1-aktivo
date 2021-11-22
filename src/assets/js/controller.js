@@ -225,11 +225,16 @@ function generateList(view, listContainer, search) {
 
 function toggleNav(navbar, btn) {
     let appHeight = app.clientHeight;
+    let appWidth = app.clientWidth;
+
+    // Calculate final navbar width
+    let logoutWidth = document.querySelector(".logout").clientWidth;
+    let finalWidth = appWidth - logoutWidth;
 
     if (!aktivo.inputs.showNavbar) {
         navbar.style.visibility = "visible";
         navbar.style.height = appHeight + "px";
-        navbar.style.width = "60%";
+        navbar.style.width = finalWidth + "px";
         btn.style.transform = "rotate(180deg)";
         setTimeout(setHTML(btn, '<i class="fas fa-times"></i>'), 500);
         aktivo.inputs.showNavbar = true;
