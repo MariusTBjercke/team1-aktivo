@@ -19,6 +19,23 @@ $header-height: 47px;
         visibility: hidden;
         transition: .5s;
 
+        .nav-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+            padding-left: 17px;
+
+            .nav-item {
+                font-size: 1.3em;
+
+                &:hover {
+                    font-weight: bold;
+                    cursor: pointer;
+                }
+            }
+        }
+
         .top-row {
             height: $header-height;
             display: grid;

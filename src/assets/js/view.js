@@ -174,7 +174,7 @@ function showNewActivity(view) {
             btn1 = 'Ny gruppe';
             btn2 = 'Personer';
             searchText = 'grupper';
-            view2 = 'newactivitypeople';
+            view2 = 'newactivitypeople'; // Her kan man kanskje bruke view parameter istedenfor?
             break;
 
         case 'people':
@@ -240,6 +240,20 @@ function header(title) {
 
     let navbar = cr('div', header, 'class navbar');
     let topRow = cr('div', navbar, 'class top-row');
+    let navContainer = cr('div', navbar, 'class nav-container');
+
+    // Navigation items
+    for (let x of [
+        ['Min profil', 'profile'],
+        ['FAQ', 'faq'],
+        ['Personvernerklæring', 'privacypolicy']
+    ]) {
+        let item = cr('div', navContainer, 'class nav-item', x[0]);
+        item.onclick = () => {
+            show(x[1]);
+        }
+    }
+
 
     let row = cr('div', header, 'class row');
     let btn = cr('div', row, 'class nav-btn');
@@ -253,6 +267,7 @@ function header(title) {
         currentUser = '';
         show('login');
     }
+    toggleNav(navbar, btn); // OBS: Husk å slette!!
 }
 
 /**
