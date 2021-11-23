@@ -2,6 +2,8 @@ import { aktivo } from './model';
 import { show, cr, currentPage } from './view';
 let currentUser = aktivo.app.currentUser;
 let user = aktivo.data.users[aktivo.data.users.findIndex(x => x.username === currentUser)];
+let addedGroups = aktivo.inputs.newActivity.chosenGroups;
+let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 // If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
 function auth() {
     let pageAuth = false;
@@ -212,8 +214,6 @@ function removeInputError(isErrorInList, errorList, errorIndex, input) {
 function generateList(view, listContainer, search) {
     listContainer.innerHTML = '';
     let isGroups = view === 'groups';
-    let addedGroups = aktivo.inputs.newActivity.chosenGroups;
-    let addedPeople = aktivo.inputs.newActivity.chosenPeople;
     let list = isGroups ? addedGroups : addedPeople;
     let dataList = isGroups ? user.groups : user.people;
     dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1 && list.findIndex(L => L.name === x.name) === -1)).forEach(x => {
@@ -221,7 +221,6 @@ function generateList(view, listContainer, search) {
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         let item = cr('div', itemContainer, 'class item', '<i class="fas fa-plus"></i>' + x.name);
         item.onclick = function() {
-            console.log('added ' + x.name);
             list.push({name: x.name});
             if (isGroups) {
                 x.members.forEach(name =>  {
@@ -233,13 +232,33 @@ function generateList(view, listContainer, search) {
                     }
                 });
             }
-            // else addedPeople.push({name: x.name});
-            console.log(addedGroups, addedPeople);
             itemContainer.parentElement.removeChild(itemContainer);
         };
     });
-    
-    // loop based on search.input, and cr for each object in dataList up to maybe 30 groups? user can search if a group isn't displayed...
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user }
+function generateMemberList(listContainer) {
+    listContainer.innerHTML = '';
+    let list = [];
+    addedGroups.forEach(group => {
+        list.push({name: group.name, members: addedPeople.filter(person => person.from === group.name)});
+    });
+    list.push({name: 'Personer', members: addedPeople.filter(person => !person.from)});
+    let filteredList = list.filter(x => x.members.length > 0);
+
+    filteredList.forEach(x => {
+        if (filteredList.length > 1) cr('span', listContainer, '', 'Fra ' + x.name + ':');
+        x.members.forEach(member => {
+            let itemContainer = cr('div', listContainer, 'class list-item');
+            let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+            let item = cr('div', itemContainer, 'class item', member.name);
+            let deleteBtn = cr('div', itemContainer, 'class delete-btn', '<span>✕</span>')
+            deleteBtn.onclick = function() {
+                itemContainer.parentElement.removeChild(itemContainer);
+                addedPeople.splice(addedPeople.findIndex(x => x.name === member.name), 1);
+            }
+        });
+    });
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList }

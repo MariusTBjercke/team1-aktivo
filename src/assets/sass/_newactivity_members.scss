@@ -1,23 +1,12 @@
-.new-activity-container {
+.new-activity-members-container {
     position: relative;
     display: grid;
     justify-items: center;
     align-items: start;
-    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-rows: auto 1fr auto;
     gap: 20px;
     margin-top: $container-margin-top;
     margin-bottom: $container-margin-bottom;
-
-    .btn-container {
-        display: grid;
-        grid-template-columns: auto auto;
-        justify-content: space-between;
-        width: 100%;
-
-        .btn {
-            width: 135px;
-        }
-    }
 
     .btn {
         padding: 12px 0;
@@ -25,10 +14,6 @@
         font-size: 18px;
         text-align: center;
         width: 292px;
-    }
-
-    .search {
-        width: 100%;
     }
 
     .list-container {
@@ -48,28 +33,68 @@
             justify-items: center;
             display: grid;
             gap: 20px;
-            grid-template-columns: 30px 1fr;
+            grid-template-columns: 30px 1fr 30px;
             background: $btn-bg-color;
 
-            * {
+            div {
                 width: 100%;
-                cursor: pointer;
             }
 
             svg {
+                width: 100%;
                 font-size: 15px;
+                cursor: pointer;
             }
 
             .item {
                 display: flex;
                 justify-content: start;
                 align-items: center;
-
-                svg {
-                    width: 30px;
-                }
             }
 
+            .delete-btn {
+                display: flex;
+                justify-content: center;
+
+                span {
+                    cursor: pointer;
+                    font-size: 15px;
+                    font-weight: 700;
+                }
+            }
         }
+    }
+}
+
+.members-list-item {
+    margin-bottom: 20px;
+    width: 100%;
+    justify-items: center;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 30px 1fr 30px;
+    background: $btn-bg-color;
+
+    * {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    svg {
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .item {
+        justify-content: start;
+        align-items: center;
+    }
+    
+    span {
+        cursor: pointer;
+        align-items: center;
+        font-size: 15px;
     }
 }

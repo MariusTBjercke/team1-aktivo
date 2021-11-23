@@ -1,8 +1,10 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, generateMemberList } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
+let addedGroups = aktivo.inputs.newActivity.chosenGroups;
+let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
 show("newactivitygroups");
 function show(page, parameters) {
@@ -34,6 +36,10 @@ function show(page, parameters) {
         case 'newactivitypeople':
             showNewActivity('people');
             break;
+
+        case 'newActivityMembers':
+            showNewActivityMembers();
+        break;
     
         default:
             showFrontPage();
@@ -195,6 +201,12 @@ function showNewActivity(view) {
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class new-activity-container');
     let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = function() {
+        show('home');
+        // add to archive
+        addedGroups.splice(0, addedGroups.length);
+        addedPeople.splice(0, addedPeople.length);
+    }
     let btnContainer = cr('div', container, 'class btn-container');
     let newBtn = cr('div', btnContainer, 'class btn', '<i class="fa fa-plus"></i> ' + btn1);
     let toggleView = cr('div', btnContainer, 'class btn', btn2);
@@ -207,11 +219,27 @@ function showNewActivity(view) {
     });
     let listContainer = cr('div', container, 'class list-container');
     let next = cr('div', container, 'class btn', 'Neste');
-    next.onclick = function() {}
+    next.onclick = function() {
+        if (addedGroups.length !== 0 || addedPeople.length !== 0) show('newActivityMembers'); // could be a controller function that gives an error-message.
+    }
     generateList(view, listContainer, search);
 }
 
-function showNewActivityMembers() {}
+function showNewActivityMembers() {
+    header('Medlemsliste');
+    let wrapper = cr('div', app, 'class wrapper');
+    let container = cr('div', wrapper, 'class new-activity-members-container');
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = function() {
+        show("newactivitygroups"); // should be changed to remember if last page was groups or people..
+    }
+    let listContainer = cr('div', container, 'class list-container');
+    let seeActivities = cr('div', container, 'class btn', 'Se forslag');
+    seeActivities.onclick = function() {
+        show('newActivitySuggestions');
+    }
+    generateMemberList(listContainer);
+}
 
 // new activity (fast/simple)
 function showNewActivitySimple() {}
