@@ -219,8 +219,9 @@ function generateList(view, listContainer, search) {
     dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1 && list.findIndex(L => L.name === x.name) === -1)).forEach(x => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
-        let item = cr('div', itemContainer, 'class item', '<i class="fas fa-plus"></i>' + x.name);
-        item.onclick = function() {
+        let item = cr('div', itemContainer, 'class item', x.name);
+        let add = cr('div', itemContainer, 'class add-btn', '<i class="fas fa-plus"></i>');
+        add.onclick = function() {
             list.push({name: x.name});
             if (isGroups) {
                 x.members.forEach(name =>  {
@@ -261,4 +262,31 @@ function generateMemberList(listContainer) {
     });
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList }
+function generateAdminList(view, listContainer, search) {
+    listContainer.innerHTML = '';
+    let isGroups = view === 'groups';
+    let dataList = isGroups ? user.groups : user.people;
+    dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1)).forEach(x => {
+        let itemContainer = cr('div', listContainer, 'class list-item');
+        let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+        editBtn.onclick = function() {
+            if (isGroups) {
+                console.log('edit (group): ' + x.name);
+            } else console.log('edit (person): ' + x.name);
+        };
+        let item = cr('div', itemContainer, 'class item', x.name);
+        let deleteBtn = cr('div', itemContainer, 'class delete-btn', '<i class="far fa-trash-alt"></i>')
+        deleteBtn.onclick = function() {
+            itemContainer.parentElement.removeChild(itemContainer);
+            dataList.splice(dataList.findIndex(y => y.name === x.name), 1);
+            if (!isGroups) {
+                user.groups.forEach(group => {
+                    let index = group.members.findIndex(name => name === x.name);
+                    if (index > -1) group.members.splice(index, 1);
+                });
+            }
+        }
+    });
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList }
