@@ -223,7 +223,10 @@ function generateList(view, listContainer, search) {
     // loop based on search.input, and cr for each object in dataList up to maybe 30 groups? user can search if a group isn't displayed...
 }
 
-function toggleNav(navbar, btn) {
+function toggleNav() {
+    let navbar = app.querySelector('.navbar');
+    let btn = app.querySelector('.nav-btn');
+    let navContainer = navbar.querySelector('.nav-container');
     let appHeight = app.clientHeight;
     let appWidth = app.clientWidth;
 
@@ -232,19 +235,34 @@ function toggleNav(navbar, btn) {
     let finalWidth = appWidth - logoutWidth;
 
     if (!aktivo.inputs.showNavbar) {
+        navContainer.style.opacity = "1";
+        navContainer.style.transition = "all 250ms ease-in-out 250ms";
+
         navbar.style.visibility = "visible";
         navbar.style.height = appHeight + "px";
         navbar.style.width = finalWidth + "px";
+
         btn.style.transform = "rotate(180deg)";
-        setTimeout(setHTML(btn, '<i class="fas fa-times"></i>'), 500);
+        setTimeout(setHTML(btn, '<i class="fas fa-times"></i>'), 250);
+
         aktivo.inputs.showNavbar = true;
     } else {
+        navContainer.style.opacity = "0";
+        navContainer.style.transition = "all 150ms ease-in-out";
+
         navbar.style.visibility = "hidden";
         navbar.style.width = "0";
+
         btn.style.transform = "rotate(-180deg)";
-        setTimeout(setHTML(btn, '<i class="fa fa-bars"></i>'), 500);
+        setTimeout(setHTML(btn, '<i class="fa fa-bars"></i>'), 250);
+
         aktivo.inputs.showNavbar = false;
     }
+}
+
+function toggleTheme() {
+    let theme = user.options.theme;
+    console.log(theme);
 }
 
 /**
@@ -256,4 +274,4 @@ function setHTML(element, html) {
     element.innerHTML = html;
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, toggleNav }
+export { auth, userLogin, userCreate, validateInput, generateList, user, toggleNav, toggleTheme }

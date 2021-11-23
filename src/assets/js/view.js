@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleTheme } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -254,11 +254,15 @@ function header(title) {
         }
     }
 
+    let themeBtn = cr('div', navContainer, 'class nav-item', '<i class="fas fa-lightbulb"></i>');
+    themeBtn.onclick = () => {
+        toggleTheme();
+    }
 
     let row = cr('div', header, 'class row');
     let btn = cr('div', row, 'class nav-btn');
     btn.onclick = function() {
-        toggleNav(navbar, btn);
+        toggleNav();
     }
     let bars = cr('i', btn, 'class fa fa-bars');
     let pageDescr = cr('div', row, 'class page-description', title);
@@ -267,7 +271,7 @@ function header(title) {
         currentUser = '';
         show('login');
     }
-    toggleNav(navbar, btn); // OBS: Husk å slette!!
+    toggleNav(); // OBS: Husk å slette!!
 }
 
 /**

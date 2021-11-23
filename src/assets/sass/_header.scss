@@ -25,6 +25,7 @@ $header-height: 47px;
             gap: 15px;
             margin-top: 25px;
             padding-left: 17px;
+            transition: all 250ms ease-in-out 250ms;
 
             .nav-item {
                 font-size: 1.3em;
@@ -61,7 +62,7 @@ $header-height: 47px;
             padding: 0 7px;
             font-size: calc($header-height * .75);
             cursor: pointer;
-            transition: .5s;
+            transition: all 500ms;
             z-index: 3;
         }
 
