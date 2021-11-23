@@ -244,6 +244,10 @@ function showProfile() {
 
     let btnContainer = cr('div', container, 'class btn-container');
 
+    let editEmail = cr('div', btnContainer, 'class btn', 'Endre epostadresse');
+
+    let editPassword = cr('div', btnContainer, 'class btn', 'Endre passord');
+
 }
 function showChangePassword() {}
 function showChangeEmail() {}
