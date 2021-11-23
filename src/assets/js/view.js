@@ -240,7 +240,7 @@ function showProfile() {
 
     let container = cr('div', app, 'class profile-container');
 
-    let title = cr('div', container, 'class title', '<i class="fas fa-user"></i>');
+    let title = cr('div', container, 'class title', '<i class="fas fa-user"></i> Min profil');
 
     let btnContainer = cr('div', container, 'class btn-container');
 
