@@ -1,0 +1,38 @@
+.profile-container {
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    grid-template-rows: 89px auto;
+    width: 100%;
+    margin-top: $container-margin-top;
+    margin-bottom: $container-margin-bottom;
+
+    .header {
+        width: 929px;
+        height: 89px;
+    }
+
+    .btn-container {
+        display: grid;
+        margin-top: calc($container-margin-top - $header-height);
+        gap: 20px;
+    }
+
+    .btn {
+        padding: 12px 0;
+        border: none;
+        font-size: 18px;
+        text-align: center;
+        width: 292px;
+
+        &:hover {
+            font-weight: bold;
+        }
+
+        i {
+            font-weight: 400;
+        }
+
+    }
+
+}

@@ -1,10 +1,10 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleTheme } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleTheme, getThemeIcon } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
 
-show("newactivitygroups");
+show("profile");
 function show(page, parameters) {
     if (page) currentPage = page;
     console.log(aktivo.data.users);
@@ -25,6 +25,10 @@ function show(page, parameters) {
 
         case 'home':
             showFrontPage();
+            break;
+
+        case 'profile':
+            showProfile();
             break;
 
         case 'newactivitygroups':
@@ -230,7 +234,17 @@ function showNewPersonFilters() {}
 function showAdministerGroups() {}
 function showAdministerPeople() {}
 
-function showProfile() {}
+function showProfile() {
+
+    header('Min profil');
+
+    let container = cr('div', app, 'class profile-container');
+
+    let title = cr('div', container, 'class title', '<i class="fas fa-user"></i>');
+
+    let btnContainer = cr('div', container, 'class btn-container');
+
+}
 function showChangePassword() {}
 function showChangeEmail() {}
 function showChangeName() {}
@@ -246,17 +260,22 @@ function header(title) {
     for (let x of [
         ['Min profil', 'profile'],
         ['FAQ', 'faq'],
-        ['Personvernerklæring', 'privacypolicy']
+        ['Personvernerklæring', 'privacypolicy'],
+        ['theme'],
+        ['Test1', 'test1'],
+        ['Test2', 'test2']
     ]) {
-        let item = cr('div', navContainer, 'class nav-item', x[0]);
-        item.onclick = () => {
-            show(x[1]);
+        if (x[0] === 'theme') {
+            let item = cr('div', navContainer, 'class nav-item', getThemeIcon());
+            item.onclick = () => {
+                toggleTheme();
+            }
+        } else {
+            let item = cr('div', navContainer, 'class nav-item', x[0]);
+            item.onclick = () => {
+                show(x[1]);
+            }
         }
-    }
-
-    let themeBtn = cr('div', navContainer, 'class nav-item', '<i class="fas fa-lightbulb"></i>');
-    themeBtn.onclick = () => {
-        toggleTheme();
     }
 
     let row = cr('div', header, 'class row');
@@ -271,7 +290,6 @@ function header(title) {
         currentUser = '';
         show('login');
     }
-    toggleNav(); // OBS: Husk å slette!!
 }
 
 /**

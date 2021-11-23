@@ -260,9 +260,13 @@ function toggleNav() {
     }
 }
 
+function getThemeIcon() {
+    return user.options.theme === 0 ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+}
+
 function toggleTheme() {
     let theme = user.options.theme;
-    console.log(theme);
+    console.log('Current theme: ' + theme);
 }
 
 /**
@@ -274,4 +278,4 @@ function setHTML(element, html) {
     element.innerHTML = html;
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, toggleNav, toggleTheme }
+export { auth, userLogin, userCreate, validateInput, generateList, user, toggleNav, toggleTheme, getThemeIcon }
