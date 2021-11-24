@@ -290,17 +290,27 @@ function generateAdminList(view, listContainer, search) {
 }
 
 function toggleNav() {
+    let header = app.querySelector('.header');
     let navbar = app.querySelector('.navbar');
     let btn = app.querySelector('.nav-btn');
     let navContainer = navbar.querySelector('.nav-container');
+    let navBg = header.querySelector('.bg');
     let appHeight = app.clientHeight;
     let appWidth = app.clientWidth;
+    let headerHeight = header.clientHeight;
+
+    let navBgHeight = appHeight - headerHeight + "px";
+    navBg.style.width = appWidth + "px";
+    navBg.style.height = navBgHeight;
 
     // Calculate final navbar width
     let logoutWidth = document.querySelector(".logout").clientWidth;
     let finalWidth = appWidth - logoutWidth;
 
-    if (!aktivo.inputs.showNavbar) {
+    if (!aktivo.inputs.showNavBar) {
+        navBg.style.visibility = "visible";
+        navBg.style.opacity = "1";
+
         navContainer.style.opacity = "1";
         navContainer.style.transition = "all 250ms ease-in-out 250ms";
 
@@ -311,8 +321,13 @@ function toggleNav() {
         // btn.style.transform = "rotate(180deg)";
         setTimeout(setHTML(btn, '<i class="fas fa-times"></i>'), 250);
 
-        aktivo.inputs.showNavbar = true;
+        aktivo.inputs.showNavBar = true;
     } else {
+        navBg.style.opacity = "0";
+        setTimeout(() => {
+            navBg.style.visibility = "hidden";
+        }, 250);
+
         navContainer.style.opacity = "0";
         navContainer.style.transition = "all 150ms ease-in-out";
 
@@ -322,17 +337,17 @@ function toggleNav() {
         // btn.style.transform = "rotate(-180deg)";
         setTimeout(setHTML(btn, '<i class="fa fa-bars"></i>'), 250);
 
-        aktivo.inputs.showNavbar = false;
+        aktivo.inputs.showNavBar = false;
     }
 }
 
-function getThemeIcon() {
-    return user.options.theme === 0 ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+function getBulbIcon() {
+    return user.options.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
 }
 
-function toggleTheme() {
-    let theme = user.options.theme;
-    console.log('Current theme: ' + theme);
+function toggleLights(bulb) {
+    user.options.lightsOn = !user.options.lightsOn;
+    setHTML(bulb, getBulbIcon());
 }
 
 /**
@@ -344,4 +359,4 @@ function setHTML(element, html) {
     element.innerHTML = html;
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleTheme, getThemeIcon }
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon }

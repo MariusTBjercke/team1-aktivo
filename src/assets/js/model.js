@@ -39,6 +39,9 @@ const aktivo = {
           activity: [],
         },
       },
+      myProfile: {
+        returnPage: ""
+      },
       editPassword: {
         oldPassword: "",
         password: "",
@@ -124,7 +127,7 @@ const aktivo = {
             },
           ],
           options: {
-            theme: 0, // 0 for light, 1 for dark?
+            lightsOn: true,
           },
         },
       ],

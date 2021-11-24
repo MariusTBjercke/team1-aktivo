@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleTheme, getThemeIcon, generateMemberList, generateAdminList } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -317,42 +317,55 @@ function showProfile() {
 
     let container = cr('div', app, 'class profile-container');
 
-    let title = cr('div', container, 'class title', '<i class="fas fa-user"></i> Min profil');
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = () => {
+        aktivo.inputs.myProfile.returnPage === currentPage ? show('home') : show(aktivo.inputs.myProfile.returnPage);
+    }
 
     let btnContainer = cr('div', container, 'class btn-container');
 
     let editEmail = cr('div', btnContainer, 'class btn', 'Endre epostadresse');
+    editEmail.onclick = () => {
+        show('showChangeEmail');
+    }
 
     let editPassword = cr('div', btnContainer, 'class btn', 'Endre passord');
 
 }
 function showChangePassword() {}
-function showChangeEmail() {}
+function showChangeEmail() {
+
+    header('Endre e-post');
+
+    let container = cr('div', app, 'class profile-container');
+
+    let formContainer = cr('div', container, 'class form');
+
+    let emailInput = cr('input', formContainer);
+
+}
 function showChangeName() {}
 
 function header(title) {
     let header = cr('div', app, 'class header');
-
+    let navBg = cr('div', header, 'class bg');
+    navBg.onclick = () => {
+        toggleNav();
+    }
     let navbar = cr('div', header, 'class navbar');
     let topRow = cr('div', navbar, 'class top-row');
     let navContainer = cr('div', navbar, 'class nav-container');
 
-    // Navigation items
-    for (let x of [
-        ['Min profil', 'profile'],
-        ['theme'],
-    ]) {
-        if (x[0] === 'theme') {
-            let item = cr('div', navContainer, 'class nav-item', getThemeIcon());
-            item.onclick = () => {
-                toggleTheme();
-            }
-        } else {
-            let item = cr('div', navContainer, 'class nav-item', x[0]);
-            item.onclick = () => {
-                show(x[1]);
-            }
-        }
+    let profile = cr('div', navContainer, 'class nav-item', 'Min profil');
+    profile.onclick = () => {
+        aktivo.inputs.showNavBar = false;
+        if (currentPage !== 'profile') aktivo.inputs.myProfile.returnPage = currentPage;
+        show('profile');
+    }
+
+    let theme = cr('div', navContainer, 'class nav-item', getBulbIcon());
+    theme.onclick = () => {
+        toggleLights(theme);
     }
 
     let row = cr('div', header, 'class row');
