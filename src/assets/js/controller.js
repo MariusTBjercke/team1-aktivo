@@ -242,7 +242,7 @@ function toggleNav() {
         navbar.style.height = appHeight + "px";
         navbar.style.width = finalWidth + "px";
 
-        btn.style.transform = "rotate(180deg)";
+        // btn.style.transform = "rotate(180deg)";
         setTimeout(setHTML(btn, '<i class="fas fa-times"></i>'), 250);
 
         aktivo.inputs.showNavbar = true;
@@ -253,7 +253,7 @@ function toggleNav() {
         navbar.style.visibility = "hidden";
         navbar.style.width = "0";
 
-        btn.style.transform = "rotate(-180deg)";
+        // btn.style.transform = "rotate(-180deg)";
         setTimeout(setHTML(btn, '<i class="fa fa-bars"></i>'), 250);
 
         aktivo.inputs.showNavbar = false;

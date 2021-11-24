@@ -4,7 +4,7 @@ let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
 
-show("profile");
+show("home");
 function show(page, parameters) {
     if (page) currentPage = page;
     console.log(aktivo.data.users);
@@ -263,11 +263,7 @@ function header(title) {
     // Navigation items
     for (let x of [
         ['Min profil', 'profile'],
-        ['FAQ', 'faq'],
-        ['Personvernerklæring', 'privacypolicy'],
         ['theme'],
-        ['Test1', 'test1'],
-        ['Test2', 'test2']
     ]) {
         if (x[0] === 'theme') {
             let item = cr('div', navContainer, 'class nav-item', getThemeIcon());
