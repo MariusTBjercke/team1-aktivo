@@ -1,9 +1,8 @@
-.new-activity-container {
+.container {
     position: relative;
     display: grid;
     justify-items: center;
     align-items: start;
-    grid-template-rows: auto auto auto 1fr auto;
     gap: 20px;
     margin-top: $container-margin-top;
     margin-bottom: $container-margin-bottom;
@@ -27,8 +26,6 @@
         width: 292px;
     }
 
-
-
     .search {
         width: 100%;
     }
@@ -36,14 +33,13 @@
     .list-container {
         height: 100%;
         width: 100%;
-        border: 1px solid;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
         align-items: center;
         border: .3px solid rgb(118, 118, 118);
         border-radius: 1px;
-        overflow: scroll;
+        overflow-y: scroll;
 
         .list-item {
             margin-bottom: 20px;
@@ -51,29 +47,38 @@
             justify-items: center;
             display: grid;
             gap: 20px;
-            grid-template-columns: 30px 1fr;
+            grid-template-columns: 30px 1fr 30px;
             background: $btn-bg-color;
 
-            * {
+            div {
                 width: 100%;
-                cursor: pointer;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
             svg {
-                border: none;
                 font-size: 15px;
+                cursor: pointer;
             }
 
-            .item {
-                display: flex;
-                justify-content: start;
-                align-items: center;
-
-                svg {
-                    width: 30px;
-                }
+            .delete-btn span{
+                cursor: pointer;
+                font-size: 15px;
+                font-weight: 700;
             }
-
         }
     }
+}
+
+.new-activity {
+    grid-template-rows: auto auto auto 1fr auto;
+}
+
+.new-activity-members {
+    grid-template-rows: auto 1fr auto;
+}
+
+.administer {
+    grid-template-rows: auto auto auto 1fr;
 }

@@ -1,8 +1,10 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleTheme, getThemeIcon } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleTheme, getThemeIcon, generateMemberList, generateAdminList } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
+let addedGroups = aktivo.inputs.newActivity.chosenGroups;
+let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
 show("home");
 function show(page, parameters) {
@@ -38,6 +40,18 @@ function show(page, parameters) {
         case 'newactivitypeople':
             showNewActivity('people');
             break;
+
+        case 'newActivityMembers':
+            showNewActivityMembers();
+        break;
+
+        case 'administerGroups':
+            showAdminister('groups');
+        break;
+    
+        case 'administerPeople':
+            showAdminister('people');
+        break;
     
         default:
             showFrontPage();
@@ -162,8 +176,14 @@ function showFrontPage() {
     let archive = cr('div', btnContainer, 'class btn', 'Arkiv');
 
     let groups = cr('div', btnContainer, 'class btn', 'Administrer grupper');
+    groups.onclick = function() {
+        show('administerGroups');
+    }
 
     let people = cr('div', btnContainer, 'class btn', 'Administrer personer');
+    people.onclick = function() {
+        show('administerPeople');
+    }
 
 }
 
@@ -173,12 +193,14 @@ function showNewActivity(view) {
     let btn2;
     let view2;
     let searchText;
+    let title;
     switch (view) {
         case 'groups':
             btn1 = 'Ny gruppe';
             btn2 = 'Personer';
             searchText = 'grupper';
-            view2 = 'newactivitypeople'; // Her kan man kanskje bruke view parameter istedenfor?
+            view2 = 'newactivitypeople';
+            title = 'Legg til gruppe(r)';
             break;
 
         case 'people':
@@ -186,16 +208,23 @@ function showNewActivity(view) {
             btn2 = 'Grupper';
             searchText = 'personer';
             view2 = 'newactivitygroups';
+            title = 'Legg til person(er)';
             break;
     
         default:
             break;
     }
 
-    header('Legg til gruppe(r)');
+    header(title);
     let wrapper = cr('div', app, 'class wrapper');
-    let container = cr('div', wrapper, 'class new-activity-container');
+    let container = cr('div', wrapper, 'class container new-activity');
     let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = function() {
+        show('home');
+        // add to archive
+        addedGroups.splice(0, addedGroups.length);
+        addedPeople.splice(0, addedPeople.length);
+    }
     let btnContainer = cr('div', container, 'class btn-container');
     let newBtn = cr('div', btnContainer, 'class btn', '<i class="fa fa-plus"></i> ' + btn1);
     let toggleView = cr('div', btnContainer, 'class btn', btn2);
@@ -208,11 +237,27 @@ function showNewActivity(view) {
     });
     let listContainer = cr('div', container, 'class list-container');
     let next = cr('div', container, 'class btn', 'Neste');
-    next.onclick = function() {}
+    next.onclick = function() {
+        if (addedGroups.length !== 0 || addedPeople.length !== 0) show('newActivityMembers'); // could be a controller function that gives an error-message.
+    }
     generateList(view, listContainer, search);
 }
 
-function showNewActivityMembers() {}
+function showNewActivityMembers() {
+    header('Medlemsliste');
+    let wrapper = cr('div', app, 'class wrapper');
+    let container = cr('div', wrapper, 'class container new-activity-members');
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = function() {
+        show("newactivitygroups"); // should be changed to remember if last page was groups or people..
+    }
+    let listContainer = cr('div', container, 'class list-container');
+    let seeActivities = cr('div', container, 'class btn', 'Se forslag');
+    seeActivities.onclick = function() {
+        show('newActivitySuggestions');
+    }
+    generateMemberList(listContainer);
+}
 
 // new activity (fast/simple)
 function showNewActivitySimple() {}
@@ -231,8 +276,40 @@ function showEditGroup() {}
 function showNewPerson() {}
 function showNewPersonFilters() {}
 
-function showAdministerGroups() {}
-function showAdministerPeople() {}
+function showAdminister(view) {
+    let btn;
+    let searchText;
+    let title;
+    switch (view) {
+        case 'groups':
+            btn = 'Ny gruppe';
+            searchText = 'grupper';
+            title = 'Administrer grupper';
+            break;
+
+        case 'people':
+            btn = 'Ny person';
+            searchText = 'personer';
+            title = 'Administrer personer';
+            break;
+    
+        default:
+            break;
+    }
+
+    header(title);
+    let wrapper = cr('div', app, 'class wrapper');
+    let container = cr('div', wrapper, 'class container administer');
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = function() {show('home');}
+    let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> ' + btn);
+    let search = cr('input',container, 'type text, class search, placeholder Søk i ' + searchText);
+    search.addEventListener('input', function () {
+        generateAdminList(view, listContainer, search);
+    });
+    let listContainer = cr('div', container, 'class list-container');
+    generateAdminList(view, listContainer, search);
+}
 
 function showProfile() {
 

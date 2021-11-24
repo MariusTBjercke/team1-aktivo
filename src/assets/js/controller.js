@@ -2,6 +2,8 @@ import { aktivo } from './model';
 import { show, cr, currentPage } from './view';
 let currentUser = aktivo.app.currentUser;
 let user = aktivo.data.users[aktivo.data.users.findIndex(x => x.username === currentUser)];
+let addedGroups = aktivo.inputs.newActivity.chosenGroups;
+let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 // If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
 function auth() {
     let pageAuth = false;
@@ -212,15 +214,79 @@ function removeInputError(isErrorInList, errorList, errorIndex, input) {
 function generateList(view, listContainer, search) {
     listContainer.innerHTML = '';
     let isGroups = view === 'groups';
-    let list = isGroups ? aktivo.inputs.chosenGroup : aktivo.inputs.chosenPeople; // the groups or people added to the memberlist.
+    let list = isGroups ? addedGroups : addedPeople;
     let dataList = isGroups ? user.groups : user.people;
-    dataList.filter(x => x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1).forEach(x => {
+    dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1 && list.findIndex(L => L.name === x.name) === -1)).forEach(x => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
-        let item = cr('div', itemContainer, 'class item', '<i class="fas fa-plus"></i>' + x.name);
+        let item = cr('div', itemContainer, 'class item', x.name);
+        let add = cr('div', itemContainer, 'class add-btn', '<i class="fas fa-plus"></i>');
+        add.onclick = function() {
+            list.push({name: x.name});
+            if (isGroups) {
+                x.members.forEach(name =>  {
+                    if (addedPeople.findIndex(m => m.name === name) === -1) {
+                        addedPeople.push({
+                            name: name,
+                            from: x.name
+                        });
+                    }
+                });
+            }
+            itemContainer.parentElement.removeChild(itemContainer);
+        };
     });
-    
-    // loop based on search.input, and cr for each object in dataList up to maybe 30 groups? user can search if a group isn't displayed...
+}
+
+function generateMemberList(listContainer) {
+    listContainer.innerHTML = '';
+    let list = [];
+    addedGroups.forEach(group => {
+        list.push({name: group.name, members: addedPeople.filter(person => person.from === group.name)});
+    });
+    list.push({name: 'Personer', members: addedPeople.filter(person => !person.from)});
+    let filteredList = list.filter(x => x.members.length > 0);
+
+    filteredList.forEach(x => {
+        if (filteredList.length > 1) cr('span', listContainer, '', 'Fra ' + x.name + ':');
+        x.members.forEach(member => {
+            let itemContainer = cr('div', listContainer, 'class list-item');
+            let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+            let item = cr('div', itemContainer, 'class item', member.name);
+            let deleteBtn = cr('div', itemContainer, 'class delete-btn', '<span>✕</span>')
+            deleteBtn.onclick = function() {
+                itemContainer.parentElement.removeChild(itemContainer);
+                addedPeople.splice(addedPeople.findIndex(x => x.name === member.name), 1);
+            }
+        });
+    });
+}
+
+function generateAdminList(view, listContainer, search) {
+    listContainer.innerHTML = '';
+    let isGroups = view === 'groups';
+    let dataList = isGroups ? user.groups : user.people;
+    dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1)).forEach(x => {
+        let itemContainer = cr('div', listContainer, 'class list-item');
+        let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+        editBtn.onclick = function() {
+            if (isGroups) {
+                console.log('edit (group): ' + x.name);
+            } else console.log('edit (person): ' + x.name);
+        };
+        let item = cr('div', itemContainer, 'class item', x.name);
+        let deleteBtn = cr('div', itemContainer, 'class delete-btn', '<i class="far fa-trash-alt"></i>')
+        deleteBtn.onclick = function() {
+            itemContainer.parentElement.removeChild(itemContainer);
+            dataList.splice(dataList.findIndex(y => y.name === x.name), 1);
+            if (!isGroups) {
+                user.groups.forEach(group => {
+                    let index = group.members.findIndex(name => name === x.name);
+                    if (index > -1) group.members.splice(index, 1);
+                });
+            }
+        }
+    });
 }
 
 function toggleNav() {
@@ -278,4 +344,4 @@ function setHTML(element, html) {
     element.innerHTML = html;
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, toggleNav, toggleTheme, getThemeIcon }
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleTheme, getThemeIcon }
