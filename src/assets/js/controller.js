@@ -152,21 +152,22 @@ function validateInput(input, type, errorList = []) {
             let checkEmailPattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
             error.message = 'Ugyldig epost-adresse.';
 
-            aktivo.data.users.forEach(item => {
-                if (input.value === item.email) {
-                    error.message = 'E-post er allerede i bruk';
-                    addInputError(isErrorInList, errorList, errorIndex, input, error);
-                }
-            })
+            let emailExists = aktivo.data.users.filter(x => x.email === input.value);
 
-            if (input.value.match(checkEmailPattern)) {
-                removeInputError(isErrorInList, errorList, errorIndex, input);
-            } else if (input.value === user.email) {
-                error.message = 'Skriv inn en ny epostadresse.';
+            if (emailExists.length > 0) {
+                error.message = 'E-post er allerede i bruk';
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
+            } else if (input.value === user.email && emailExists.length === 0) {
+                error.message = 'Du kan ikke skrive inn din nåværende adresse.';
                 addInputError(isErrorInList, errorList, errorIndex, input, error);
             } else if (input.value === '') {
                 error.message = 'Mangler epost-adresse.';
                 addInputError(isErrorInList, errorList, errorIndex, input, error);
+            } else if (!input.value.match(checkEmailPattern)) {
+                error.message = 'Ugyldig epost-adresse';
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
+            } else {
+                removeInputError(isErrorInList, errorList, errorIndex, input);
             }
             break;
 
