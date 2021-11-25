@@ -150,14 +150,13 @@ function validateInput(input, type, errorList = []) {
 
         case 'checkEmail':
             let checkEmailPattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+            let emailExists = (aktivo.data.users.filter(x => x.email === input.value).length > 0);
             error.message = 'Ugyldig epost-adresse.';
 
-            let emailExists = aktivo.data.users.filter(x => x.email === input.value);
-
-            if (emailExists.length > 0) {
+            if (emailExists) {
                 error.message = 'E-post er allerede i bruk';
                 addInputError(isErrorInList, errorList, errorIndex, input, error);
-            } else if (input.value === user.email && emailExists.length === 0) {
+            } else if (input.value === user.email && !emailExists) {
                 error.message = 'Du kan ikke skrive inn din nåværende adresse.';
                 addInputError(isErrorInList, errorList, errorIndex, input, error);
             } else if (input.value === '') {
