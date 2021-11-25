@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -139,7 +139,7 @@ function showRegister() {
     userNameInput.before(cr('span', null, null, 'Brukernavn: '));
     
     let emailDiv = cr('div', form, 'class input-field');
-    let emailInput = cr('input', emailDiv, 'type text');
+    let emailInput = cr('input', emailDiv, 'type email');
     emailInput.before(cr('span', null, null, 'Epost-adresse: '));
 
     let passwordDiv = cr('div', form, 'class input-field');
@@ -309,12 +309,35 @@ function showNewGroup() {
     let listContainer = cr('div', container, 'class list-container');
     let next = cr('div', container, 'class btn', 'Neste');
     next.onclick = function() {
-        show('editGroup'); // if list (in aktivo.inputs.newGroup.group.members) isn't empty.
+        if (aktivo.inputs.newGroup.group.members.length > 0) {
+            aktivo.inputs.editGroup.group = aktivo.inputs.newGroup.group;
+            aktivo.inputs.editGroup.returnPage = currentPage;
+            show('editGroup');
+        }
     }
     generatePeopleList(listContainer, search);
 }
+
 function showEditGroup() {
     console.log('There is no spoon.....editGroup yet...');
+
+    header('Rediger gruppe');
+    let wrapper = cr('div', app, 'class wrapper');
+    let container = cr('div', wrapper, 'class container edit-group list-page');
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = function() {
+        show(aktivo.inputs.editGroup.returnPage);
+        aktivo.inputs.editGroup.returnPage = '';
+    }
+    let nameInput = cr('input',container, 'type text, class search, placeholder Navn på gruppen');
+    let listContainer = cr('div', container, 'class list-container');
+    let save = cr('div', container, 'class btn', 'Lagre');
+    save.onclick = function() {
+        if (aktivo.inputs.newGroup.group.members.length > 0) {
+            //do stuff
+        }
+    }
+    generateEditGroupList(listContainer, search);
 }
 
 function showNewPerson() {}
@@ -398,19 +421,19 @@ function showChangePassword() {
 
     let form = cr('div', container, 'class form');
 
-    let oldPassword = cr('div', form, 'class item');
-    let oldPasswordLabel = cr('label', oldPassword, '', 'Gammelt passord: ');
+    let oldPassword = cr('div', form, 'class input-field');
+    let oldPasswordLabel = cr('span', oldPassword, '', 'Gammelt passord: ');
     let oldPasswordInput = cr('input', oldPassword, 'type password');
 
-    let newPassword = cr('div', form, 'class item');
-    let newPasswordLabel = cr('label', newPassword, '', 'Nytt passord: ');
+    let newPassword = cr('div', form, 'class input-field');
+    let newPasswordLabel = cr('span', newPassword, '', 'Nytt passord: ');
     let newPasswordInput = cr('input', newPassword, 'type password');
 
-    let repeatPassword = cr('div', form, 'class item');
-    let repeatPasswordLabel = cr('label', repeatPassword, '', 'Gjenta nytt passord: ');
+    let repeatPassword = cr('div', form, 'class input-field');
+    let repeatPasswordLabel = cr('span', repeatPassword, '', 'Gjenta nytt passord: ');
     let repeatPasswordInput = cr('input', repeatPassword, 'type password');
 
-    let submit = cr('div', form, 'class item');
+    let submit = cr('div', form, 'class submit');
     let submitBtn = cr('div', submit, 'class btn', 'Endre');
 
 }
@@ -427,25 +450,25 @@ function showChangeEmail() {
 
     let form = cr('div', container, 'class form');
 
-    let oldEmail = cr('div', form, 'class item');
-    let oldEmailTxt = cr('div', oldEmail, '', 'Din epostadresse: ' + user.email);
+    let currentEmail = cr('div', form, '');
+    let currentEmailTxt = cr('div', currentEmail, '', 'Din epostadresse: ' + user.email);
 
-    let password = cr('div', form, 'class item');
-    let passwordLabel = cr('label', password, '', 'Ditt passord: ');
+    let password = cr('div', form, 'class input-field');
+    let passwordLabel = cr('span', password, '', 'Ditt passord: ');
     let passwordInput = cr('input', password, 'type password');
 
-    let email = cr('div', form, 'class item');
-    let emailLabel = cr('label', email, '', 'Ny e-post: ');
-    let emailInput = cr('input', email, 'type text');
+    let email = cr('div', form, 'class input-field');
+    let emailLabel = cr('span', email, '', 'Ny e-post: ');
+    let emailInput = cr('input', email, 'type email');
 
-    let repeat = cr('div', form, 'class item');
-    let repeatLabel = cr('label', repeat, '', 'Gjenta e-post: ');
-    let repeatInput = cr('input', repeat, 'type text');
+    let repeat = cr('div', form, 'class input-field');
+    let repeatLabel = cr('span', repeat, '', 'Gjenta e-post: ');
+    let repeatInput = cr('input', repeat, 'type email');
 
-    let submit = cr('div', form, 'class item');
+    let submit = cr('div', form, 'class submit');
     let submitBtn = cr('div', submit, 'class btn', 'Endre');
     submitBtn.onclick = () => {
-        changeEmail(emailInput, repeatInput);
+        changeEmail(passwordInput, emailInput, repeatInput);
     }
 
 }

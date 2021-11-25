@@ -20,14 +20,28 @@
 
     .form {
         display: grid;
-        justify-items: center;
-        justify-content: center;
-        gap: 15px;
         margin-top: 15px;
 
-        .item {
+        div {
             display: grid;
-            width: 100%;
+            grid-template-columns: auto;
+            grid-template-rows: auto auto;
+        }
+    
+        span {
+            font-weight: bold;
+        }
+
+        .submit {
+            padding-top: 20px;
+        }
+
+        .input-field {
+            padding: 20px 0;
+
+            .errorMsg {
+                top: 25px;
+            }
         }
     }
 

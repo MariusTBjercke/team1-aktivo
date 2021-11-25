@@ -9,18 +9,26 @@ const aktivo = {
     // Input
     inputs: {
       showNavBar: false,
+
       newGroup: {
-        name: "",
-        search: "",
-        people: [],
+        group: {
+          name: "",
+          members: [],
+        },
         returnPage: "",
       },
+      editGroup: {
+        returnPage: "",
+        newGroup: false,
+      },
       newPerson: {
-        name: "",
-        search: "",
-        gender: "",
-        born: null,
-        filters: [],
+        person: {
+          name: "",
+          gender: "",
+          born: null,
+          age: null,
+          filters: [],
+        },
         returnPage: "",
       },
       administerPerson: {

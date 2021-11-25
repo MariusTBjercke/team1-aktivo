@@ -147,6 +147,40 @@ function validateInput(input, type, errorList = []) {
                 addInputError(isErrorInList, errorList, errorIndex, input, error);
             }
             break;
+
+        case 'checkEmail':
+            let checkEmailPattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+            error.message = 'Ugyldig epost-adresse.';
+
+            aktivo.data.users.forEach(item => {
+                if (input.value === item.email) {
+                    error.message = 'E-post er allerede i bruk';
+                    addInputError(isErrorInList, errorList, errorIndex, input, error);
+                }
+            })
+
+            if (input.value.match(checkEmailPattern)) {
+                removeInputError(isErrorInList, errorList, errorIndex, input);
+            } else if (input.value === user.email) {
+                error.message = 'Skriv inn en ny epostadresse.';
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
+            } else if (input.value === '') {
+                error.message = 'Mangler epost-adresse.';
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
+            }
+            break;
+
+        case 'confirmEmail':
+            let email = input[0], confirmEmail = input[1];
+            error.message = 'Ulik e-post.';
+            
+            if (email.value === confirmEmail.value && email.value.length > 0) {
+                removeInputError(isErrorInList, errorList, errorIndex, confirmEmail);
+            } else {
+                if (confirmEmail.value === '') error.message = 'Mangler gjenta e-post.';
+                addInputError(isErrorInList, errorList, errorIndex, confirmEmail, error);
+            }
+            break;
         
         case 'password':
             let passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
@@ -169,6 +203,18 @@ function validateInput(input, type, errorList = []) {
             } else {
                 if (confirmPassword.value === '') error.message = 'Mangler bekreftet passord.';
                 addInputError(isErrorInList, errorList, errorIndex, confirmPassword, error);
+            }
+            break;
+
+        case 'checkPassword':
+            if (input.value.length > 0 && input.value === user.password) {
+                removeInputError(isErrorInList, errorList, errorIndex, input);
+            } else if (!input.value.length > 0) {
+                error.message = 'Mangler passord.';
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
+            } else if (input.value !== user.password) {
+                error.message = 'Feil passord.';
+                addInputError(isErrorInList, errorList, errorIndex, input, error);
             }
             break;
 
@@ -290,7 +336,36 @@ function generateAdminList(view, listContainer, search) {
 }
 
 function generatePeopleList(listContainer, search) {
-console.log(`Yo! I'm gonna make a list yo!!`);
+    listContainer.innerHTML = '';
+    let group = aktivo.inputs.newGroup.group;
+    let dataList = user.people;
+    dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1)).forEach(x => {
+        let itemContainer = cr('div', listContainer, 'class list-item');
+        let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+        let item = cr('div', itemContainer, 'class item', x.name);
+        let add = cr('div', itemContainer, 'class add-btn', '<i class="fas fa-plus"></i>');
+        add.onclick = function() {
+            group.members.push(x.name);
+            itemContainer.parentElement.removeChild(itemContainer);
+        };
+    });
+}
+
+function generateEditGroupList(listContainer) {
+    listContainer.innerHTML = '';
+    let group = aktivo.inputs.editGroup.group; // må kanskje søke opp riktig gruppe i user.groups basert på navn
+    // if (aktivo.inputs.editGroup.newGroup) comes from new group, not from pressing an edit-button..
+
+    group.members.forEach(person => {
+        let itemContainer = cr('div', listContainer, 'class list-item');
+        let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+        let item = cr('div', itemContainer, 'class item', x.name);
+        let deleteBtn = cr('div', itemContainer, 'class delete-btn', '<span>✕</span>');
+        deleteBtn.onclick = function() {
+            itemContainer.parentElement.removeChild(itemContainer);
+            group.splice(dataList.findIndex(name => name === person), 1);
+        }
+    });
 }
 
 function toggleNav() {
@@ -363,8 +438,23 @@ function setHTML(element, html) {
     element.innerHTML = html;
 }
 
-function changeEmail(emailInput, repeatInput) {
+function changeEmail(password, email, repeatEmail) {
+
+    let error = [];
+
+    for (let x of [
+        [password, 'checkPassword'],
+        [email, 'checkEmail'],
+        [[email, repeatEmail], 'confirmEmail']
+    ]) {
+        validateInput(x[0], x[1], error);
+    }
+
+    if (!error.length > 0) {
+        user.email = email.value;
+        show('changeemail');
+    }
 
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList }
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList }
