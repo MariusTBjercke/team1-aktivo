@@ -1,0 +1,42 @@
+.list-page {
+    gap: 20px;
+
+    .btn {
+        padding: 8px 0;
+        border: none;
+        font-size: 18px;
+        text-align: center;
+        width: 292px;
+    }
+
+    .search {
+        width: 100%;
+    }
+
+    .btn-container {
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: space-between;
+        width: 100%;
+
+        .btn {
+            width: 135px;
+        }
+    }
+}
+
+.new-activity {
+    grid-template-rows: auto auto auto 1fr auto;
+}
+
+.new-activity-members {
+    grid-template-rows: auto 1fr auto;
+}
+
+.administer {
+    grid-template-rows: auto auto auto 1fr;
+}
+
+.new-group {
+    grid-template-rows: auto auto auto 1fr auto;
+}

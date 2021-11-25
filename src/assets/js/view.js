@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -33,6 +33,14 @@ function show(page, parameters) {
             showProfile();
             break;
 
+        case 'changeemail':
+            showChangeEmail();
+            break;
+
+        case 'changepassword':
+            showChangePassword();
+            break;
+
         case 'newactivitygroups':
             showNewActivity('groups');
             break;
@@ -43,15 +51,23 @@ function show(page, parameters) {
 
         case 'newActivityMembers':
             showNewActivityMembers();
-        break;
+            break;
 
         case 'administerGroups':
             showAdminister('groups');
-        break;
+            break;
     
         case 'administerPeople':
             showAdminister('people');
-        break;
+            break;
+    
+        case 'newGroup':
+            showNewGroup();
+            break;
+    
+        case 'editGroup':
+            showEditGroup();
+            break;
     
         default:
             showFrontPage();
@@ -62,13 +78,13 @@ function show(page, parameters) {
 
 function showLogin() {
 
-    let container = cr('div', app, 'class login-container');
+    let container = cr('div', app, 'class container login');
 
     let logo = cr('div', container, 'class logo');
     
     let header = cr('h6', container, '', 'Velkommen til Aktivo - appen som foreslår din neste aktivitet!');
     
-    let form = cr('form', container, 'class login-form');
+    let form = cr('form', container, 'class form');
 
     let usernameField = cr('div', form, 'class input-field');
     let usernameInput = cr('input', usernameField, 'type text');
@@ -112,11 +128,11 @@ function showLogin() {
 
 function showRegister() {
 
-    let container = cr('div', app, 'class register-container');
+    let container = cr('div', app, 'class container register');
 
     let logo = cr('div', container, 'class logo');
 
-    let form = cr('form', container, 'class register-form');
+    let form = cr('form', container, 'class form');
 
     let userNameDiv = cr('div', form, 'class input-field');
     let userNameInput = cr('input', userNameDiv, 'type text');
@@ -160,11 +176,11 @@ function showFrontPage() {
     
     header('Forside');
 
-    let container = cr('div', app, 'class frontpage-container');
+    let container = cr('div', app, 'class container frontpage');
 
     let logo = cr('div', container, 'class logo');
 
-    let btnContainer = cr('div', container, 'class btn-container');
+    let btnContainer = cr('div', container, 'class vertical-btn-container');
 
     let newActivity = cr('div', btnContainer, 'class btn', '<i class="fas fa-plus"></i> Ny aktivitet');
     newActivity.onclick = function() {
@@ -217,7 +233,7 @@ function showNewActivity(view) {
 
     header(title);
     let wrapper = cr('div', app, 'class wrapper');
-    let container = cr('div', wrapper, 'class container new-activity');
+    let container = cr('div', wrapper, 'class container new-activity list-page');
     let back = cr('div', container, 'class btn', 'Tilbake');
     back.onclick = function() {
         show('home');
@@ -227,6 +243,12 @@ function showNewActivity(view) {
     }
     let btnContainer = cr('div', container, 'class btn-container');
     let newBtn = cr('div', btnContainer, 'class btn', '<i class="fa fa-plus"></i> ' + btn1);
+    newBtn.onclick = function() {
+        if (view === 'groups') {
+            aktivo.inputs.newGroup.returnPage = currentPage;
+            show('newGroup');
+        }
+    }
     let toggleView = cr('div', btnContainer, 'class btn', btn2);
     toggleView.onclick = function() {
         show(view2);
@@ -246,7 +268,7 @@ function showNewActivity(view) {
 function showNewActivityMembers() {
     header('Medlemsliste');
     let wrapper = cr('div', app, 'class wrapper');
-    let container = cr('div', wrapper, 'class container new-activity-members');
+    let container = cr('div', wrapper, 'class container new-activity-members list-page');
     let back = cr('div', container, 'class btn', 'Tilbake');
     back.onclick = function() {
         show("newactivitygroups"); // should be changed to remember if last page was groups or people..
@@ -270,8 +292,30 @@ function showNewActivitySuggestions() {}
 function showArchive() {}
 
 // create/edit group
-function showNewGroup() {}
-function showEditGroup() {}
+function showNewGroup() {
+    header('Lag ny gruppe');
+    let wrapper = cr('div', app, 'class wrapper');
+    let container = cr('div', wrapper, 'class container new-group list-page');
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = function() {
+        show(aktivo.inputs.newGroup.returnPage);
+        aktivo.inputs.newGroup.returnPage = '';
+    }
+    let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> Ny person');
+    let search = cr('input',container, 'type text, class search, placeholder Søk i personer');
+    search.addEventListener('input', function () {
+        generatePeopleList(listContainer, search);
+    });
+    let listContainer = cr('div', container, 'class list-container');
+    let next = cr('div', container, 'class btn', 'Neste');
+    next.onclick = function() {
+        show('editGroup'); // if list (in aktivo.inputs.newGroup.group.members) isn't empty.
+    }
+    generatePeopleList(listContainer, search);
+}
+function showEditGroup() {
+    console.log('There is no spoon.....editGroup yet...');
+}
 
 function showNewPerson() {}
 function showNewPersonFilters() {}
@@ -299,10 +343,16 @@ function showAdminister(view) {
 
     header(title);
     let wrapper = cr('div', app, 'class wrapper');
-    let container = cr('div', wrapper, 'class container administer');
+    let container = cr('div', wrapper, 'class container administer list-page');
     let back = cr('div', container, 'class btn', 'Tilbake');
     back.onclick = function() {show('home');}
     let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> ' + btn);
+    newBtn.onclick = function() {
+        if (view === 'groups') {
+            aktivo.inputs.newGroup.returnPage = currentPage;
+            show('newGroup');
+        }
+    }
     let search = cr('input',container, 'type text, class search, placeholder Søk i ' + searchText);
     search.addEventListener('input', function () {
         generateAdminList(view, listContainer, search);
@@ -315,33 +365,88 @@ function showProfile() {
 
     header('Min profil');
 
-    let container = cr('div', app, 'class profile-container');
+    let container = cr('div', app, 'class container profile');
 
     let back = cr('div', container, 'class btn', 'Tilbake');
     back.onclick = () => {
         aktivo.inputs.myProfile.returnPage === currentPage ? show('home') : show(aktivo.inputs.myProfile.returnPage);
     }
 
-    let btnContainer = cr('div', container, 'class btn-container');
+    let btnContainer = cr('div', container, 'class vertical-btn-container');
 
     let editEmail = cr('div', btnContainer, 'class btn', 'Endre epostadresse');
     editEmail.onclick = () => {
-        show('showChangeEmail');
+        show('changeemail');
     }
 
     let editPassword = cr('div', btnContainer, 'class btn', 'Endre passord');
+    editPassword.onclick = () => {
+        show('changepassword');
+    }
 
 }
-function showChangePassword() {}
+function showChangePassword() {
+
+    header('Endre passord');
+
+    let container = cr('div', app, 'class container profile');
+
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = () => {
+        show('profile');
+    }
+
+    let form = cr('div', container, 'class form');
+
+    let oldPassword = cr('div', form, 'class item');
+    let oldPasswordLabel = cr('label', oldPassword, '', 'Gammelt passord: ');
+    let oldPasswordInput = cr('input', oldPassword, 'type password');
+
+    let newPassword = cr('div', form, 'class item');
+    let newPasswordLabel = cr('label', newPassword, '', 'Nytt passord: ');
+    let newPasswordInput = cr('input', newPassword, 'type password');
+
+    let repeatPassword = cr('div', form, 'class item');
+    let repeatPasswordLabel = cr('label', repeatPassword, '', 'Gjenta nytt passord: ');
+    let repeatPasswordInput = cr('input', repeatPassword, 'type password');
+
+    let submit = cr('div', form, 'class item');
+    let submitBtn = cr('div', submit, 'class btn', 'Endre');
+
+}
 function showChangeEmail() {
 
     header('Endre e-post');
 
-    let container = cr('div', app, 'class profile-container');
+    let container = cr('div', app, 'class container profile');
 
-    let formContainer = cr('div', container, 'class form');
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = () => {
+        show('profile');
+    }
 
-    let emailInput = cr('input', formContainer);
+    let form = cr('div', container, 'class form');
+
+    let oldEmail = cr('div', form, 'class item');
+    let oldEmailTxt = cr('div', oldEmail, '', 'Din epostadresse: ' + user.email);
+
+    let password = cr('div', form, 'class item');
+    let passwordLabel = cr('label', password, '', 'Ditt passord: ');
+    let passwordInput = cr('input', password, 'type password');
+
+    let email = cr('div', form, 'class item');
+    let emailLabel = cr('label', email, '', 'Ny e-post: ');
+    let emailInput = cr('input', email, 'type text');
+
+    let repeat = cr('div', form, 'class item');
+    let repeatLabel = cr('label', repeat, '', 'Gjenta e-post: ');
+    let repeatInput = cr('input', repeat, 'type text');
+
+    let submit = cr('div', form, 'class item');
+    let submitBtn = cr('div', submit, 'class btn', 'Endre');
+    submitBtn.onclick = () => {
+        changeEmail(emailInput, repeatInput);
+    }
 
 }
 function showChangeName() {}

@@ -93,3 +93,69 @@ input[type="text"], input[type="password"] {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+.list-container {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: .3px solid rgb(118, 118, 118);
+    border-radius: 1px;
+    overflow-y: scroll;
+
+    .list-item {
+        margin-bottom: 20px;
+        width: 100%;
+        justify-items: center;
+        display: grid;
+        gap: 20px;
+        grid-template-columns: 30px 1fr 30px;
+        background: $btn-bg-color;
+
+        div {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        svg {
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .delete-btn span {
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+        }
+    }
+}
+
+.vertical-btn-container {
+    display: grid;
+    margin-top: calc($container-margin-top - $header-height);
+    gap: 20px;
+}
+
+.horizontal-btn-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    width: 100%;
+
+    .btn {
+        width: 135px;
+    }
+}
+
+.container {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    align-items: start;
+    margin-top: $container-margin-top;
+    margin-bottom: $container-margin-bottom;
+}

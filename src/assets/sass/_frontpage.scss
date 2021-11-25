@@ -1,17 +1,5 @@
-.frontpage-container {
-    display: grid;
-    justify-items: center;
-    align-items: start;
+.frontpage {
     grid-template-rows: 89px auto;
-    width: 100%;
-    margin-top: $container-margin-top;
-    margin-bottom: $container-margin-bottom;
-
-    .btn-container {
-        display: grid;
-        margin-top: calc($container-margin-top - $header-height);
-        gap: 20px;
-    }
 
     .btn {
         padding: 12px 0;

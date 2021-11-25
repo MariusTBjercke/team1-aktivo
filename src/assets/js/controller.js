@@ -289,6 +289,10 @@ function generateAdminList(view, listContainer, search) {
     });
 }
 
+function generatePeopleList(listContainer, search) {
+console.log(`Yo! I'm gonna make a list yo!!`);
+}
+
 function toggleNav() {
     let header = app.querySelector('.header');
     let navbar = app.querySelector('.navbar');
@@ -359,4 +363,8 @@ function setHTML(element, html) {
     element.innerHTML = html;
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon }
+function changeEmail(emailInput, repeatInput) {
+
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList }

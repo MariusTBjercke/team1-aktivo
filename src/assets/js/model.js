@@ -70,7 +70,7 @@ const aktivo = {
         {
           username: "demo",
           password: "demo",
-          email: "",
+          email: "demo@demo.com",
           fullName: "",
           people: [
             {
