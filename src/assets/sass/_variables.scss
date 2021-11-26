@@ -2,7 +2,6 @@ $main-bg-color: #f8f9fa;
 $dark-bg-color: #343a40;
 $main-text-color: black;
 $dark-text-color: white;
-$main-border-color: rgb(118, 118, 118);
 $container-margin-top: 75px;
 $container-margin-bottom: 60px;
 $btn-bg-color: linear-gradient(0deg, #dadada 0%, #d1d1d1 100%);
@@ -11,11 +10,11 @@ $header-height: 47px;
 
 .theme-light {
     --logout-bg-color: rgb(158, 204, 158);
-    --logout-bg-hover-color: rgb(158, 204, 158);
+    --logout-bg-hover-color: rgb(128, 165, 128);
     --logout-font-color: #000;
     --body-font-color: #000;
     --container-font-color: #000;
-    --main-body-bg-color: #f8f9fa;
+    --main-body-bg-color: default;
     --main-bg-color: #f8f9fa;
     --btn-color: #000;
     --btn-bg-color: linear-gradient(0deg, #dadada 0%, #d1d1d1 100%);
@@ -23,16 +22,20 @@ $header-height: 47px;
     --filter-drop-shadow: none;
     --btn-hover-color: linear-gradient(0deg, #c2c2c2 0%, #cccccc 100%);
     --header-bg-color: linear-gradient(0deg, #dadada 0%, #d1d1d1 100%);
-    --input-bg-color: rgb(255, 255, 255);
+    --input-bg-color: white;
+    --input-border-color: default;
+    --main-border-color: rgb(118, 118, 118);
+    --list-container-bg-color: white;
+    --placeholder-font-color: var(--btn-color);
 }
 
 .theme-dark {
     --logout-bg-color: linear-gradient(0deg, rgb(151, 101, 26) 0%, rgb(168, 113, 29) 100%); // rgb(75, 65, 32)
     --logout-bg-hover-color: rgb(42, 37, 18);
     --logout-font-color: #d3d3d3;
-    --body-font-color: rgb(194, 194, 194);
-    --container-font-color: rgb(177, 177, 177);
-    --main-body-bg-color: #303030;
+    --body-font-color: #d3d3d3;
+    --container-font-color: #d3d3d3;
+    --main-body-bg-color: #404040;
     --main-bg-color: #1b1b1b;
     --btn-color: #d3d3d3;
     --btn-bg-color: rgb(149, 78, 7);
@@ -40,5 +43,9 @@ $header-height: 47px;
     --filter-drop-shadow: drop-shadow(.5px .5px 1px #000);
     --btn-hover-color: #582b00;
     --header-bg-color: var(--btn-bg-color);
-    --input-bg-color: rgb(141 94 24);
+    --input-bg-color: #222222;
+    --main-border-color: #303030;
+    --input-border-color: var(--main-border-color);
+    --list-container-bg-color: var(--input-bg-color);
+    --placeholder-font-color: #a0a0a0;
 }

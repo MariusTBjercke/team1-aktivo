@@ -38,7 +38,7 @@ body, html {
     background: var(--btn-bg-color);
     color: var(--btn-color);
     text-shadow: var(--text-shadow);
-    border: .3px solid rgb(118, 118, 118);
+    border: .3px solid --main-border-color;
     border-radius: 1px;
     padding: 8px 0;
     cursor: pointer;
@@ -59,9 +59,10 @@ input {
     background: var(--input-bg-color);
     color: var(--btn-color);
     text-shadow: var(--text-shadow);
+    border-color: var(--input-border-color);
 
     &::placeholder {
-        color: var(--btn-color);
+        color: var(--placeholder-font-color);
         text-shadow: var(--text-shadow);
     }
 }
@@ -115,7 +116,8 @@ input {
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: .3px solid rgb(118, 118, 118);
+    background: var(--list-container-bg-color);
+    border: .3px solid var(--main-border-color);
     border-radius: 1px;
     overflow-y: scroll;
 
