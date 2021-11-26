@@ -339,7 +339,7 @@ function generatePeopleList(listContainer, search) {
     listContainer.innerHTML = '';
     let group = aktivo.inputs.newGroup.group;
     let dataList = user.people;
-    dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1)).forEach(x => {
+    dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) && group.members.findIndex(name => name === x.name) === -1).forEach(x => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         let item = cr('div', itemContainer, 'class item', x.name);
@@ -359,11 +359,11 @@ function generateEditGroupList(listContainer) {
     group.members.forEach(person => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
-        let item = cr('div', itemContainer, 'class item', x.name);
+        let item = cr('div', itemContainer, 'class item', person);
         let deleteBtn = cr('div', itemContainer, 'class delete-btn', '<span>✕</span>');
         deleteBtn.onclick = function() {
             itemContainer.parentElement.removeChild(itemContainer);
-            group.splice(dataList.findIndex(name => name === person), 1);
+            group.members.splice(group.members.findIndex(name => name === person), 1);
         }
     });
 }
@@ -391,7 +391,7 @@ function toggleNav() {
         navBg.style.opacity = "1";
 
         navContainer.style.opacity = "1";
-        navContainer.style.transition = "all 250ms ease-in-out 250ms";
+        navContainer.style.transition = "width 250ms, opacity 250ms ease-in-out 250ms";
 
         navbar.style.visibility = "visible";
         navbar.style.height = appHeight + "px";
@@ -408,7 +408,7 @@ function toggleNav() {
         }, 250);
 
         navContainer.style.opacity = "0";
-        navContainer.style.transition = "all 150ms ease-in-out";
+        navContainer.style.transition = "width 150ms, opacity 150ms ease-in-out";
 
         navbar.style.visibility = "hidden";
         navbar.style.width = "0";
@@ -418,15 +418,6 @@ function toggleNav() {
 
         aktivo.inputs.showNavBar = false;
     }
-}
-
-function getBulbIcon() {
-    return user.options.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
-}
-
-function toggleLights(bulb) {
-    user.options.lightsOn = !user.options.lightsOn;
-    setHTML(bulb, getBulbIcon());
 }
 
 /**
@@ -457,4 +448,51 @@ function changeEmail(password, email, repeatEmail) {
 
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList }
+function changePassword(oldPassword, password, repeatPassword) {
+
+    let error = [];
+
+    for (let x of [
+        [oldPassword, 'checkPassword'],
+        [password, 'password'],
+        [[password, repeatPassword], 'confirmPassword']
+    ]) {
+        validateInput(x[0], x[1], error);
+    }
+
+    if (!error.length > 0) {
+        user.password = password.value;
+        show('showchangepassword');
+    }
+
+}
+
+function getBulbIcon() {
+    return user.options.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+}
+
+function toggleLights(bulb) {
+    if (user.options.lightsOn) {
+        user.options.lightsOn = false;
+        setTheme('theme-dark');
+    } else {
+        user.options.lightsOn = true;
+        setTheme('theme-light');
+    }
+    setHTML(bulb, getBulbIcon());
+}
+
+function setTheme(themeName) {
+    document.documentElement.className = themeName;
+}
+
+function loadTheme() {
+    let lightsOn = user.options.lightsOn;
+    if (lightsOn) {
+        setTheme('theme-light');
+    } else {
+        setTheme('theme-dark');
+    }
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme }

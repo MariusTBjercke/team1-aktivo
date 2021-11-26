@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -7,6 +7,7 @@ let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
 show("home");
+loadTheme();
 function show(page, parameters) {
     if (page) currentPage = page;
     console.log(aktivo.data.users);
@@ -337,7 +338,7 @@ function showEditGroup() {
             //do stuff
         }
     }
-    generateEditGroupList(listContainer, search);
+    generateEditGroupList(listContainer);
 }
 
 function showNewPerson() {}
@@ -430,11 +431,14 @@ function showChangePassword() {
     let newPasswordInput = cr('input', newPassword, 'type password');
 
     let repeatPassword = cr('div', form, 'class input-field');
-    let repeatPasswordLabel = cr('span', repeatPassword, '', 'Gjenta nytt passord: ');
+    let repeatPasswordLabel = cr('span', repeatPassword, '', 'Bekreft passord: ');
     let repeatPasswordInput = cr('input', repeatPassword, 'type password');
 
     let submit = cr('div', form, 'class submit');
     let submitBtn = cr('div', submit, 'class btn', 'Endre');
+    submitBtn.onclick = () => {
+        changePassword(oldPasswordInput, newPasswordInput, repeatPasswordInput);
+    }
 
 }
 function showChangeEmail() {
