@@ -24,6 +24,7 @@ $header-height: 47px;
     --header-bg-color: linear-gradient(0deg, #dadada 0%, #d1d1d1 100%);
     --input-bg-color: white;
     --input-border-color: default;
+    --checkmark-bg-color: #a0a0a0;
     --main-border-color: rgb(118, 118, 118);
     --list-container-bg-color: white;
     --placeholder-font-color: var(--btn-color);
@@ -46,6 +47,7 @@ $header-height: 47px;
     --input-bg-color: #222222;
     --main-border-color: #303030;
     --input-border-color: var(--main-border-color);
+    --checkmark-bg-color: var(--btn-bg-color);
     --list-container-bg-color: var(--input-bg-color);
     --placeholder-font-color: #a0a0a0;
 }

@@ -63,7 +63,7 @@
                 }
     
                 input:checked ~ .checkmark {
-                    background-color: var(--btn-bg-color);
+                    background-color: var(--checkmark-bg-color);
                 }
     
                 .checkmark {
@@ -73,7 +73,7 @@
                     height: 18px;
                     width: 18px;
                     background-color: var(--input-bg-color);
-                    border: .3px solid var(--input-border-color);
+                    border: .3px solid var(--main-border-color);
                     border-radius: 1px;
     
                     &::after {
