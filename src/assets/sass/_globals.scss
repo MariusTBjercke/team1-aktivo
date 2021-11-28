@@ -28,7 +28,7 @@ body, html {
 }
 
 .logo {
-    background: url('../img/aktivo-logo.png');
+    background: var(--logo-background);
     width: 292px;
     height: 89px;
 }
