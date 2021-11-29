@@ -10,33 +10,14 @@ const aktivo = {
     inputs: {
       showNavBar: false,
 
-      newGroup: {
-        group: {
-          name: "",
-          members: [],
-        },
-        returnPage: "",
+      administer: {
+        edit: false,  // if true the group/person's path is editPath, if false new group/person is created.
+        addedToList: false, // becomes true when a new group/person is pushed to the array, but user has yet to finalize its creation. becomes false once finalized
+        editPath: null,
+        returnPageNew: "",
+        returnPageEdit: ""
       },
-      editGroup: {
-        returnPage: "",
-        newGroup: false,
-      },
-      newPerson: {
-        person: {
-          name: "",
-          gender: "",
-          born: null,
-          age: null,
-          filters: [],
-        },
-        returnPage: "",
-      },
-      administerPerson: {
-        search: "",
-      },
-      administerGroup: {
-        search: "",
-      },
+
       newActivity: {
         groupSearch: "",
         peopleSearch: "",
@@ -47,14 +28,17 @@ const aktivo = {
           activity: [],
         },
       },
+
       myProfile: {
         returnPage: ""
       },
+
       editPassword: {
         oldPassword: "",
         password: "",
         repeatPassword: "",
       },
+
       editEmail: {
         email: "",
         repeatEmail: "",

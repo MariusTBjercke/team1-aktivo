@@ -337,7 +337,14 @@ function generateAdminList(view, listContainer, search) {
 
 function generatePeopleList(listContainer, search) {
     listContainer.innerHTML = '';
-    let group = aktivo.inputs.newGroup.group;
+    let group;
+    if (!aktivo.inputs.administer.edit && !aktivo.inputs.administer.addedToList) {
+        group = {name:'',members:[]};
+        user.groups.push(group);
+        aktivo.inputs.administer.addedToList = true;
+        aktivo.inputs.administer.editPath = group;
+    } else group = aktivo.inputs.administer.editPath;
+
     let dataList = user.people;
     dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) && group.members.findIndex(name => name === x.name) === -1).forEach(x => {
         let itemContainer = cr('div', listContainer, 'class list-item');
@@ -353,8 +360,7 @@ function generatePeopleList(listContainer, search) {
 
 function generateEditGroupList(listContainer) {
     listContainer.innerHTML = '';
-    let group = aktivo.inputs.editGroup.group; // må kanskje søke opp riktig gruppe i user.groups basert på navn
-    // if (aktivo.inputs.editGroup.newGroup) comes from new group, not from pressing an edit-button..
+    let group =  aktivo.inputs.administer.editPath;
 
     group.members.forEach(person => {
         let itemContainer = cr('div', listContainer, 'class list-item');
@@ -366,6 +372,15 @@ function generateEditGroupList(listContainer) {
             group.members.splice(group.members.findIndex(name => name === person), 1);
         }
     });
+}
+
+function addGroup() {
+    let group = aktivo.inputs.editGroup.group;
+    if (nameInput.value === '' || group.members.length === 0) {
+        console.log('Missing a group name or members!');
+        return;
+    }
+
 }
 
 function toggleNav() {

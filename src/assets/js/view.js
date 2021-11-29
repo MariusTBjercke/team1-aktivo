@@ -246,7 +246,7 @@ function showNewActivity(view) {
     let newBtn = cr('div', btnContainer, 'class btn', '<i class="fa fa-plus"></i> ' + btn1);
     newBtn.onclick = function() {
         if (view === 'groups') {
-            aktivo.inputs.newGroup.returnPage = currentPage;
+            aktivo.inputs.administer.returnPageNew = currentPage;
             show('newGroup');
         }
     }
@@ -299,8 +299,12 @@ function showNewGroup() {
     let container = cr('div', wrapper, 'class container new-group list-page');
     let back = cr('div', container, 'class btn', 'Tilbake');
     back.onclick = function() {
-        show(aktivo.inputs.newGroup.returnPage);
-        aktivo.inputs.newGroup.returnPage = '';
+        user.groups.splice(user.groups.length-1, 1);
+        aktivo.inputs.administer.addedToList = false;
+        if (aktivo.inputs.administer.returnPageNew !== '') {
+            show(aktivo.inputs.administer.returnPageNew);
+            aktivo.inputs.administer.returnPageNew = '';
+        } else show('editGroup');
     }
     let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> Ny person');
     let search = cr('input',container, 'type text, class search, placeholder Søk i personer');
@@ -310,11 +314,8 @@ function showNewGroup() {
     let listContainer = cr('div', container, 'class list-container');
     let next = cr('div', container, 'class btn', 'Neste');
     next.onclick = function() {
-        if (aktivo.inputs.newGroup.group.members.length > 0) {
-            aktivo.inputs.editGroup.group = aktivo.inputs.newGroup.group;
-            aktivo.inputs.editGroup.returnPage = currentPage;
-            show('editGroup');
-        }
+        if (aktivo.inputs.administer.edit) show('editGroup');
+        else if (user.groups[user.groups.length-1].members.length > 0) show('editGroup');
     }
     generatePeopleList(listContainer, search);
 }
@@ -327,15 +328,29 @@ function showEditGroup() {
     let container = cr('div', wrapper, 'class container edit-group list-page');
     let back = cr('div', container, 'class btn', 'Tilbake');
     back.onclick = function() {
-        show(aktivo.inputs.editGroup.returnPage);
-        aktivo.inputs.editGroup.returnPage = '';
+        if (aktivo.inputs.administer.returnPageEdit !== '') {
+            show(aktivo.inputs.administer.returnPageEdit);
+            aktivo.inputs.administer.returnPageEdit = '';
+        } else show('newGroup');
     }
     let nameInput = cr('input',container, 'type text, class search, placeholder Navn på gruppen');
+    nameInput.addEventListener('input', function() {
+        aktivo.inputs.administer.editPath.name = nameInput.value;
+    });
     let listContainer = cr('div', container, 'class list-container');
     let save = cr('div', container, 'class btn', 'Lagre');
     save.onclick = function() {
-        if (aktivo.inputs.newGroup.group.members.length > 0) {
-            //do stuff
+        if ((aktivo.inputs.administer.edit || aktivo.inputs.administer.editPath.members.length > 0) && aktivo.inputs.administer.editPath.name !== '') {
+            aktivo.inputs.administer.addedToList = false;
+            if (aktivo.inputs.administer.edit) {
+                show(aktivo.inputs.administer.returnPageEdit);
+                aktivo.inputs.administer.edit = false;
+                aktivo.inputs.administer.returnPageEdit = '';
+            } else {
+                show(aktivo.inputs.administer.returnPageNew);
+                aktivo.inputs.administer.addedToList = false;
+                aktivo.inputs.administer.returnPageNew = '';
+            }
         }
     }
     generateEditGroupList(listContainer);
@@ -373,7 +388,7 @@ function showAdminister(view) {
     let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> ' + btn);
     newBtn.onclick = function() {
         if (view === 'groups') {
-            aktivo.inputs.newGroup.returnPage = currentPage;
+            aktivo.inputs.administer.returnPageNew = currentPage;
             show('newGroup');
         }
     }
