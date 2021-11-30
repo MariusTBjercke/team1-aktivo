@@ -271,35 +271,27 @@ function generateAgeGroupForm(form) {
 
         let counter = cr('div', row, 'class counter');
         let decrease = cr('div', counter, 'class decrease', '-');
-        decrease.onclick = () => {
-            decreaseCounter(amount);
-        }
-        let decreaseInterval;
-        decrease.addEventListener('mousedown', function() {
-            decreaseInterval = setInterval(function() {
-                decreaseCounter(amount);
-            }, 150);
-        })
-        decrease.addEventListener('mouseup', function() {
-            clearInterval(decreaseInterval);
-        })
         let amount = cr('input', counter, 'class amount, type text, value 0');
         let increase = cr('div', counter, 'class increase', '+');
-        increase.onclick = () => {
-            increaseCounter(amount);
+
+        for (let x of [
+            [increase, 'click', increaseCounter],
+            [decrease, 'click', decreaseCounter],
+            [amount, 'change', checkCounter]
+        ]) {
+            x[0].addEventListener(x[1], () => {
+                x[2](amount);
+            })
         }
-        let increaseInterval;
-        increase.addEventListener('mousedown', function() {
-            increaseInterval = setInterval(function() {
-                increaseCounter(amount);
-            }, 150);
-        })
-        increase.addEventListener('mouseup', function() {
-            clearInterval(increaseInterval);
-        })
 
-    })
+    });
 
+}
+
+function checkCounter(counter) {
+    if (counter.value < 0) {
+        counter.value = 0;
+    }
 }
 
 function increaseCounter(counter, event) {
