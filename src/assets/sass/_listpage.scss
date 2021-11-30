@@ -1,16 +1,23 @@
 .list-page {
-    gap: 20px;
-
     .btn {
         padding: 8px 0;
         border: none;
         font-size: 18px;
         text-align: center;
         width: 292px;
+        margin-top: 20px;
+    }
+    .top-element {
+        margin-top: 0;
+    }
+    .sub-title {
+        margin: 16px 0 6px 0;
+        font-size: 18px;
     }
 
     .search {
         width: 100%;
+        margin-top: 20px;
     }
 
     .btn-container {
@@ -18,29 +25,39 @@
         grid-template-columns: auto auto;
         justify-content: space-between;
         width: 100%;
+        margin-top: 20px;
 
         .btn {
             width: 135px;
+            margin-top: 0;
         }
     }
 }
 
 .new-activity {
-    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto auto 1fr auto;
 }
 
 .new-activity-members {
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto;
+
+    .sub-title {
+        margin-top: 20px;
+    }
 }
 
 .administer {
     grid-template-rows: auto auto auto 1fr;
+
+    .list-container {
+        margin-top: 20px;
+    }
 }
 
 .new-group {
-    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto auto 1fr auto;
 }
 
 .edit-group{
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-rows: auto auto auto 1fr auto;
 }

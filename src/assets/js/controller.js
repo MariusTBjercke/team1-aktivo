@@ -296,11 +296,11 @@ function generateMemberList(listContainer) {
     addedGroups.forEach(group => {
         list.push({name: group.name, members: addedPeople.filter(person => person.from === group.name)});
     });
-    list.push({name: 'Personer', members: addedPeople.filter(person => !person.from)});
+    list.push({name: '', members: addedPeople.filter(person => !person.from)});
     let filteredList = list.filter(x => x.members.length > 0);
 
     filteredList.forEach(x => {
-        if (filteredList.length > 1) cr('span', listContainer, '', 'Fra ' + x.name + ':');
+        if (filteredList.length > 1) cr('span', listContainer, 'class origin-desc', x.name === '' ? 'Andre:' : 'Fra ' + x.name + ':');
         x.members.forEach(member => {
             let itemContainer = cr('div', listContainer, 'class list-item');
             let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');

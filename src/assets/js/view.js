@@ -217,7 +217,7 @@ function showNewActivity(view) {
             btn2 = 'Personer';
             searchText = 'grupper';
             view2 = 'newactivitypeople';
-            title = 'Legg til gruppe(r)';
+            title = 'Legg til grupper';
             break;
 
         case 'people':
@@ -225,17 +225,17 @@ function showNewActivity(view) {
             btn2 = 'Grupper';
             searchText = 'personer';
             view2 = 'newactivitygroups';
-            title = 'Legg til person(er)';
+            title = 'Legg til personer';
             break;
     
         default:
             break;
     }
 
-    header(title);
+    header('Ny aktivitet');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container new-activity list-page');
-    let back = cr('div', container, 'class btn', 'Tilbake');
+    let back = cr('div', container, 'class btn top-element', 'Tilbake');
     back.onclick = function() {
         show('home');
         // add to archive
@@ -258,6 +258,7 @@ function showNewActivity(view) {
     search.addEventListener('input', function () {
         generateList(view, listContainer, search);
     });
+    let directions = cr('span', container, 'class sub-title', title + ':');
     let listContainer = cr('div', container, 'class list-container');
     let next = cr('div', container, 'class btn', 'Neste');
     next.onclick = function() {
@@ -267,13 +268,14 @@ function showNewActivity(view) {
 }
 
 function showNewActivityMembers() {
-    header('Medlemsliste');
+    header('Ny aktivitet');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container new-activity-members list-page');
-    let back = cr('div', container, 'class btn', 'Tilbake');
+    let back = cr('div', container, 'class btn top-element', 'Tilbake');
     back.onclick = function() {
         show("newactivitygroups"); // should be changed to remember if last page was groups or people..
     }
+    let directions = cr('span', container, 'class sub-title', 'Medlemsliste:');
     let listContainer = cr('div', container, 'class list-container');
     let seeActivities = cr('div', container, 'class btn', 'Se forslag');
     seeActivities.onclick = function() {
@@ -294,10 +296,10 @@ function showArchive() {}
 
 // create/edit group
 function showNewGroup() {
-    header('Lag ny gruppe');
+    header(aktivo.inputs.administer.edit?'Rediger gruppe':'Ny gruppe');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container new-group list-page');
-    let back = cr('div', container, 'class btn', aktivo.inputs.administer.edit?'Medlemsliste':'Tilbake');
+    let back = cr('div', container, 'class btn top-element', aktivo.inputs.administer.edit?'Medlemsliste':'Tilbake');
     back.onclick = function() {
         if (!aktivo.inputs.administer.edit) {
             user.groups.splice(user.groups.length-1, 1);
@@ -311,6 +313,7 @@ function showNewGroup() {
     search.addEventListener('input', function () {
         generatePeopleList(listContainer, search);
     });
+    let directions = cr('span', container, 'class sub-title', 'Legg til medlemmer:');
     let listContainer = cr('div', container, 'class list-container');
     let next = cr('div', container, 'class btn', aktivo.inputs.administer.edit ? 'Lagre' : 'Neste');
     next.onclick = function() {
@@ -325,18 +328,17 @@ function showNewGroup() {
 }
 
 function showEditGroup() {
-    console.log('There is no spoon.....editGroup yet...');
-
-    header('Rediger gruppe');
+    header(aktivo.inputs.administer.edit?'Rediger gruppe':'Ny gruppe');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container edit-group list-page');
-    let back = cr('div', container, 'class btn', aktivo.inputs.administer.edit?'<i class="fa fa-plus"></i> Medlemmer':'Tilbake');
+    let back = cr('div', container, 'class btn top-element', aktivo.inputs.administer.edit?'<i class="fa fa-plus"></i> Medlemmer':'Tilbake');
     back.onclick = function() {show('newGroup')};
     let nameInput = cr('input',container, 'type text, class search, placeholder Navn på gruppen');
     nameInput.value = aktivo.inputs.administer.editPath.name;
     nameInput.addEventListener('input', function() {
         aktivo.inputs.administer.editPath.name = nameInput.value;
     });
+    let directions = cr('span', container, 'class sub-title', 'Medlemsliste:');
     let listContainer = cr('div', container, 'class list-container');
     let save = cr('div', container, 'class btn', 'Lagre');
     save.onclick = function() {
@@ -383,7 +385,7 @@ function showAdminister(view) {
     header(title);
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container administer list-page');
-    let back = cr('div', container, 'class btn', 'Tilbake');
+    let back = cr('div', container, 'class btn top-element', 'Tilbake');
     back.onclick = function() {show('home');}
     let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> ' + btn);
     newBtn.onclick = function() {
