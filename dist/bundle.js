@@ -213,7 +213,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _ass
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
-eval("module.exports = __webpack_require__.p + \"154d76bf7abb0ae00adf.svg\";\n\n//# sourceURL=webpack://team1-aktivo/./src/assets/img/aktivo-logo-dark.svg?");
+eval("module.exports = __webpack_require__.p + \"854cd6873bceb96c4e27.svg\";\n\n//# sourceURL=webpack://team1-aktivo/./src/assets/img/aktivo-logo-dark.svg?");
 
 /***/ }),
 
