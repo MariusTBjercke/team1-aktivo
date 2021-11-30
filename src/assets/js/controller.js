@@ -265,6 +265,12 @@ function generateList(view, listContainer, search) {
     dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1 && list.findIndex(L => L.name === x.name) === -1)).forEach(x => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+        editBtn.onclick = function() {
+            aktivo.inputs.administer.edit = true;
+            aktivo.inputs.administer.editPath = x;
+            aktivo.inputs.administer.returnPageEdit = currentPage;
+            show('editGroup');
+        };
         let item = cr('div', itemContainer, 'class item', x.name);
         let add = cr('div', itemContainer, 'class add-btn', '<i class="fas fa-plus"></i>');
         add.onclick = function() {
@@ -316,8 +322,11 @@ function generateAdminList(view, listContainer, search) {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         editBtn.onclick = function() {
+            aktivo.inputs.administer.edit = true;
             if (isGroups) {
-                console.log('edit (group): ' + x.name);
+                aktivo.inputs.administer.editPath = x;
+                aktivo.inputs.administer.returnPageEdit = currentPage;
+                show('editGroup');
             } else console.log('edit (person): ' + x.name);
         };
         let item = cr('div', itemContainer, 'class item', x.name);

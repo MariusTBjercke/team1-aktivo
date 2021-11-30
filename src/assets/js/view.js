@@ -297,11 +297,11 @@ function showNewGroup() {
     header('Lag ny gruppe');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container new-group list-page');
-    let back = cr('div', container, 'class btn', 'Tilbake');
+    let back = cr('div', container, 'class btn', aktivo.inputs.administer.edit?'Medlemsliste':'Tilbake');
     back.onclick = function() {
-        user.groups.splice(user.groups.length-1, 1);
-        aktivo.inputs.administer.addedToList = false;
-        if (aktivo.inputs.administer.returnPageNew !== '') {
+        if (!aktivo.inputs.administer.edit) {
+            user.groups.splice(user.groups.length-1, 1);
+            aktivo.inputs.administer.addedToList = false;
             show(aktivo.inputs.administer.returnPageNew);
             aktivo.inputs.administer.returnPageNew = '';
         } else show('editGroup');
@@ -312,9 +312,13 @@ function showNewGroup() {
         generatePeopleList(listContainer, search);
     });
     let listContainer = cr('div', container, 'class list-container');
-    let next = cr('div', container, 'class btn', 'Neste');
+    let next = cr('div', container, 'class btn', aktivo.inputs.administer.edit ? 'Lagre' : 'Neste');
     next.onclick = function() {
-        if (aktivo.inputs.administer.edit) show('editGroup');
+        if (aktivo.inputs.administer.edit) {
+            show(aktivo.inputs.administer.returnPageEdit);
+            aktivo.inputs.administer.edit = false;
+            aktivo.inputs.administer.returnPageEdit = '';
+        }
         else if (user.groups[user.groups.length-1].members.length > 0) show('editGroup');
     }
     generatePeopleList(listContainer, search);
@@ -326,14 +330,10 @@ function showEditGroup() {
     header('Rediger gruppe');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container edit-group list-page');
-    let back = cr('div', container, 'class btn', 'Tilbake');
-    back.onclick = function() {
-        if (aktivo.inputs.administer.returnPageEdit !== '') {
-            show(aktivo.inputs.administer.returnPageEdit);
-            aktivo.inputs.administer.returnPageEdit = '';
-        } else show('newGroup');
-    }
+    let back = cr('div', container, 'class btn', aktivo.inputs.administer.edit?'<i class="fa fa-plus"></i> Medlemmer':'Tilbake');
+    back.onclick = function() {show('newGroup')};
     let nameInput = cr('input',container, 'type text, class search, placeholder Navn på gruppen');
+    nameInput.value = aktivo.inputs.administer.editPath.name;
     nameInput.addEventListener('input', function() {
         aktivo.inputs.administer.editPath.name = nameInput.value;
     });
