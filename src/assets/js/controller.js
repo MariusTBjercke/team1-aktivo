@@ -300,7 +300,7 @@ function generateMemberList(listContainer) {
     let filteredList = list.filter(x => x.members.length > 0);
 
     filteredList.forEach(x => {
-        if (filteredList.length > 1) cr('span', listContainer, 'class origin-desc', x.name === '' ? 'Andre:' : 'Fra ' + x.name + ':');
+        if (filteredList.length > 1) cr('span', listContainer, `class origin-desc ${x.name === filteredList[0].name ? 'first-desc' : ''}` , x.name === '' ? 'Andre:' : 'Fra ' + x.name + ':');
         x.members.forEach(member => {
             let itemContainer = cr('div', listContainer, 'class list-item');
             let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');

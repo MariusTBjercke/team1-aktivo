@@ -122,9 +122,13 @@ input {
     overflow-y: scroll;
 
     .origin-desc {
-        padding: 2px 0; 
-        color: #666;
+        padding-bottom: 2px; 
+        color: var(--origin-desc-font-color);
         font-size: 12px;
+    }
+
+    .first-desc {
+        padding-top: 12px;
     }
 
     .list-item {
