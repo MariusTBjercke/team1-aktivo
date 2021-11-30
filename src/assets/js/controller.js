@@ -257,6 +257,60 @@ function removeInputError(isErrorInList, errorList, errorIndex, input) {
     }
 }
 
+function generateAgeGroupForm(form) {
+
+    let ageGroups = aktivo.inputs.newActivitySimple.ageGroups;
+
+    ageGroups.forEach(item => {
+        
+        let row = cr('div', form, 'class row');
+
+        let name = cr('div', row, 'class name', item.name);
+
+        let age = cr('div', row, 'class age', item.age);
+
+        let counter = cr('div', row, 'class counter');
+        let decrease = cr('div', counter, 'class decrease', '-');
+        decrease.onclick = () => {
+            decreaseCounter(amount);
+        }
+        let decreaseInterval;
+        decrease.addEventListener('mousedown', function() {
+            decreaseInterval = setInterval(function() {
+                decreaseCounter(amount);
+            }, 150);
+        })
+        decrease.addEventListener('mouseup', function() {
+            clearInterval(decreaseInterval);
+        })
+        let amount = cr('input', counter, 'class amount, type text, value 0');
+        let increase = cr('div', counter, 'class increase', '+');
+        increase.onclick = () => {
+            increaseCounter(amount);
+        }
+        let increaseInterval;
+        increase.addEventListener('mousedown', function() {
+            increaseInterval = setInterval(function() {
+                increaseCounter(amount);
+            }, 150);
+        })
+        increase.addEventListener('mouseup', function() {
+            clearInterval(increaseInterval);
+        })
+
+    })
+
+}
+
+function increaseCounter(counter, event) {
+    counter.value++;
+}
+
+function decreaseCounter(counter) {
+    if (counter.value > 0)
+        counter.value--;
+}
+
 function generateList(view, listContainer, search) {
     listContainer.innerHTML = '';
     let isGroups = view === 'groups';
@@ -519,4 +573,4 @@ function loadTheme() {
     }
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme }
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm }

@@ -29,6 +29,43 @@ const aktivo = {
         },
       },
 
+      newActivitySimple: {
+        ageGroups: [
+          {
+            name: 'Voksne',
+            age: '60+'
+          },
+          {
+            name: 'Voksne',
+            age: '40-59'
+          },
+          {
+            name: 'Voksne',
+            age: '25-39'
+          },
+          {
+            name: 'Voksne',
+            age: '18-24'
+          },
+          {
+            name: 'Ungdom',
+            age: '12-17'
+          },
+          {
+            name: 'Barn',
+            age: '7-11'
+          },
+          {
+            name: 'Barn',
+            age: '3-6'
+          },
+          {
+            name: 'Barn',
+            age: '0-2'
+          },
+        ],
+      },
+
       myProfile: {
         returnPage: ""
       },

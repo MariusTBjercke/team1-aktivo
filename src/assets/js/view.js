@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -40,6 +40,10 @@ function show(page, parameters) {
 
         case 'changepassword':
             showChangePassword();
+            break;
+
+        case 'newActivitySimple':
+            showNewActivitySimple();
             break;
 
         case 'newactivitygroups':
@@ -188,7 +192,10 @@ function showFrontPage() {
         show('newactivitygroups');
     }
 
-    let newActivityFast = cr('div', btnContainer, 'class btn', '<i class="fas fa-plus"></i> Ny aktivitet<br>(hurtig registrering)');
+    let newActivitySimple = cr('div', btnContainer, 'class btn', '<i class="fas fa-plus"></i> Ny aktivitet<br>(hurtig registrering)');
+    newActivitySimple.onclick = () => {
+        show('newActivitySimple');
+    }
 
     let archive = cr('div', btnContainer, 'class btn', 'Arkiv');
 
@@ -283,7 +290,26 @@ function showNewActivityMembers() {
 }
 
 // new activity (fast/simple)
-function showNewActivitySimple() {}
+function showNewActivitySimple() {
+
+    header('Ny aktivitet (hurtig)');
+
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container new-activity-simple');
+
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = function() {
+        show('home');
+    }
+
+    let description = cr('h5', container, 'class description', 'Velg antall medlemmer per aldersgruppe.');
+
+    let form = cr('div', container, 'class form');
+
+    generateAgeGroupForm(form);
+
+}
 
 // new activity's filters and suggestions
 function showNewActivityFilters() {}
