@@ -274,6 +274,7 @@ function generateAgeGroupForm(form) {
         let amount = cr('input', counter, 'class amount, type text, value 0');
         let increase = cr('div', counter, 'class increase', '+');
 
+        // Counter listeners
         for (let x of [
             [increase, 'click', increaseCounter],
             [decrease, 'click', decreaseCounter],
@@ -291,6 +292,10 @@ function generateAgeGroupForm(form) {
 function checkCounter(counter) {
     if (counter.value < 0) {
         counter.value = 0;
+    } else if (isNaN(counter.value)) {
+        counter.value = 0;
+    } else if (counter.value % 1 != 0) {
+        counter.value = Math.round(counter.value);
     }
 }
 
