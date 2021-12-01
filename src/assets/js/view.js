@@ -99,7 +99,7 @@ function showLogin() {
     let passwordInput = cr('input', passwordField, 'type password');
     passwordInput.before(cr('span', null, null, 'Passord: '));
 
-    let showPasswordDiv = cr('div', form, 'class show-password checkmark-input');
+    let showPasswordDiv = cr('div', form, 'class show-password checkbox-input');
     let showPasswordText = cr('span', showPasswordDiv, '', 'Vis passord:');
     let showPasswordLabel = cr('label', showPasswordDiv);
     let showPassword = cr('input', showPasswordLabel, 'type checkbox');
@@ -315,13 +315,13 @@ function showNewActivitySimple() {
 
     let genderInputRow = cr('div', genderRow, 'class gender-input-row');
 
-    let maleCol = cr('div', genderInputRow, 'class male-col checkmark-input');
+    let maleCol = cr('div', genderInputRow, 'class male-col checkbox-input');
     let maleTxt = cr('div', maleCol, 'class male-text', 'Kun menn');
     let maleInputLabel = cr('label', maleCol);
     let maleInput = cr('input', maleInputLabel, 'type checkbox');
     let maleInputMark = cr('span', maleInputLabel, 'class checkmark');
 
-    let femaleCol = cr('div', genderInputRow, 'class female-col checkmark-input');
+    let femaleCol = cr('div', genderInputRow, 'class female-col checkbox-input');
     let femaleTxt = cr('div', femaleCol, 'class female-text', 'Kun kvinner');
     let femaleInputLabel = cr('label', femaleCol);
     let femaleInput = cr('input', femaleInputLabel, 'type checkbox');
