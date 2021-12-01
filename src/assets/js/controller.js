@@ -271,7 +271,7 @@ function generateAgeGroupForm(form) {
 
         let counter = cr('div', row, 'class counter');
         let decrease = cr('div', counter, 'class decrease', '-');
-        let amount = cr('input', counter, 'class amount, type number, value 0');
+        let amount = cr('input', counter, 'class amount, type number, value ' + item.amount);
         let increase = cr('div', counter, 'class increase', '+');
 
         // Counter listeners
@@ -297,16 +297,15 @@ function generateAgeGroupForm(form) {
  * @returns 
  */
 function getSimpleActivityFilters(male, female) {
+    let ageGroups = aktivo.inputs.newActivitySimple.ageGroups;
     let total = 0;
     let obj = {
         filters: [],
     };
 
-    aktivo.inputs.newActivitySimple.ageGroups.forEach(x => {
-        if (x.amount > 0) {
-            total = Number(total) + Number(x.amount);
-            obj.filters.push(x.age);
-        }
+    ageGroups.filter(x => x.amount > 0).forEach(x => {
+        total = Number(total) + Number(x.amount);
+        obj.filters.push(x.age);
     });
 
     obj.filters.push(total + ' personer');
@@ -319,12 +318,7 @@ function getSimpleActivityFilters(male, female) {
 
 function updateAgeGroupAmount(ageGroup, amount) {
     let ageGroups = aktivo.inputs.newActivitySimple.ageGroups;
-
-    ageGroups.forEach(x => {
-        if (x.age === ageGroup) {
-            x.amount = amount;
-        }
-    });
+    ageGroups.filter(x => x.age === ageGroup ? x.amount = amount : x);
 }
 
 function checkCounter(counter) {
@@ -619,4 +613,10 @@ function validateTwoCheckboxes(input1, input2) {
     }
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters }
+function resetAgeGroupForm() {
+    let ageGroups = aktivo.inputs.newActivitySimple.ageGroups;
+    ageGroups.filter(x => x.amount = 0);
+    show('newActivitySimple');
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm }

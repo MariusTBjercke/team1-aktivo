@@ -1,5 +1,5 @@
 .new-activity-simple {
-    grid-template-rows: auto auto auto 1fr;
+    grid-template-rows: auto auto auto 60px;
     align-items: end;
 
     .btn {
@@ -99,6 +99,12 @@
                 display: flex;
                 gap: 5px;
             }
+        }
+
+        .reset {
+            font-size: .7em;
+            cursor: pointer;
+            text-align: right;
         }
     }
 }
