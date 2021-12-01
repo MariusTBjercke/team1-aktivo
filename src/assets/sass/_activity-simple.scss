@@ -74,6 +74,11 @@
             }
         }
 
+        .reset-row {
+            display: flex;
+            justify-content: end;
+        }
+
         .gender-row {
             display: grid;
             grid-template-rows: auto auto;

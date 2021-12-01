@@ -309,7 +309,8 @@ function showNewActivitySimple() {
 
     generateAgeGroupForm(form);
 
-    let reset = cr('div', form, 'class reset', 'Tilbakestill');
+    let resetRow = cr('div', form, 'class reset-row');
+    let reset = cr('div', resetRow, 'class reset', 'Tilbakestill');
     reset.onclick = () => {
         resetAgeGroupForm();
     }

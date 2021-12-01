@@ -9,6 +9,7 @@ $header-height: 47px;
     text-shadow: var(--text-shadow);
     top: 0;
     z-index: 1;
+    border-radius: 5px 5px 0px 0px;
 
     .bg {
         background: rgba(0, 0, 0, .7);
@@ -87,6 +88,7 @@ $header-height: 47px;
             font-size: calc($header-height * .50);
             padding: 0 7px;
             cursor: pointer;
+            border-radius: 0px 5px 0px 0px;
 
             &:hover {
                 background: var(--logout-bg-hover-color);
