@@ -1,5 +1,6 @@
 .new-activity-simple {
-    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-rows: auto auto auto 1fr;
+    align-items: end;
 
     .btn {
         padding: 8px 0;
@@ -77,21 +78,26 @@
             display: grid;
             grid-template-rows: auto auto;
             grid-template-columns: auto;
+
+            .gender-title {
+                font-size: .8em;
+            }
         }
 
         .gender-input-row {
             display: grid;
             grid-template-rows: auto;
             grid-template-columns: auto auto;
+            justify-content: space-between;
 
             .male-col {
                 display: flex;
-                align-items: center;
+                gap: 5px;
             }
 
             .female-col {
                 display: flex;
-                align-items: center;
+                gap: 5px;
             }
         }
     }

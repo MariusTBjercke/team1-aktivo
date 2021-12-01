@@ -327,6 +327,8 @@ function showNewActivitySimple() {
     let femaleInput = cr('input', femaleInputLabel, 'type checkbox');
     let femaleInputMark = cr('span', femaleInputLabel, 'class checkmark');
 
+    let next = cr('div', container, 'class btn next', 'Neste');
+
 }
 
 // new activity's filters and suggestions
