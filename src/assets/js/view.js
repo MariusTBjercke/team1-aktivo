@@ -6,7 +6,7 @@ let currentUser = aktivo.app.currentUser;
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
-show("home");
+show("newActivitySimple");
 loadTheme();
 function show(page, parameters) {
     if (page) currentPage = page;
@@ -99,7 +99,7 @@ function showLogin() {
     let passwordInput = cr('input', passwordField, 'type password');
     passwordInput.before(cr('span', null, null, 'Passord: '));
 
-    let showPasswordDiv = cr('div', form, 'class show-password');
+    let showPasswordDiv = cr('div', form, 'class show-password checkmark-input');
     let showPasswordText = cr('span', showPasswordDiv, '', 'Vis passord:');
     let showPasswordLabel = cr('label', showPasswordDiv);
     let showPassword = cr('input', showPasswordLabel, 'type checkbox');
@@ -308,6 +308,24 @@ function showNewActivitySimple() {
     let form = cr('div', container, 'class form');
 
     generateAgeGroupForm(form);
+
+    let genderRow = cr('div', form, 'class gender-row');
+
+    let genderTitle = cr('div', genderRow, 'class gender-title', 'Kryss av hvis: ');
+
+    let genderInputRow = cr('div', genderRow, 'class gender-input-row');
+
+    let maleCol = cr('div', genderInputRow, 'class male-col checkmark-input');
+    let maleTxt = cr('div', maleCol, 'class male-text', 'Kun menn');
+    let maleInputLabel = cr('label', maleCol);
+    let maleInput = cr('input', maleInputLabel, 'type checkbox');
+    let maleInputMark = cr('span', maleInputLabel, 'class checkmark');
+
+    let femaleCol = cr('div', genderInputRow, 'class female-col checkmark-input');
+    let femaleTxt = cr('div', femaleCol, 'class female-text', 'Kun kvinner');
+    let femaleInputLabel = cr('label', femaleCol);
+    let femaleInput = cr('input', femaleInputLabel, 'type checkbox');
+    let femaleInputMark = cr('span', femaleInputLabel, 'class checkmark');
 
 }
 

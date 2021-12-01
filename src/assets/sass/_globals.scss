@@ -182,3 +182,68 @@ input {
 svg{
     filter: var(--filter-drop-shadow);
 }
+
+.checkmark-input {
+    
+    label {
+        display: block;
+        position: relative;
+        padding-left: 35px;
+        margin-bottom: 12px;
+        margin-left: 3px;
+        cursor: pointer;
+        font-size: 22px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        input[type="checkbox"]::after {
+            content: "";
+        }
+
+        input:checked ~ .checkmark {
+            background-color: var(--checkmark-bg-color);
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 18px;
+            width: 18px;
+            background-color: var(--input-bg-color);
+            border: .3px solid var(--main-border-color);
+            border-radius: 1px;
+
+            &::after {
+                left: 6px;
+                top: 2.5px;
+                width: 3px;
+                height: 8px;
+                border: solid white;
+                border-width: 0 3px 3px 0;
+                -webkit-transform: rotate(45deg);
+                -ms-transform: rotate(45deg);
+                transform: rotate(45deg);
+                content: "";
+                position: absolute;
+                display: none;
+            }
+        }
+
+        input:checked ~ .checkmark::after {
+            display: block;
+        }
+
+    }
+
+}

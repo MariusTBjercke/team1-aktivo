@@ -265,13 +265,11 @@ function generateAgeGroupForm(form) {
         
         let row = cr('div', form, 'class row');
 
-        let name = cr('div', row, 'class name', item.name);
-
         let age = cr('div', row, 'class age', item.age);
 
         let counter = cr('div', row, 'class counter');
         let decrease = cr('div', counter, 'class decrease', '-');
-        let amount = cr('input', counter, 'class amount, type text, value 0');
+        let amount = cr('input', counter, 'class amount, type number, value 0');
         let increase = cr('div', counter, 'class increase', '+');
 
         // Counter listeners

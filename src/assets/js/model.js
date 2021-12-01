@@ -32,35 +32,24 @@ const aktivo = {
       newActivitySimple: {
         ageGroups: [
           {
-            name: 'Voksne',
             age: '60+'
           },
           {
-            name: 'Voksne',
-            age: '40-59'
+            age: '30-59'
           },
           {
-            name: 'Voksne',
-            age: '25-39'
+            age: '18-29'
           },
           {
-            name: 'Voksne',
-            age: '18-24'
+            age: '13-17'
           },
           {
-            name: 'Ungdom',
-            age: '12-17'
+            age: '7-12'
           },
           {
-            name: 'Barn',
-            age: '7-11'
-          },
-          {
-            name: 'Barn',
             age: '3-6'
           },
           {
-            name: 'Barn',
             age: '0-2'
           },
         ],

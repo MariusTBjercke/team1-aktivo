@@ -12,17 +12,18 @@
     .form {
         display: grid;
         width: 90%;
-        gap: 5px;
+        gap: 10px;
 
         .row {
             display: grid;
             grid-template-rows: auto;
-            grid-template-columns: 1fr 1fr auto;
+            grid-template-columns: 1fr auto;
+            align-items: center;
 
             .counter {
                 display: grid;
                 grid-template-columns: auto auto auto;
-
+                
                 .decrease {
                     border-left: 1px;
                     border-right: 0;
@@ -30,7 +31,9 @@
                     border-bottom: 1px;
                     border-style: solid;
                     border-color: black;
-                    padding: 0px 8px;
+                    padding: 0px 15px;
+                    display: grid;
+                    align-items: center;
                     border-radius: 4px 0 0 4px;
                     user-select: none;
                     background: radial-gradient( rgb(247, 247, 247), rgb(233, 233, 233));
@@ -43,9 +46,9 @@
 
                 .amount {
                     border: 1px solid black;
-                    padding: 0px 7px;
-                    width: 30px;
-                    height: 24px;
+                    text-align: center;
+                    width: 60px;
+                    height: 25px;
                 }
 
                 .increase {
@@ -55,7 +58,9 @@
                     border-bottom: 1px;
                     border-style: solid;
                     border-color: black;
-                    padding: 0px 7px;
+                    padding: 0px 15px;
+                    display: grid;
+                    align-items: center;
                     border-radius: 0 4px 4px 0;
                     user-select: none;
                     background: radial-gradient( rgb(247, 247, 247), rgb(233, 233, 233));
@@ -65,6 +70,28 @@
                         cursor: pointer;
                     }
                 }
+            }
+        }
+
+        .gender-row {
+            display: grid;
+            grid-template-rows: auto auto;
+            grid-template-columns: auto;
+        }
+
+        .gender-input-row {
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: auto auto;
+
+            .male-col {
+                display: flex;
+                align-items: center;
+            }
+
+            .female-col {
+                display: flex;
+                align-items: center;
             }
         }
     }
