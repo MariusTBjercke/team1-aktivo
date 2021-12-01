@@ -28,12 +28,14 @@ function auth() {
  */
 function userLogin(username, password) {
 
+    let pass = password.value;
+
     for (let x of [[username, 'loginUsername'], [password, 'empty']]) validateInput(x[0], x[1]);
 
     let users = aktivo.data.users;
 
     users.forEach(user => {
-        if (username.value === user.username && password.value === user.password) {
+        if (username.value === user.username && pass === user.password) {
             currentUser = username.value;
             show('home');
             return;

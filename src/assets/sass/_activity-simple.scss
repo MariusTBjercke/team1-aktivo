@@ -37,10 +37,10 @@
                     align-items: center;
                     border-radius: 4px 0 0 4px;
                     user-select: none;
-                    background: radial-gradient( rgb(247, 247, 247), rgb(233, 233, 233));
+                    background: var(--btn-bg-color);
 
                     &:hover {
-                        background: #ccc;
+                        background: var(--btn-hover-color);
                         cursor: pointer;
                     }
                 }
@@ -64,10 +64,10 @@
                     align-items: center;
                     border-radius: 0 4px 4px 0;
                     user-select: none;
-                    background: radial-gradient( rgb(247, 247, 247), rgb(233, 233, 233));
+                    background: var(--btn-bg-color);
 
                     &:hover {
-                        background: #ccc;
+                        background: var(--btn-hover-color);
                         cursor: pointer;
                     }
                 }

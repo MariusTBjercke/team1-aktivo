@@ -570,7 +570,7 @@ function header(title) {
     let pageDescr = cr('div', row, 'class page-description', title);
     let logOut = cr('div', row, 'class logout', 'Logg ut');
     logOut.onclick = function() {
-        currentUser = '';
+        aktivo.app.currentUser = '';
         show('login');
     }
 }
