@@ -282,11 +282,22 @@ function generateAgeGroupForm(form) {
         ]) {
             x[0].addEventListener(x[1], () => {
                 x[2](amount);
-            })
+                updateAgeGroupAmount(item.age, amount.value);
+            });
         }
 
     });
 
+}
+
+function updateAgeGroupAmount(ageGroup, amount) {
+    let ageGroups = aktivo.inputs.newActivitySimple.ageGroups;
+
+    ageGroups.forEach(x => {
+        if (x.age === ageGroup) {
+            x.amount = amount;
+        }
+    });
 }
 
 function checkCounter(counter) {

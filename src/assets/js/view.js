@@ -331,6 +331,9 @@ function showNewActivitySimple() {
     validateTwoCheckboxes(maleInput, femaleInput);
 
     let next = cr('div', container, 'class btn next', 'Neste');
+    next.onclick = () => {
+        console.log(aktivo.inputs.newActivitySimple);
+    }
 
 }
 
