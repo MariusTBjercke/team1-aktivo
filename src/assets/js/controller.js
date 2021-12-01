@@ -290,7 +290,13 @@ function generateAgeGroupForm(form) {
 
 }
 
-function getSimpleActivityFilters() {
+/**
+ * 
+ * @param {HTMLInputElement} male Male checkbox input
+ * @param {HTMLInputElement} female Female checkbox input
+ * @returns 
+ */
+function getSimpleActivityFilters(male, female) {
     let total = 0;
     let obj = {
         filters: [],
@@ -304,6 +310,9 @@ function getSimpleActivityFilters() {
     });
 
     obj.filters.push(total + ' personer');
+
+    if (male.checked) obj.filters.push('Kun menn');
+    if (female.checked) obj.filters.push('Kun kvinner');
 
     return obj;
 }

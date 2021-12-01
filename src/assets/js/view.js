@@ -332,7 +332,7 @@ function showNewActivitySimple() {
 
     let next = cr('div', container, 'class btn next', 'Neste');
     next.onclick = () => {
-        console.log(getSimpleActivityFilters());
+        console.log(getSimpleActivityFilters(maleInput, femaleInput));
     }
 
 }
