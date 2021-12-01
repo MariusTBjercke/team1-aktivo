@@ -570,4 +570,15 @@ function loadTheme() {
     }
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm }
+function validateTwoCheckboxes(input1, input2) {
+    for (let x of [
+        [input1, input2],
+        [input2, input1]
+    ]) {
+        x[0].onclick = () => {
+            if (x[1].checked) x[1].checked = false;
+        }
+    }
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes }

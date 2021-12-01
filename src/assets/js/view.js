@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -326,6 +326,9 @@ function showNewActivitySimple() {
     let femaleInputLabel = cr('label', femaleCol);
     let femaleInput = cr('input', femaleInputLabel, 'type checkbox');
     let femaleInputMark = cr('span', femaleInputLabel, 'class checkmark');
+
+    // Check one checkmark at a time
+    validateTwoCheckboxes(maleInput, femaleInput);
 
     let next = cr('div', container, 'class btn next', 'Neste');
 
