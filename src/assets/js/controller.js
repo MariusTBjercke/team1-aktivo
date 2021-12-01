@@ -290,6 +290,24 @@ function generateAgeGroupForm(form) {
 
 }
 
+function getSimpleActivityFilters() {
+    let total = 0;
+    let obj = {
+        filters: [],
+    };
+
+    aktivo.inputs.newActivitySimple.ageGroups.forEach(x => {
+        if (x.amount > 0) {
+            total = Number(total) + Number(x.amount);
+            obj.filters.push(x.age);
+        }
+    });
+
+    obj.filters.push(total + ' personer');
+
+    return obj;
+}
+
 function updateAgeGroupAmount(ageGroup, amount) {
     let ageGroups = aktivo.inputs.newActivitySimple.ageGroups;
 
@@ -592,4 +610,4 @@ function validateTwoCheckboxes(input1, input2) {
     }
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes }
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters }
