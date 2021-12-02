@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, createEditPerson } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -68,6 +68,10 @@ function show(page, parameters) {
     
         case 'editGroup':
             showEditGroup();
+            break;
+        
+        case 'newEditPerson':
+            showNewEditPerson();
             break;
     
         default:
@@ -249,6 +253,10 @@ function showNewActivity(view) {
             aktivo.inputs.administer.returnPageNew = currentPage;
             show('newGroup');
         }
+        else {
+            aktivo.inputs.administer.person.returnPage = currentPage;
+            show('newEditPerson');
+        }
     }
     let toggleView = cr('div', btnContainer, 'class btn', btn2);
     toggleView.onclick = function() {
@@ -309,6 +317,10 @@ function showNewGroup() {
         } else show('editGroup');
     }
     let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> Ny person');
+    newBtn.onclick = function() {
+        aktivo.inputs.administer.person.returnPage = currentPage;
+        show('newEditPerson');
+    };
     let search = cr('input',container, 'type text, class search, placeholder Søk i personer');
     search.addEventListener('input', function () {
         generatePeopleList(listContainer, search);
@@ -349,6 +361,17 @@ function showEditGroup() {
                 aktivo.inputs.administer.edit = false;
                 aktivo.inputs.administer.returnPageEdit = '';
             } else {
+                if (aktivo.inputs.administer.returnPageNew === 'newactivitygroups') {
+                    aktivo.inputs.newActivity.chosenGroups.push({name: aktivo.inputs.administer.editPath.name});
+                    aktivo.inputs.administer.editPath.members.forEach(name =>  {
+                        if (aktivo.inputs.newActivity.chosenPeople.findIndex(m => m.name === name) === -1) {
+                            aktivo.inputs.newActivity.chosenPeople.push({
+                                name: name,
+                                from: aktivo.inputs.administer.editPath.name
+                            });
+                        }
+                    });
+                }
                 show(aktivo.inputs.administer.returnPageNew);
                 aktivo.inputs.administer.addedToList = false;
                 aktivo.inputs.administer.returnPageNew = '';
@@ -358,7 +381,48 @@ function showEditGroup() {
     generateEditGroupList(listContainer);
 }
 
-function showNewPerson() {}
+function showNewEditPerson() {
+    header(aktivo.inputs.administer.edit ? 'Rediger person' : 'Ny person');
+    let wrapper = cr('div', app, 'class wrapper');
+    let container = cr('div', wrapper, 'class container new-person list-page');
+    let back = cr('div', container, 'class btn top-element', 'Tilbake');
+    back.onclick = function() { // make into a cancel function which is also run when loging out..
+        if (!aktivo.inputs.administer.person.edit) {
+            user.people.splice(user.people.length-1, 1);
+            aktivo.inputs.administer.person.addedToList = false;
+        }
+        else {
+            aktivo.inputs.administer.person.edit = false;
+            // aktivo.inputs.administer.person.editPath.name = aktivo.inputs.administer.person.clone.name;
+            // aktivo.inputs.administer.person.editPath.filters = [...aktivo.inputs.administer.person.clone.filters];
+        }
+        show(aktivo.inputs.administer.person.returnPage);
+        aktivo.inputs.administer.person.returnPage = '';
+    }
+    let nameInput = cr('input', container, 'type text, placeholder Navn på personen');
+    let ageGroupInput = cr('input', container, 'type text, placeholder Aldersgruppe');
+    let filterBtn = cr('div', container, 'class btn', 'Filtre');
+    filterBtn.onclick = function() {
+        console.log('Make the filter-page!')
+    }
+    let save = cr('div', container, 'class btn', 'Lagre');
+    save.onclick = function() {
+        if ((aktivo.inputs.administer.person.edit || aktivo.inputs.administer.person.editPath.filters.length > 0) && aktivo.inputs.administer.person.editPath.name !== '') {
+            aktivo.inputs.administer.person.addedToList = false;
+            if (!aktivo.inputs.administer.person.edit && aktivo.inputs.administer.person.returnPage === 'newGroup') {
+                aktivo.inputs.administer.editPath.members.push(aktivo.inputs.administer.person.editPath.name);
+            }
+            if (!aktivo.inputs.administer.person.edit && aktivo.inputs.administer.person.returnPage === 'newactivitypeople') {
+                aktivo.inputs.newActivity.chosenPeople.push({name: aktivo.inputs.administer.person.editPath.name});
+            }
+            show(aktivo.inputs.administer.person.returnPage);
+            aktivo.inputs.administer.person.edit = false;
+            aktivo.inputs.administer.person.returnPage = '';
+        }
+    }
+    createEditPerson(nameInput, ageGroupInput);
+}
+
 function showNewPersonFilters() {}
 
 function showAdminister(view) {
@@ -392,6 +456,10 @@ function showAdminister(view) {
         if (view === 'groups') {
             aktivo.inputs.administer.returnPageNew = currentPage;
             show('newGroup');
+        }
+        else {
+            aktivo.inputs.administer.person.returnPage = currentPage;
+            show('newEditPerson');
         }
     }
     let search = cr('input',container, 'type text, class search, placeholder Søk i ' + searchText);

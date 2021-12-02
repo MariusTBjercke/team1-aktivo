@@ -11,11 +11,18 @@ const aktivo = {
       showNavBar: false,
 
       administer: {
-        edit: false,  // if true the group/person's path is editPath, if false new group/person is created.
-        addedToList: false, // becomes true when a new group/person is pushed to the array, but user has yet to finalize its creation. becomes false once finalized
+        edit: false,  // if true the group's path is editPath, if false new group is created.
+        addedToList: false, // becomes true when a new group is pushed to the array, but user has yet to finalize its creation. becomes false once finalized
         editPath: null,
         returnPageNew: "",
-        returnPageEdit: ""
+        returnPageEdit: "",
+
+        person: {
+          edit: false,  // if true the person's path is editPath, if false new person is created.
+          addedToList: false, // becomes true when a new person is pushed to the array, but user has yet to finalize its creation. becomes false once finalized
+          editPath: null,
+          returnPage: "",
+        },
       },
 
       newActivity: {
@@ -67,31 +74,44 @@ const aktivo = {
           people: [
             {
               name: "Turid",
-              born: '01.01.1970',
-              filter: [],
+              filters: ['40-60'],
             },
             {
               name: "Arne",
-              born: '01.01.1970',
-              filter: [],
+              filters: ['25-40'],
             },
             {
               name: "Rolf",
-              born: '01.01.1970',
-              filter: [],
+              filters: ['60+'],
+            },
+            {
+              name: "Karl",
+              filters: ['12-16'],
+            },
+            {
+              name: "Sofie",
+              filters: ['16-25'],
+            },
+            {
+              name: "Mats",
+              filters: ['6-12'],
+            },
+            {
+              name: "Ida",
+              filters: ['3-6'],
             },
           ],
           groups: [
             {
-              name: "Group1",
+              name: "Gruppe 1",
               members: ["Turid", "Arne"],
             },
             {
-              name: "Group2",
+              name: "Gruppe 2",
               members: ["Turid", "Rolf"],
             },
             {
-              name: "Group3",
+              name: "Gruppe 3",
               members: ["Arne", "Rolf"],
             },
           ],
