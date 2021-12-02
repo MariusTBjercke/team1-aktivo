@@ -258,6 +258,8 @@ function removeInputError(isErrorInList, errorList, errorIndex, input) {
 }
 
 function generateList(view, listContainer, search) {
+    const admGroup = aktivo.inputs.administer;
+    const admPerson = aktivo.inputs.administer.person;
     listContainer.innerHTML = '';
     let isGroups = view === 'groups';
     let list = isGroups ? addedGroups : addedPeople;
@@ -267,14 +269,14 @@ function generateList(view, listContainer, search) {
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         editBtn.onclick = function() {
             if (isGroups) {
-                aktivo.inputs.administer.edit = true;
-                aktivo.inputs.administer.editPath = x;
-                aktivo.inputs.administer.returnPageEdit = currentPage;
+                admGroup.edit = true;
+                admGroup.index = user.groups.findIndex(g => g.name === x.name);
+                admGroup.returnPageEdit = currentPage;
                 show('editGroup');
             } else {
-                aktivo.inputs.administer.person.edit = true;
-                aktivo.inputs.administer.person.editPath = x;
-                aktivo.inputs.administer.person.returnPage = currentPage;
+                admPerson.edit = true;
+                admPerson.index = user.people.findIndex(p => p.name === x.name);
+                admPerson.returnPage = currentPage;
                 show('newEditPerson');
             }
         };
@@ -298,6 +300,7 @@ function generateList(view, listContainer, search) {
 }
 
 function generateMemberList(listContainer) {
+    const admPerson = aktivo.inputs.administer.person;
     listContainer.innerHTML = '';
     let list = [];
     addedGroups.forEach(group => {
@@ -312,9 +315,9 @@ function generateMemberList(listContainer) {
             let itemContainer = cr('div', listContainer, 'class list-item');
             let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
             editBtn.onclick = function() {
-                aktivo.inputs.administer.person.edit = true;
-                aktivo.inputs.administer.person.editPath = user.people[user.people.findIndex(x => x.name === member.name)];
-                aktivo.inputs.administer.person.returnPage = currentPage;
+                admPerson.edit = true;
+                admPerson.index = user.people.findIndex(x => x.name === member.name);
+                admPerson.returnPage = currentPage;
                 show('newEditPerson');
             }
             let item = cr('div', itemContainer, 'class item', member.name);
@@ -328,6 +331,8 @@ function generateMemberList(listContainer) {
 }
 
 function generateAdminList(view, listContainer, search) {
+    const admGroup = aktivo.inputs.administer;
+    const admPerson = aktivo.inputs.administer.person;
     listContainer.innerHTML = '';
     let isGroups = view === 'groups';
     let dataList = isGroups ? user.groups : user.people;
@@ -336,14 +341,14 @@ function generateAdminList(view, listContainer, search) {
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         editBtn.onclick = function() {
             if (isGroups) {
-                aktivo.inputs.administer.edit = true;
-                aktivo.inputs.administer.editPath = x;
-                aktivo.inputs.administer.returnPageEdit = currentPage;
+                admGroup.edit = true;
+                admGroup.index = user.groups.findIndex(g => g.name === x.name);
+                admGroup.returnPageEdit = currentPage;
                 show('editGroup');
             } else {
-                aktivo.inputs.administer.person.edit = true;
-                aktivo.inputs.administer.person.editPath = x;
-                aktivo.inputs.administer.person.returnPage = currentPage;
+                admPerson.edit = true;
+                admPerson.index = user.people.findIndex(p => p.name === x.name);
+                admPerson.returnPage = currentPage;
                 show('newEditPerson');
             }
         };
@@ -353,6 +358,7 @@ function generateAdminList(view, listContainer, search) {
             itemContainer.parentElement.removeChild(itemContainer);
             dataList.splice(dataList.findIndex(y => y.name === x.name), 1);
             if (!isGroups) {
+                // deleting person from all groups they are in:       !!!!!!  can be used for editing people's name in groups they are in when their names are edited  !!!!!!
                 user.groups.forEach(group => {
                     let index = group.members.findIndex(name => name === x.name);
                     if (index > -1) group.members.splice(index, 1);
@@ -363,23 +369,24 @@ function generateAdminList(view, listContainer, search) {
 }
 
 function generatePeopleList(listContainer, search) {
+    const admGroup = aktivo.inputs.administer;
+    const admPerson = aktivo.inputs.administer.person;
     listContainer.innerHTML = '';
-    let group;
-    if (!aktivo.inputs.administer.edit && !aktivo.inputs.administer.addedToList) {
-        group = {name:'',members:[]};
-        user.groups.push(group);
-        aktivo.inputs.administer.addedToList = true;
-        aktivo.inputs.administer.editPath = group;
-    } else group = aktivo.inputs.administer.editPath;
+    if (!admGroup.edit && !admGroup.addedToList) {
+        user.groups.push({name:'',members:[]});
+        admGroup.addedToList = true;
+        admGroup.index = user.groups.length-1;
+    }
+    const group = user.groups[admGroup.index];
 
     let dataList = user.people;
     dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) && group.members.findIndex(name => name === x.name) === -1).forEach(y => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         editBtn.onclick = function() {
-            aktivo.inputs.administer.person.edit = true;
-            aktivo.inputs.administer.person.editPath = y;
-            aktivo.inputs.administer.person.returnPage = currentPage;
+            admPerson.edit = true;
+            admPerson.index = user.people.findIndex(p => p.name === y.name);
+            admPerson.returnPage = currentPage;
             show('newEditPerson');
         }
         let item = cr('div', itemContainer, 'class item', y.name);
@@ -393,15 +400,16 @@ function generatePeopleList(listContainer, search) {
 
 function generateEditGroupList(listContainer) {
     listContainer.innerHTML = '';
-    let group =  aktivo.inputs.administer.editPath;
+    const admPerson = aktivo.inputs.administer.person;
+    let group =  user.groups[aktivo.inputs.administer.index];
 
     group.members.forEach(person => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         editBtn.onclick = function() {
-            aktivo.inputs.administer.person.edit = true;
-            aktivo.inputs.administer.person.editPath = user.people[user.people.findIndex(x => x.name === person)];
-            aktivo.inputs.administer.person.returnPage = currentPage;
+            admPerson.edit = true;
+            admPerson.index = user.people.findIndex(x => x.name === person);
+            admPerson.returnPage = currentPage;
             show('newEditPerson');
         }
         let item = cr('div', itemContainer, 'class item', person);
@@ -414,26 +422,20 @@ function generateEditGroupList(listContainer) {
 }
 
 function createEditPerson(nameInput, ageGroupInput) { // add inputs as parameters..
-    let person;
-    console.log(aktivo.inputs.administer.person.edit, aktivo.inputs.administer.person.addedToList);
-    if (!aktivo.inputs.administer.person.edit && !aktivo.inputs.administer.person.addedToList) { // if (!aktivo.inputs.administer.person.edit && !aktivo.inputs.administer.person.addedToList) {
-        person = {name:'',filters:['']};
-        user.people.push(person);
-        aktivo.inputs.administer.person.addedToList = true;
-        aktivo.inputs.administer.person.editPath = person;
-    } else person = aktivo.inputs.administer.person.editPath;
+    const admPerson = aktivo.inputs.administer.person;
+    const person = user.people[admPerson.index];
 
-    // if (aktivo.inputs.administer.person.edit && !aktivo.inputs.administer.person.cloned) {
-    //     aktivo.inputs.administer.person.clone = [...person];
-    //     aktivo.inputs.administer.person.cloned = true;
+    // if (admPerson.edit && !admPerson.cloned) {
+    //     admPerson.clone = [...person];
+    //     admPerson.cloned = true;
     // }
 
     
-    // step 1 change editPaths to user the index in user.groups or user.people
-    // step 2 - make clone
-    //     if (aktivo.inputs.administer.person.returnPage === 'newActivityMembers') {
+    // step 1 - make clone
+    // editing a person must update that person's name in groups they're in.
+    //     if (admPerson.returnPage === 'newActivityMembers') {
     //     };
-    //     if (aktivo.inputs.administer.person.returnPage === 'editGroup') {
+    //     if (admPerson.returnPage === 'editGroup') {
     //     };
 
 

@@ -13,14 +13,14 @@ const aktivo = {
       administer: {
         edit: false,  // if true the group's path is editPath, if false new group is created.
         addedToList: false, // becomes true when a new group is pushed to the array, but user has yet to finalize its creation. becomes false once finalized
-        editPath: null,
+        index: 0,
         returnPageNew: "",
         returnPageEdit: "",
 
         person: {
           edit: false,  // if true the person's path is editPath, if false new person is created.
           addedToList: false, // becomes true when a new person is pushed to the array, but user has yet to finalize its creation. becomes false once finalized
-          editPath: null,
+          index: 0,
           returnPage: "",
         },
       },

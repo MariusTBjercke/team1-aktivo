@@ -304,21 +304,22 @@ function showArchive() {}
 
 // create/edit group
 function showNewGroup() {
-    header(aktivo.inputs.administer.edit?'Rediger gruppe':'Ny gruppe');
+    const admGroup = aktivo.inputs.administer;
+    header(admGroup.edit?'Rediger gruppe':'Ny gruppe');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container new-group list-page');
-    let back = cr('div', container, 'class btn top-element', aktivo.inputs.administer.edit?'Medlemsliste':'Tilbake');
+    let back = cr('div', container, 'class btn top-element', admGroup.edit?'Medlemsliste':'Tilbake');
     back.onclick = function() {
-        if (!aktivo.inputs.administer.edit) {
+        if (!admGroup.edit) {
             user.groups.splice(user.groups.length-1, 1);
-            aktivo.inputs.administer.addedToList = false;
-            show(aktivo.inputs.administer.returnPageNew);
-            aktivo.inputs.administer.returnPageNew = '';
+            admGroup.addedToList = false;
+            show(admGroup.returnPageNew);
+            admGroup.returnPageNew = '';
         } else show('editGroup');
     }
     let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> Ny person');
     newBtn.onclick = function() {
-        aktivo.inputs.administer.person.returnPage = currentPage;
+        admGroup.person.returnPage = currentPage;
         show('newEditPerson');
     };
     let search = cr('input',container, 'type text, class search, placeholder Søk i personer');
@@ -327,12 +328,12 @@ function showNewGroup() {
     });
     let directions = cr('span', container, 'class sub-title', 'Legg til medlemmer:');
     let listContainer = cr('div', container, 'class list-container');
-    let next = cr('div', container, 'class btn', aktivo.inputs.administer.edit ? 'Lagre' : 'Neste');
+    let next = cr('div', container, 'class btn', admGroup.edit ? 'Lagre' : 'Neste');
     next.onclick = function() {
-        if (aktivo.inputs.administer.edit) {
-            show(aktivo.inputs.administer.returnPageEdit);
-            aktivo.inputs.administer.edit = false;
-            aktivo.inputs.administer.returnPageEdit = '';
+        if (admGroup.edit) {
+            show(admGroup.returnPageEdit);
+            admGroup.edit = false;
+            admGroup.returnPageEdit = '';
         }
         else if (user.groups[user.groups.length-1].members.length > 0) show('editGroup');
     }
@@ -340,41 +341,43 @@ function showNewGroup() {
 }
 
 function showEditGroup() {
-    header(aktivo.inputs.administer.edit?'Rediger gruppe':'Ny gruppe');
+    const admGroup = aktivo.inputs.administer;
+    const group = user.groups[admGroup.index];
+    header(admGroup.edit?'Rediger gruppe':'Ny gruppe');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container edit-group list-page');
-    let back = cr('div', container, 'class btn top-element', aktivo.inputs.administer.edit?'<i class="fa fa-plus"></i> Medlemmer':'Tilbake');
+    let back = cr('div', container, 'class btn top-element', admGroup.edit?'<i class="fa fa-plus"></i> Medlemmer':'Tilbake');
     back.onclick = function() {show('newGroup')};
     let nameInput = cr('input',container, 'type text, class search, placeholder Navn på gruppen');
-    nameInput.value = aktivo.inputs.administer.editPath.name;
+    nameInput.value = group.name;
     nameInput.addEventListener('input', function() {
-        aktivo.inputs.administer.editPath.name = nameInput.value;
+        group.name = nameInput.value;
     });
     let directions = cr('span', container, 'class sub-title', 'Medlemsliste:');
     let listContainer = cr('div', container, 'class list-container');
     let save = cr('div', container, 'class btn', 'Lagre');
     save.onclick = function() {
-        if ((aktivo.inputs.administer.edit || aktivo.inputs.administer.editPath.members.length > 0) && aktivo.inputs.administer.editPath.name !== '') {
-            aktivo.inputs.administer.addedToList = false;
-            if (aktivo.inputs.administer.edit) {
-                show(aktivo.inputs.administer.returnPageEdit);
-                aktivo.inputs.administer.edit = false;
-                aktivo.inputs.administer.returnPageEdit = '';
+        if ((admGroup.edit || group.members.length > 0) && group.name !== '') {
+            admGroup.addedToList = false;
+            if (admGroup.edit) {
+                show(admGroup.returnPageEdit);
+                admGroup.edit = false;
+                admGroup.returnPageEdit = '';
             } else {
-                if (aktivo.inputs.administer.returnPageNew === 'newactivitygroups') {
-                    aktivo.inputs.newActivity.chosenGroups.push({name: aktivo.inputs.administer.editPath.name});
-                    aktivo.inputs.administer.editPath.members.forEach(name =>  {
+                if (admGroup.returnPageNew === 'newactivitygroups') {
+                    aktivo.inputs.newActivity.chosenGroups.push({name: group.name});
+                    group.members.forEach(name =>  {
                         if (aktivo.inputs.newActivity.chosenPeople.findIndex(m => m.name === name) === -1) {
                             aktivo.inputs.newActivity.chosenPeople.push({
                                 name: name,
-                                from: aktivo.inputs.administer.editPath.name
+                                from: group.name
                             });
                         }
                     });
                 }
-                show(aktivo.inputs.administer.returnPageNew);
-                aktivo.inputs.administer.addedToList = false;
-                aktivo.inputs.administer.returnPageNew = '';
+                show(admGroup.returnPageNew);
+                admGroup.addedToList = false;
+                admGroup.returnPageNew = '';
             }
         }
     }
@@ -382,22 +385,29 @@ function showEditGroup() {
 }
 
 function showNewEditPerson() {
-    header(aktivo.inputs.administer.edit ? 'Rediger person' : 'Ny person');
+    const admPerson = aktivo.inputs.administer.person;
+    if (!admPerson.edit && !admPerson.addedToList) {
+        user.people.push({name:'',filters:['']});
+        admPerson.addedToList = true;
+        admPerson.index = user.people.length-1;
+    }
+    const person = user.people[admPerson.index];
+    header(admPerson.edit ? 'Rediger person' : 'Ny person');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container new-person list-page');
     let back = cr('div', container, 'class btn top-element', 'Tilbake');
     back.onclick = function() { // make into a cancel function which is also run when loging out..
-        if (!aktivo.inputs.administer.person.edit) {
+        if (!admPerson.edit) {
             user.people.splice(user.people.length-1, 1);
-            aktivo.inputs.administer.person.addedToList = false;
+            admPerson.addedToList = false;
         }
         else {
-            aktivo.inputs.administer.person.edit = false;
-            // aktivo.inputs.administer.person.editPath.name = aktivo.inputs.administer.person.clone.name;
-            // aktivo.inputs.administer.person.editPath.filters = [...aktivo.inputs.administer.person.clone.filters];
+            admPerson.edit = false;
+            // person.name = admPerson.clone.name;
+            // person.filters = [...admPerson.clone.filters];
         }
-        show(aktivo.inputs.administer.person.returnPage);
-        aktivo.inputs.administer.person.returnPage = '';
+        show(admPerson.returnPage);
+        admPerson.returnPage = '';
     }
     let nameInput = cr('input', container, 'type text, placeholder Navn på personen');
     let ageGroupInput = cr('input', container, 'type text, placeholder Aldersgruppe');
@@ -407,17 +417,28 @@ function showNewEditPerson() {
     }
     let save = cr('div', container, 'class btn', 'Lagre');
     save.onclick = function() {
-        if ((aktivo.inputs.administer.person.edit || aktivo.inputs.administer.person.editPath.filters.length > 0) && aktivo.inputs.administer.person.editPath.name !== '') {
-            aktivo.inputs.administer.person.addedToList = false;
-            if (!aktivo.inputs.administer.person.edit && aktivo.inputs.administer.person.returnPage === 'newGroup') {
-                aktivo.inputs.administer.editPath.members.push(aktivo.inputs.administer.person.editPath.name);
+        if ((admPerson.edit || person.filters.length > 0) && person.name !== '') {
+            admPerson.addedToList = false;
+            if (admPerson.returnPage === 'newactivitypeople') {
+                const activityMembers = aktivo.inputs.newActivity.chosenPeople;
+                if (!admPerson.edit) {
+                    activityMembers.push({name: person.name});
+                } else {
+                    // activityMembers[activityMembers.findIndex(x => x.name === person.clone.name)].name = person.name;
+                }
             }
-            if (!aktivo.inputs.administer.person.edit && aktivo.inputs.administer.person.returnPage === 'newactivitypeople') {
-                aktivo.inputs.newActivity.chosenPeople.push({name: aktivo.inputs.administer.person.editPath.name});
+            if (admPerson.returnPage === 'newGroup') {
+                const groupMembers = user.groups[aktivo.inputs.administer.index].members;
+                if (!admPerson.edit) {
+                    groupMembers.push(person.name);
+                } else {
+                    // groupMembers[groupMembers.findIndex(x => x.name === person.clone.name)].name = person.name;
+                }
             }
-            show(aktivo.inputs.administer.person.returnPage);
-            aktivo.inputs.administer.person.edit = false;
-            aktivo.inputs.administer.person.returnPage = '';
+            
+            show(admPerson.returnPage);
+            admPerson.edit = false;
+            admPerson.returnPage = '';
         }
     }
     createEditPerson(nameInput, ageGroupInput);
