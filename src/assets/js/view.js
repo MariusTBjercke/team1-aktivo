@@ -1,5 +1,5 @@
 import { aktivo } from "./model";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, createEditPerson } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, addToTemp } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -250,7 +250,7 @@ function showNewActivity(view) {
     let newBtn = cr('div', btnContainer, 'class btn', '<i class="fa fa-plus"></i> ' + btn1);
     newBtn.onclick = function() {
         if (view === 'groups') {
-            aktivo.inputs.administer.returnPageNew = currentPage;
+            aktivo.inputs.administer.group.returnPage = currentPage;
             show('newGroup');
         }
         else {
@@ -270,7 +270,10 @@ function showNewActivity(view) {
     let listContainer = cr('div', container, 'class list-container');
     let next = cr('div', container, 'class btn', 'Neste');
     next.onclick = function() {
-        if (addedGroups.length !== 0 || addedPeople.length !== 0) show('newActivityMembers'); // could be a controller function that gives an error-message.
+        if (addedGroups.length !== 0 || addedPeople.length !== 0) {
+            aktivo.inputs.newActivity.returnPage = currentPage;
+            show('newActivityMembers');
+        }
     }
     generateList(view, listContainer, search);
 }
@@ -281,7 +284,7 @@ function showNewActivityMembers() {
     let container = cr('div', wrapper, 'class container new-activity-members list-page');
     let back = cr('div', container, 'class btn top-element', 'Tilbake');
     back.onclick = function() {
-        show("newactivitygroups"); // should be changed to remember if last page was groups or people..
+        show(aktivo.inputs.newActivity.returnPage);
     }
     let directions = cr('span', container, 'class sub-title', 'Medlemsliste:');
     let listContainer = cr('div', container, 'class list-container');
@@ -304,22 +307,22 @@ function showArchive() {}
 
 // create/edit group
 function showNewGroup() {
-    const admGroup = aktivo.inputs.administer;
+    addToTemp('group');
+    const admGroup = aktivo.inputs.administer.group;
     header(admGroup.edit?'Rediger gruppe':'Ny gruppe');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container new-group list-page');
-    let back = cr('div', container, 'class btn top-element', admGroup.edit?'Medlemsliste':'Tilbake');
+    let back = cr('div', container, 'class btn top-element', admGroup.edit?'Medlemsliste':'Avbryt');
     back.onclick = function() {
         if (!admGroup.edit) {
-            user.groups.splice(user.groups.length-1, 1);
-            admGroup.addedToList = false;
-            show(admGroup.returnPageNew);
-            admGroup.returnPageNew = '';
+            admGroup.addedToTemp = false;
+            show(admGroup.returnPage);
+            admGroup.returnPage = '';
         } else show('editGroup');
     }
     let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> Ny person');
     newBtn.onclick = function() {
-        admGroup.person.returnPage = currentPage;
+        aktivo.inputs.administer.person.returnPage = currentPage;
         show('newEditPerson');
     };
     let search = cr('input',container, 'type text, class search, placeholder Søk i personer');
@@ -328,26 +331,50 @@ function showNewGroup() {
     });
     let directions = cr('span', container, 'class sub-title', 'Legg til medlemmer:');
     let listContainer = cr('div', container, 'class list-container');
-    let next = cr('div', container, 'class btn', admGroup.edit ? 'Lagre' : 'Neste');
-    next.onclick = function() {
-        if (admGroup.edit) {
-            show(admGroup.returnPageEdit);
-            admGroup.edit = false;
-            admGroup.returnPageEdit = '';
+
+    if (!admGroup.edit) {
+        let next = cr('div', container, 'class btn', 'Neste');
+        next.onclick = function() {
+            const group = admGroup.temp;
+            if (!admGroup.edit && group.members.length > 0) show('editGroup');
         }
-        else if (user.groups[user.groups.length-1].members.length > 0) show('editGroup');
+    }
+    else {
+        let btnContainer = cr('div', container, 'class btn-container');
+        let cancel = cr('div', btnContainer, 'class btn', 'Avbryt');
+        let save = cr('div', btnContainer, 'class btn', 'Lagre');
+        cancel.onclick = function() {
+            admGroup.edit = false;
+            admGroup.addedToTemp = false;
+            show(admGroup.returnPage);
+            admGroup.returnPage = '';
+        }
+        save.onclick = function() {
+            const group = admGroup.temp;
+            if (group.members.length > 0 && group.name !== '') { // save group function (use the other one)..
+                let gnIndex = user.groups.findIndex(x => x.name === group.name);
+                if (gnIndex < 0 || gnIndex === admGroup.index) {
+                    user.groups[admGroup.index] = {...group};
+                    admGroup.edit = false;
+                    admGroup.addedToTemp = false;
+                    show(admGroup.returnPage);
+                    admGroup.returnPage = '';
+                }
+            }
+        }
     }
     generatePeopleList(listContainer, search);
 }
 
 function showEditGroup() {
-    const admGroup = aktivo.inputs.administer;
-    const group = user.groups[admGroup.index];
+    addToTemp('group');
+    const admGroup = aktivo.inputs.administer.group;
+    const group = admGroup.temp;
     header(admGroup.edit?'Rediger gruppe':'Ny gruppe');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container edit-group list-page');
     let back = cr('div', container, 'class btn top-element', admGroup.edit?'<i class="fa fa-plus"></i> Medlemmer':'Tilbake');
-    back.onclick = function() {show('newGroup')};
+    back.onclick = function() {show('newGroup');}
     let nameInput = cr('input',container, 'type text, class search, placeholder Navn på gruppen');
     nameInput.value = group.name;
     nameInput.addEventListener('input', function() {
@@ -355,29 +382,45 @@ function showEditGroup() {
     });
     let directions = cr('span', container, 'class sub-title', 'Medlemsliste:');
     let listContainer = cr('div', container, 'class list-container');
-    let save = cr('div', container, 'class btn', 'Lagre');
+
+    let save;
+    let cancel;
+    if (!admGroup.edit) save = cr('div', container, 'class btn', 'Lagre');
+    else {
+        let btnContainer = cr('div', container, 'class btn-container');
+        cancel = cr('div', btnContainer, 'class btn', 'Avbryt');
+        save = cr('div', btnContainer, 'class btn', 'Lagre');
+        cancel.onclick = function() {
+            admGroup.edit = false;
+            admGroup.addedToTemp = false;
+            show(admGroup.returnPage);
+            admGroup.returnPage = '';
+        }
+    }
     save.onclick = function() {
-        if ((admGroup.edit || group.members.length > 0) && group.name !== '') {
-            admGroup.addedToList = false;
-            if (admGroup.edit) {
-                show(admGroup.returnPageEdit);
-                admGroup.edit = false;
-                admGroup.returnPageEdit = '';
-            } else {
-                if (admGroup.returnPageNew === 'newactivitygroups') {
-                    aktivo.inputs.newActivity.chosenGroups.push({name: group.name});
-                    group.members.forEach(name =>  {
-                        if (aktivo.inputs.newActivity.chosenPeople.findIndex(m => m.name === name) === -1) {
-                            aktivo.inputs.newActivity.chosenPeople.push({
-                                name: name,
-                                from: group.name
-                            });
-                        }
-                    });
+        if (group.members.length > 0 && group.name !== '') { // save group function..
+            let gnIndex = user.groups.findIndex(x => x.name === group.name);
+            if (gnIndex < 0 || (admGroup.edit && gnIndex === admGroup.index)) {
+                admGroup.addedToTemp = false;
+                if (admGroup.edit) {
+                    user.groups[admGroup.index] = {...group};
+                    show(admGroup.returnPage);
+                    admGroup.returnPage = '';
+                    admGroup.edit = false;
                 }
-                show(admGroup.returnPageNew);
-                admGroup.addedToList = false;
-                admGroup.returnPageNew = '';
+                else {
+                    if (admGroup.returnPage === 'newactivitygroups') {
+                        const activityGroups = aktivo.inputs.newActivity.chosenGroups;
+                        const activityMembers = aktivo.inputs.newActivity.chosenPeople;
+                        activityGroups.push({name: group.name});
+                        group.members.forEach(p => {
+                            activityMembers.push({name: p, from: group.name});
+                        });
+                    }
+                    user.groups.push(group);
+                    show(admGroup.returnPage);
+                    admGroup.returnPage = '';
+                }
             }
         }
     }
@@ -385,63 +428,66 @@ function showEditGroup() {
 }
 
 function showNewEditPerson() {
+    addToTemp('person');
     const admPerson = aktivo.inputs.administer.person;
-    if (!admPerson.edit && !admPerson.addedToList) {
-        user.people.push({name:'',filters:['']});
-        admPerson.addedToList = true;
-        admPerson.index = user.people.length-1;
-    }
-    const person = user.people[admPerson.index];
+    const person = admPerson.temp;
+
     header(admPerson.edit ? 'Rediger person' : 'Ny person');
     let wrapper = cr('div', app, 'class wrapper');
     let container = cr('div', wrapper, 'class container new-person list-page');
-    let back = cr('div', container, 'class btn top-element', 'Tilbake');
-    back.onclick = function() { // make into a cancel function which is also run when loging out..
-        if (!admPerson.edit) {
-            user.people.splice(user.people.length-1, 1);
-            admPerson.addedToList = false;
-        }
-        else {
-            admPerson.edit = false;
-            // person.name = admPerson.clone.name;
-            // person.filters = [...admPerson.clone.filters];
-        }
+    let cancel = cr('div', container, 'class btn top-element', 'Avbryt');
+    cancel.onclick = function() {
+        admPerson.addedToTemp = false;
+        admPerson.edit = false;
         show(admPerson.returnPage);
         admPerson.returnPage = '';
     }
+
     let nameInput = cr('input', container, 'type text, placeholder Navn på personen');
     let ageGroupInput = cr('input', container, 'type text, placeholder Aldersgruppe');
+
+    if (admPerson.edit) {
+        nameInput.value = person.name;
+        ageGroupInput.value = person.filters[0]; // a checkbox for each age group..
+    }
+    nameInput.addEventListener('input', function() {
+        person.name = nameInput.value;
+    });
+    ageGroupInput.addEventListener('input', function() {
+        person.filters[0] = ageGroupInput.value;
+    });
+
     let filterBtn = cr('div', container, 'class btn', 'Filtre');
     filterBtn.onclick = function() {
         console.log('Make the filter-page!')
     }
+
     let save = cr('div', container, 'class btn', 'Lagre');
-    save.onclick = function() {
+    save.onclick = function() { // make into a save person function..
         if ((admPerson.edit || person.filters.length > 0) && person.name !== '') {
-            admPerson.addedToList = false;
-            if (admPerson.returnPage === 'newactivitypeople') {
+            if (admPerson.returnPage === 'newactivitypeople' || admPerson.returnPage === 'newActivityMembers') {
                 const activityMembers = aktivo.inputs.newActivity.chosenPeople;
-                if (!admPerson.edit) {
-                    activityMembers.push({name: person.name});
-                } else {
-                    // activityMembers[activityMembers.findIndex(x => x.name === person.clone.name)].name = person.name;
+                if (!admPerson.edit) activityMembers.push({name: person.name});                    
+                if (admPerson.returnPage === 'newActivityMembers') {
+                    activityMembers[activityMembers.findIndex(x => x.name === user.people[admPerson.index].name)].name = person.name;
                 }
             }
-            if (admPerson.returnPage === 'newGroup') {
-                const groupMembers = user.groups[aktivo.inputs.administer.index].members;
-                if (!admPerson.edit) {
-                    groupMembers.push(person.name);
-                } else {
-                    // groupMembers[groupMembers.findIndex(x => x.name === person.clone.name)].name = person.name;
+            if (admPerson.returnPage === 'newGroup' || admPerson.returnPage === 'editGroup') {
+                const groupMembers = aktivo.inputs.administer.group.temp.members;
+                if (!admPerson.edit) groupMembers.push(person.name);
+                if (admPerson.returnPage === 'editGroup') {
+                    groupMembers[groupMembers.findIndex(x => x === user.people[admPerson.index].name)] = person.name;
                 }
             }
-            
-            show(admPerson.returnPage);
+
+            if (admPerson.edit) user.people[admPerson.index] = {...admPerson.temp};
+            else user.people.push(admPerson.temp);
             admPerson.edit = false;
+            admPerson.addedToTemp = false;
+            show(admPerson.returnPage);
             admPerson.returnPage = '';
         }
     }
-    createEditPerson(nameInput, ageGroupInput);
 }
 
 function showNewPersonFilters() {}
@@ -475,7 +521,7 @@ function showAdminister(view) {
     let newBtn = cr('div', container, 'class btn', '<i class="fa fa-plus"></i> ' + btn);
     newBtn.onclick = function() {
         if (view === 'groups') {
-            aktivo.inputs.administer.returnPageNew = currentPage;
+            aktivo.inputs.administer.group.returnPage = currentPage;
             show('newGroup');
         }
         else {

@@ -11,23 +11,24 @@ const aktivo = {
       showNavBar: false,
 
       administer: {
-        edit: false,  // if true the group's path is editPath, if false new group is created.
-        addedToList: false, // becomes true when a new group is pushed to the array, but user has yet to finalize its creation. becomes false once finalized
-        index: 0,
-        returnPageNew: "",
-        returnPageEdit: "",
-
+        group: {
+          edit: false,
+          addedToTemp: false, // becomes true when temp is a new group.
+          index: 2,
+          returnPage: "",
+          temp: {},
+        },
         person: {
-          edit: false,  // if true the person's path is editPath, if false new person is created.
-          addedToList: false, // becomes true when a new person is pushed to the array, but user has yet to finalize its creation. becomes false once finalized
+          edit: false,
+          addedToTemp: false, // becomes true when temp is a new person.
           index: 0,
           returnPage: "",
+          temp: {},
         },
       },
 
       newActivity: {
-        groupSearch: "",
-        peopleSearch: "",
+        returnPage: '',
         chosenGroups: [],
         chosenPeople: [],
         filter: {
