@@ -75,6 +75,7 @@ function show(page, parameters) {
             showEditGroup();
             break;
 
+        // Development only
         case 'map':
             showMap();
         
@@ -475,7 +476,7 @@ function showEditGroup() {
                         const activityGroups = aktivo.inputs.newActivity.chosenGroups;
                         const activityMembers = aktivo.inputs.newActivity.chosenPeople;
                         activityGroups.push({name: group.name});
-                        group.members.forEach(p => {
+                        group.members.filter(m => activityMembers.findIndex(am => am.name === m) === -1).forEach(p => {
                             activityMembers.push({name: p, from: group.name});
                         });
                     }
@@ -542,7 +543,12 @@ function showNewEditPerson() {
                 }
             }
 
-            if (admPerson.edit) user.people[admPerson.index] = {...admPerson.temp};
+            if (admPerson.edit) {
+                user.groups.forEach(g => {
+                    g.members[g.members.findIndex(member => member === user.people[admPerson.index].name)] = person.name;
+                });
+                user.people[admPerson.index] = {...admPerson.temp};
+            }
             else user.people.push(admPerson.temp);
             admPerson.edit = false;
             admPerson.addedToTemp = false;

@@ -5,6 +5,26 @@ let user = aktivo.data.users[aktivo.data.users.findIndex(x => x.username === cur
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 // If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
+
+// Function to log aktivo.data.activities with the filters changed from string to an array with the original string as the first element, and a 0 as the second.
+// logActivities();
+// function logActivities() {
+//     let acitivities = [];
+//     aktivo.data.activities.forEach(activity => {
+//         let x = {
+//             name: activity.name,
+//             description: activity.description,
+//             filters: [],
+//             exfilters: activity.exfilters
+//           };
+//           let finale = [f, 0];
+//           activity.filters.forEach(f => {x.filters.push(finale)});
+//           asscitivities.push(x);
+//     });
+//     console.log(acitivities);
+// }
+
+
 function auth() {
     let pageAuth = false;
     aktivo.data.pages.forEach(page => {
@@ -308,7 +328,7 @@ function getSimpleActivityFilters(male, female) {
         obj.filters.push(x.age);
     });
 
-    obj.filters.push(total + ' personer');
+    obj.filters.push(total);
 
     if (male.checked) obj.filters.push('Kun menn');
     if (female.checked) obj.filters.push('Kun kvinner');
