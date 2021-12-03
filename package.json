@@ -4,7 +4,8 @@
   "description": "",
   "private": true,
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.4"
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "@googlemaps/js-api-loader": "^1.12.11"
   },
   "devDependencies": {
     "css-loader": "^6.5.1",

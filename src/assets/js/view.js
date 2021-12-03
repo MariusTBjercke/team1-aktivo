@@ -1,4 +1,5 @@
 import { aktivo } from "./model";
+import { loadGoogleMaps } from "./maps";
 import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
@@ -6,7 +7,7 @@ let currentUser = aktivo.app.currentUser;
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
-show("newActivitySimple");
+show("home");
 loadTheme();
 function show(page, parameters) {
     if (page) currentPage = page;
@@ -72,6 +73,10 @@ function show(page, parameters) {
     
         case 'editGroup':
             showEditGroup();
+            break;
+
+        case 'map':
+            showMap();
             break;
     
         default:
@@ -609,6 +614,22 @@ function cr(tagName, parent, attr, html) {
     }
     if (parent) parent.appendChild(element);
     return element;
+}
+
+// Page for development purposes only
+function showMap() {
+
+    header('Google Maps');
+
+    let container = cr('div', app, 'class container maps');
+
+    let map = cr('div', container, 'class map');
+
+    let mapMarkerContent = `<span>Sandefjord</span><p>Her finnes det et hav av aktiviteter.</p>`;
+
+    let position = { lat: 59.13461716996314, lng: 10.21596468687774 }
+    loadGoogleMaps(map, position, mapMarkerContent);
+
 }
 
 export { currentPage, currentUser, show, cr }

@@ -247,3 +247,22 @@ svg{
     }
 
 }
+
+.map {
+    width: 80%;
+    height: 40%;
+
+    .content {
+        display: grid;
+        justify-content: center;
+        padding: 5px 25px 15px 10px;
+
+        p {
+            margin: 3px 0;
+        }
+
+        span {
+            font-weight: bold;
+        }
+    }
+}
