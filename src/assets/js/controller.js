@@ -341,6 +341,8 @@ function decreaseCounter(counter) {
 }
 
 function generateList(view, listContainer, search) {
+    const admGroup = aktivo.inputs.administer.group;
+    const admPerson = aktivo.inputs.administer.person;
     listContainer.innerHTML = '';
     let isGroups = view === 'groups';
     let list = isGroups ? addedGroups : addedPeople;
@@ -349,10 +351,17 @@ function generateList(view, listContainer, search) {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         editBtn.onclick = function() {
-            aktivo.inputs.administer.edit = true;
-            aktivo.inputs.administer.editPath = x;
-            aktivo.inputs.administer.returnPageEdit = currentPage;
-            show('editGroup');
+            if (isGroups) {
+                admGroup.edit = true;
+                admGroup.index = user.groups.findIndex(g => g.name === x.name);
+                admGroup.returnPage = currentPage;
+                show('editGroup');
+            } else {
+                admPerson.edit = true;
+                admPerson.index = user.people.findIndex(p => p.name === x.name);
+                admPerson.returnPage = currentPage;
+                show('newEditPerson');
+            }
         };
         let item = cr('div', itemContainer, 'class item', x.name);
         let add = cr('div', itemContainer, 'class add-btn', '<i class="fas fa-plus"></i>');
@@ -374,19 +383,26 @@ function generateList(view, listContainer, search) {
 }
 
 function generateMemberList(listContainer) {
+    const admPerson = aktivo.inputs.administer.person;
     listContainer.innerHTML = '';
     let list = [];
     addedGroups.forEach(group => {
         list.push({name: group.name, members: addedPeople.filter(person => person.from === group.name)});
     });
-    list.push({name: 'Personer', members: addedPeople.filter(person => !person.from)});
+    list.push({name: '', members: addedPeople.filter(person => !person.from)});
     let filteredList = list.filter(x => x.members.length > 0);
 
     filteredList.forEach(x => {
-        if (filteredList.length > 1) cr('span', listContainer, '', 'Fra ' + x.name + ':');
+        if (filteredList.length > 1) cr('span', listContainer, `class origin-desc ${x.name === filteredList[0].name ? 'first-desc' : ''}` , x.name === '' ? 'Andre:' : 'Fra ' + x.name + ':');
         x.members.forEach(member => {
             let itemContainer = cr('div', listContainer, 'class list-item');
             let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+            editBtn.onclick = function() {
+                admPerson.edit = true;
+                admPerson.index = user.people.findIndex(x => x.name === member.name);
+                admPerson.returnPage = currentPage;
+                show('newEditPerson');
+            }
             let item = cr('div', itemContainer, 'class item', member.name);
             let deleteBtn = cr('div', itemContainer, 'class delete-btn', '<span>✕</span>')
             deleteBtn.onclick = function() {
@@ -398,6 +414,8 @@ function generateMemberList(listContainer) {
 }
 
 function generateAdminList(view, listContainer, search) {
+    const admGroup = aktivo.inputs.administer.group;
+    const admPerson = aktivo.inputs.administer.person;
     listContainer.innerHTML = '';
     let isGroups = view === 'groups';
     let dataList = isGroups ? user.groups : user.people;
@@ -405,12 +423,17 @@ function generateAdminList(view, listContainer, search) {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
         editBtn.onclick = function() {
-            aktivo.inputs.administer.edit = true;
             if (isGroups) {
-                aktivo.inputs.administer.editPath = x;
-                aktivo.inputs.administer.returnPageEdit = currentPage;
+                admGroup.edit = true;
+                admGroup.index = user.groups.findIndex(g => g.name === x.name);
+                admGroup.returnPage = currentPage;
                 show('editGroup');
-            } else console.log('edit (person): ' + x.name);
+            } else {
+                admPerson.edit = true;
+                admPerson.index = user.people.findIndex(p => p.name === x.name);
+                admPerson.returnPage = currentPage;
+                show('newEditPerson');
+            }
         };
         let item = cr('div', itemContainer, 'class item', x.name);
         let deleteBtn = cr('div', itemContainer, 'class delete-btn', '<i class="far fa-trash-alt"></i>')
@@ -418,6 +441,7 @@ function generateAdminList(view, listContainer, search) {
             itemContainer.parentElement.removeChild(itemContainer);
             dataList.splice(dataList.findIndex(y => y.name === x.name), 1);
             if (!isGroups) {
+                // deleting person from all groups they are in:
                 user.groups.forEach(group => {
                     let index = group.members.findIndex(name => name === x.name);
                     if (index > -1) group.members.splice(index, 1);
@@ -428,35 +452,46 @@ function generateAdminList(view, listContainer, search) {
 }
 
 function generatePeopleList(listContainer, search) {
+    console.log(aktivo.inputs.administer);
+    const admGroup = aktivo.inputs.administer.group;
+    const admPerson = aktivo.inputs.administer.person;
+    const group = admGroup.temp;
     listContainer.innerHTML = '';
-    let group;
-    if (!aktivo.inputs.administer.edit && !aktivo.inputs.administer.addedToList) {
-        group = {name:'',members:[]};
-        user.groups.push(group);
-        aktivo.inputs.administer.addedToList = true;
-        aktivo.inputs.administer.editPath = group;
-    } else group = aktivo.inputs.administer.editPath;
 
     let dataList = user.people;
-    dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) && group.members.findIndex(name => name === x.name) === -1).forEach(x => {
+    dataList.filter(x => (x.name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) && group.members.findIndex(name => name === x.name) === -1).forEach(y => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
-        let item = cr('div', itemContainer, 'class item', x.name);
+        editBtn.onclick = function() {
+            admPerson.edit = true;
+            admPerson.index = user.people.findIndex(p => p.name === y.name);
+            admPerson.returnPage = currentPage;
+            show('newEditPerson');
+        }
+        let item = cr('div', itemContainer, 'class item', y.name);
         let add = cr('div', itemContainer, 'class add-btn', '<i class="fas fa-plus"></i>');
         add.onclick = function() {
-            group.members.push(x.name);
+            group.members.push(y.name);
             itemContainer.parentElement.removeChild(itemContainer);
         };
     });
 }
 
 function generateEditGroupList(listContainer) {
+    const admGroup = aktivo.inputs.administer.group;
+    const admPerson = aktivo.inputs.administer.person;
+    const group = admGroup.temp;
     listContainer.innerHTML = '';
-    let group =  aktivo.inputs.administer.editPath;
 
     group.members.forEach(person => {
         let itemContainer = cr('div', listContainer, 'class list-item');
         let editBtn = cr('div', itemContainer, 'class edit-btn', '<i class="far fa-edit"></i>');
+        editBtn.onclick = function() {
+            admPerson.edit = true;
+            admPerson.index = user.people.findIndex(x => x.name === person);
+            admPerson.returnPage = currentPage;
+            show('newEditPerson');
+        }
         let item = cr('div', itemContainer, 'class item', person);
         let deleteBtn = cr('div', itemContainer, 'class delete-btn', '<span>✕</span>');
         deleteBtn.onclick = function() {
@@ -466,13 +501,23 @@ function generateEditGroupList(listContainer) {
     });
 }
 
-function addGroup() {
-    let group = aktivo.inputs.editGroup.group;
-    if (nameInput.value === '' || group.members.length === 0) {
-        console.log('Missing a group name or members!');
-        return;
+function addToTemp(type) {
+    if (type === 'person') {
+        const admPerson = aktivo.inputs.administer.person;
+        if (!admPerson.addedToTemp) {
+            if (!admPerson.edit) admPerson.temp = {name:'',filters:['']};
+            else admPerson.temp = {...user.people[admPerson.index]};
+            admPerson.addedToTemp = true;
+        }
     }
-
+    if (type === 'group') {
+        const admGroup = aktivo.inputs.administer.group;
+        if (!admGroup.addedToTemp) {
+            if (!admGroup.edit) admGroup.temp = {name:'',members:[]};
+            else admGroup.temp = {...user.groups[admGroup.index]};
+            admGroup.addedToTemp = true;
+        }
+    }
 }
 
 function toggleNav() {
@@ -619,4 +664,4 @@ function resetAgeGroupForm() {
     show('newActivitySimple');
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm }
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp }

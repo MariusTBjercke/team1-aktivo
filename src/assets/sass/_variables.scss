@@ -27,8 +27,9 @@ $header-height: 47px;
     --checkmark-bg-color: #a0a0a0;
     --main-border-color: rgb(118, 118, 118);
     --list-container-bg-color: white;
-    --placeholder-font-color: var(--btn-color);
+    --placeholder-font-color: #a0a0a0;
     --logo-background: url('../img/aktivo-logo-light.svg');
+    --origin-desc-font-color: #333;
 }
 
 .theme-dark {
@@ -52,4 +53,5 @@ $header-height: 47px;
     --list-container-bg-color: var(--input-bg-color);
     --placeholder-font-color: #a0a0a0;
     --logo-background: url('../img/aktivo-logo-dark.svg');
+    --origin-desc-font-color: #bbb;
 }

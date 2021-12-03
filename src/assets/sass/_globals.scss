@@ -121,6 +121,16 @@ input {
     border-radius: 1px;
     overflow-y: scroll;
 
+    .origin-desc {
+        padding-bottom: 2px; 
+        color: var(--origin-desc-font-color);
+        font-size: 12px;
+    }
+
+    .first-desc {
+        padding-top: 12px;
+    }
+
     .list-item {
         margin-bottom: 20px;
         width: 100%;
@@ -177,9 +187,10 @@ input {
     margin-top: $container-margin-top;
     margin-bottom: $container-margin-bottom;
     color: var(--container-font-color);
+    max-height: 477px;
 }
 
-svg{
+svg {
     filter: var(--filter-drop-shadow);
 }
 
