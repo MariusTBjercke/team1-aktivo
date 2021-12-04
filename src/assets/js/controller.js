@@ -19,10 +19,43 @@ let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 //           };
 //           let finale = [f, 0];
 //           activity.filters.forEach(f => {x.filters.push(finale)});
-//           asscitivities.push(x);
+//           acitivities.push(x);
 //     });
 //     console.log(acitivities);
 // }
+
+function suggestActivities() {
+    const allFilters = aktivo.data.filters; // all the filters in the database.
+    const selectedFilters; // the list of all the filters that apply to this instance.     ...UNFINISHED TASK...
+    const activities = aktivo.data.activities;
+    const includedActivities = activities.filter(activity => activity.exfilters.filter(xfltr => selectedFilters.includes(xfltr)).length === 0);
+    const suggestedActivities = [];
+    // calculating the strength of every included activity before adding it to suggestedActivities:
+    includedActivities.forEach(activity => {
+        let str = 0;
+        let matchingFilters = activity.filters.filter(fltr => selectedFilters.includes(fltr[0]));
+        // sorting the matching filters such that filters with greater strength come first:
+        matchingFilters.sort(function(a, b){return b[1] - a[1]});
+        // .....let str = matchingFilters.map(x => x[1]); if you want an array of the strengths.....
+        matchingFilters.forEach((x, i, m) => { // m is short for matchingFilters.
+            str += x[1];
+            m.slice(i+1).forEach((y, j) => { 
+                let overlapfilters = allFilters[allFilters.findIndex(f => f.name === x[0])].overlap;
+                let yIndex = overlapfilters.findIndex(ovrlp => ovrlp[0] === y[0]);
+                if (yIndex !== -1) {
+                    let overlap = overlapfilters[yIndex][1];
+                    m[i+1+j][1] *= (1-overlap);  // index in m is i+1+j. (example i=0 + 1 + j=0 means index is 1) or (i=2 + 1 + j=2 means index is 5)
+                }
+            });
+        });
+        suggestedActivities.push({
+            name: activity.name,
+            description: activity.description,
+            strength: str,
+        })
+    });
+    suggestedActivities.sort(function(a, b){return b.strength - a.strength}); // must export...duh...
+}
 
 
 function auth() {
@@ -684,4 +717,4 @@ function resetAgeGroupForm() {
     show('newActivitySimple');
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp }
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, suggestActivities }

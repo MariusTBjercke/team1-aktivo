@@ -1,6 +1,6 @@
 import { aktivo } from "./model";
 import { loadGoogleMaps } from "./maps";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, suggestActivities } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
@@ -302,7 +302,8 @@ function showNewActivityMembers() {
     let listContainer = cr('div', container, 'class list-container');
     let seeActivities = cr('div', container, 'class btn', 'Se forslag');
     seeActivities.onclick = function() {
-        show('newActivitySuggestions');
+        // show('newActivitySuggestions');
+        suggestActivities();
     }
     generateMemberList(listContainer);
 }
