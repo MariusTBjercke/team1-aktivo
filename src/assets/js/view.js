@@ -1,13 +1,13 @@
 import { aktivo } from "./model";
 import { loadGoogleMaps } from "./maps";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
-show("home");
+show("activitySuggestions");
 loadTheme();
 function show(page, parameters) {
     if (page) currentPage = page;
@@ -81,6 +81,10 @@ function show(page, parameters) {
         
         case 'newEditPerson':
             showNewEditPerson();
+            break;
+
+        case 'activitySuggestions':
+            showActivitySuggestions();
             break;
     
         default:
@@ -361,9 +365,32 @@ function showNewActivitySimple() {
 
 }
 
-// new activity's filters and suggestions
-function showNewActivityFilters() {}
-function showNewActivitySuggestions() {}
+// activity filters and suggestions
+function showActivityFilters() {}
+function showActivitySuggestions() {
+
+    header("Aktivitetsforslag");
+
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container activity-suggestions');
+
+    let btnContainer = cr('div', container, 'class btn-container');
+
+    let back = cr('div', btnContainer, 'class btn back', 'Tilbake');
+    back.onclick = () => {
+        show('home');
+    }
+
+    let filters = cr('div', btnContainer, 'class btn filters', 'Filter');
+    filters.onclick = () => {
+        show('home');
+    }
+
+    let activitiesContainer = cr('div', container, 'class activities-container');
+    listActivitySuggestions(activitiesContainer);
+
+}
 
 // archive
 function showArchive() {}

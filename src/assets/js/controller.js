@@ -684,4 +684,23 @@ function resetAgeGroupForm() {
     show('newActivitySimple');
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp }
+function listActivitySuggestions(listContainer) {
+
+    let activities = aktivo.data.activities;
+
+    activities.forEach(item => {
+        let row = cr('div', listContainer, 'class row');
+
+        let subRow = cr('div', row);
+        
+        let title = cr('div', subRow, 'class title', item.name);
+
+        let moreBtnContainer = cr('div', subRow, 'class more-btn-container');
+        let moreBtnText = cr('div', moreBtnContainer, 'class more-btn-text', 'Les mer');
+
+        let description = cr('div', row, 'class description', item.description);
+    })
+
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions }
