@@ -372,7 +372,7 @@ function showNewActivitySimple() {
 // activity filters and suggestions
 function showActivityFilters() {
 
-    header('Aktivitetsfilter');
+    header('Ny aktivitet (filter)');
 
     let wrapper = cr('div', app, 'class wrapper');
 
@@ -398,7 +398,7 @@ function showActivityFilters() {
 
 function showActivitySuggestions() {
 
-    header("Aktivitetsforslag");
+    header("Ny aktivitet (forslag)");
 
     let wrapper = cr('div', app, 'class wrapper');
 
