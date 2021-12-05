@@ -36,11 +36,12 @@ function suggestActivities() {
         let matchingFilters = activity.filters.filter(fltr => selectedFilters.includes(fltr[0]));
         // sorting the matching filters such that filters with greater strength come first:
         matchingFilters.sort(function(a, b){return b[1] - a[1]});
-        // .....let str = matchingFilters.map(x => x[1]); if you want an array of the strengths.....
+        // ...let str = matchingFilters.map(x => x[1]); if you want an array of the strengths...(this is irrelevant unless console loging)...
         matchingFilters.forEach((x, i, m) => { // m is short for matchingFilters.
-            str += x[1];
+            str += x[1]; // this strength is either that of the strongest filter or it has already been corrected for overlap with every stronger filter:
+            let overlapfilters = allFilters[allFilters.findIndex(f => f.name === x[0])].overlap;
+            // reducing the strength of successive filters if they overlap with the stronger filter x:
             m.slice(i+1).forEach((y, j) => { 
-                let overlapfilters = allFilters[allFilters.findIndex(f => f.name === x[0])].overlap;
                 let yIndex = overlapfilters.findIndex(ovrlp => ovrlp[0] === y[0]);
                 if (yIndex !== -1) {
                     let overlap = overlapfilters[yIndex][1];
