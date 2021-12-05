@@ -1,13 +1,13 @@
 import { aktivo } from "./model";
 import { loadGoogleMaps } from "./maps";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
-show("activitySuggestions");
+show("activityFilters");
 loadTheme();
 function show(page, parameters) {
     if (page) currentPage = page;
@@ -85,6 +85,10 @@ function show(page, parameters) {
 
         case 'activitySuggestions':
             showActivitySuggestions();
+            break;
+
+        case 'activityFilters':
+            showActivityFilters();
             break;
     
         default:
@@ -366,7 +370,32 @@ function showNewActivitySimple() {
 }
 
 // activity filters and suggestions
-function showActivityFilters() {}
+function showActivityFilters() {
+
+    header('Aktivitetsfilter');
+
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container activity-filters');
+
+    let btnContainer = cr('div', container, 'class btn-container');
+
+    // TODO: Only display back btn if there is a return page (?)
+    let back = cr('div', btnContainer, 'class btn back', 'Tilbake');
+    back.onclick = () => {
+        show('home');
+    }
+
+    let suggestions = cr('div', btnContainer, 'class btn suggestions', 'Se forslag');
+    suggestions.onclick = () => {
+        show('activitySuggestions');
+    }
+
+    let filtersContainer = cr('div', container, 'class filters-container');
+    listActivityFilters(filtersContainer);
+
+}
+
 function showActivitySuggestions() {
 
     header("Aktivitetsforslag");
@@ -379,12 +408,13 @@ function showActivitySuggestions() {
 
     let back = cr('div', btnContainer, 'class btn back', 'Tilbake');
     back.onclick = () => {
+        // TODO: Return page (?)
         show('home');
     }
 
     let filters = cr('div', btnContainer, 'class btn filters', 'Filter');
     filters.onclick = () => {
-        show('home');
+        show('activityFilters');
     }
 
     let activitiesContainer = cr('div', container, 'class activities-container');

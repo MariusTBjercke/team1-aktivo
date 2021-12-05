@@ -2,6 +2,7 @@
     grid-template-rows: auto 1fr;
     gap: 25px;
     max-height: 537px;
+    margin-bottom: 0;
 
     .btn-container {
         display: grid;
@@ -51,6 +52,8 @@
                 color: var(--btn-color);
                 text-shadow: var(--text-shadow);
                 padding: 5px 10px;
+                cursor: pointer;
+                user-select: none;
             }
         }
     }

@@ -662,7 +662,7 @@ const aktivo = {
         },
       },
     ],
-    // Dersom vi skal bruke Vue så er dette unødvendig da Router løser dette for oss.
+    // TODO: Add all pages to the array or rewrite method to only check for some kind of value that non auth pages requires
     pages: [
       {
         name: "login",
@@ -676,65 +676,71 @@ const aktivo = {
         name: "home",
         requiresAuth: true,
       },
-      // osv...
     ],
 
     filters: [
       {
         name: 'Barn',
         overlap: [
-          ['1',1],
-          ['2',1],
-          ['3',1],
-          ['4',1],
-          ['5',1],
-          ['6-7',1],
-          ['8-10',0.8],
-          ['11-20',0.1],
+          ['1', 1],
+          ['2', 1],
+          ['3', 1],
+          ['4', 1],
+          ['5', 1],
+          ['6-7', 1],
+          ['8-10', 0.8],
+          ['11-20', 0.1],
         ]
       },
-
-
-
-
       {
-        name: "over 100kr",
-        activities: [
-          {
-            name: "Restaurant",
-            match: 100,
-          },
-          {
-            name: "Kebabsjappe",
-            match: 50,
-          },
-        ],
+        name: 'Voksen',
+        overlap: [
+        ]
       },
       {
-        name: "under 100kr",
-        activities: [
-          {
-            name: "Restaurant",
-            match: -100,
-          },
-          {
-            name: "Kebabsjappe",
-            match: 100,
-          },
-        ],
+        name: 'Skadet',
+        overlap: [
+        ]
       },
       {
-        name: "vil spise",
-        activities: [
-          {
-            name: "Restaurant",
-            match: 100,
-          },
-          {
-            name: "Kebabsjappe",
-            match: 100,
-          },
-        ],
+        name: 'Intelligent',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Sulten',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Tørst',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Glad',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Sur',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Homofil',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Heterofil',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Traktor',
+        overlap: [
+        ]
       },
     ],
   },

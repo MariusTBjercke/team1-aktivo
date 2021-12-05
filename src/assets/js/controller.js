@@ -703,4 +703,22 @@ function listActivitySuggestions(listContainer) {
 
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions }
+function listActivityFilters(filtersContainer) {
+
+    let filters = aktivo.data.filters;
+
+    filters.forEach(filter => {
+
+        let filterContainer = cr('div', filtersContainer, 'class filter checkbox-input');
+
+        let name = cr('div', filterContainer, 'class name', filter.name);
+
+        let label = cr('label', name);
+        let input = cr('input', label, 'type checkbox');
+        let mark = cr('span', label, 'class checkmark');
+
+    })
+
+}
+
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters }
