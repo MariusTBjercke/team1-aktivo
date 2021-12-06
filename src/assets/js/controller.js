@@ -1,9 +1,13 @@
 import { aktivo } from './model';
 import { show, cr, currentPage } from './view';
+import { db } from './firestore';
+import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, setDoc, getDoc, collection, query, where } from "firebase/firestore";
 let currentUser = aktivo.app.currentUser;
-let user = aktivo.data.users[aktivo.data.users.findIndex(x => x.username === currentUser)];
+let user;
+const ref = doc(db, "aktivo", "data");
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
+
 // If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
 
 // Function to log aktivo.data.activities with the filters changed from string to an array with the original string as the first element, and a 0 as the second.
@@ -23,10 +27,10 @@ let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 //     });
 //     console.log(acitivities);
 // }
-
+suggestActivities();
 function suggestActivities() {
     const allFilters = aktivo.data.filters; // all the filters in the database.
-    const selectedFilters; // the list of all the filters that apply to this instance.     ...UNFINISHED TASK...
+    const selectedFilters = ['2','3']; // the list of all the filters that apply to this instance.     ...UNFINISHED TASK...
     const activities = aktivo.data.activities;
     const includedActivities = activities.filter(activity => activity.exfilters.filter(xfltr => selectedFilters.includes(xfltr)).length === 0);
     const suggestedActivities = [];
@@ -36,11 +40,13 @@ function suggestActivities() {
         let matchingFilters = activity.filters.filter(fltr => selectedFilters.includes(fltr[0]));
         // sorting the matching filters such that filters with greater strength come first:
         matchingFilters.sort(function(a, b){return b[1] - a[1]});
-        // .....let str = matchingFilters.map(x => x[1]); if you want an array of the strengths.....
+        // ...let str = matchingFilters.map(x => x[1]); if you want an array of the strengths...(this is irrelevant unless console loging)...
         matchingFilters.forEach((x, i, m) => { // m is short for matchingFilters.
-            str += x[1];
+            str += x[1]; // this strength is either that of the strongest filter or it has already been corrected for overlap with every stronger filter:
+            console.log(allFilters.findIndex(f => f.name === x[0]));
+            let overlapfilters = allFilters[allFilters.findIndex(f => f.name === x[0])].overlap;
+            // reducing the strength of successive filters if they overlap with the stronger filter x:
             m.slice(i+1).forEach((y, j) => { 
-                let overlapfilters = allFilters[allFilters.findIndex(f => f.name === x[0])].overlap;
                 let yIndex = overlapfilters.findIndex(ovrlp => ovrlp[0] === y[0]);
                 if (yIndex !== -1) {
                     let overlap = overlapfilters[yIndex][1];
@@ -54,7 +60,7 @@ function suggestActivities() {
             strength: str,
         })
     });
-    suggestedActivities.sort(function(a, b){return b.strength - a.strength}); // must export...duh...
+    console.log(suggestedActivities.sort(function(a, b){return b.strength - a.strength})); // must export...duh...
 }
 
 
@@ -72,6 +78,29 @@ function auth() {
         show('login');
         return;
     }
+
+    // DEV ONLY, REMOVE LATER
+    if (!user) {
+
+            const userQ = query(collection(db, 'users'), where('username', '==', 'demo'));
+
+            onSnapshot(userQ, (querySnapshot) => {
+                querySnapshot.forEach(doc => {
+                    user = doc.data();
+                });
+            });
+
+            const q = query(collection(db, "users"));
+
+            onSnapshot(q, (x) => {
+                const users = [];
+                x.forEach(doc => {
+                    aktivo.data.allUsers.push(doc.data().username);
+                });
+            })
+
+    }
+
 }
 
 /**
@@ -81,15 +110,15 @@ function auth() {
  */
 function userLogin(username, password) {
 
-    let pass = password.value;
-
     for (let x of [[username, 'loginUsername'], [password, 'empty']]) validateInput(x[0], x[1]);
 
-    let users = aktivo.data.users;
+    onSnapshot(doc(db, "users", username.value), (doc) => {
+        let xUsername = doc.data().username;
+        let xPassword = doc.data().password;
 
-    users.forEach(user => {
-        if (username.value === user.username && pass === user.password) {
+        if (username.value === xUsername && password.value === xPassword) {
             currentUser = username.value;
+            user = doc.data();
             show('home');
             return;
         } else {
@@ -126,7 +155,11 @@ function userCreate(username, email, password, confirmPassword) {
                 }
             ]
         };
-        aktivo.data.users.push(userObject);
+
+        // Insert data to Firestore
+        updateUser(username.value, userObject);
+
+        // aktivo.data.users.push(userObject);
         let parameters = {
             success: true,
         }
@@ -146,6 +179,7 @@ function validateInput(input, type, errorList = []) {
         type: type,
         input: input,
     }
+
     
     switch (type) {
         case 'empty':
@@ -167,11 +201,12 @@ function validateInput(input, type, errorList = []) {
 
         case 'username':
             let usernameError = true;
+            let users = aktivo.data.allUsers;
 
             if (input.value.length === 0) {
                 error.message = 'Mangler brukernavn.';
             }
-            else if (aktivo.data.users.findIndex(x => x.username === input.value) !== -1) {
+            else if (users.includes(input.value)) {
                 error.message = 'Brukernavnet er tatt.';
             }
             else {
@@ -238,10 +273,9 @@ function validateInput(input, type, errorList = []) {
             break;
         
         case 'password':
-            let passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
             error.message = 'Ugyldig passord.';
 
-            if (input.value.match(passwordPattern)) {
+            if (input.value.length > 3) {
                 removeInputError(isErrorInList, errorList, errorIndex, input);
             } else {
                 if (input.value === '') error.message = 'Mangler passord.';
@@ -499,6 +533,7 @@ function generateAdminList(view, listContainer, search) {
                     let index = group.members.findIndex(name => name === x.name);
                     if (index > -1) group.members.splice(index, 1);
                 });
+            updateUser(currentUser, user);
             }
         }
     });
@@ -574,6 +609,7 @@ function addToTemp(type) {
 }
 
 function toggleNav() {
+    console.log(user);
     let header = app.querySelector('.header');
     let navbar = app.querySelector('.navbar');
     let btn = app.querySelector('.nav-btn');
@@ -647,10 +683,20 @@ function changeEmail(password, email, repeatEmail) {
     }
 
     if (!error.length > 0) {
+
         user.email = email.value;
+
+        updateUser(currentUser, user);
+
         show('changeemail');
+
     }
 
+}
+
+function updateUser(username, object) {
+    const docRef = doc(db, "users", username);
+    setDoc(docRef, object);
 }
 
 function changePassword(oldPassword, password, repeatPassword) {
@@ -667,21 +713,26 @@ function changePassword(oldPassword, password, repeatPassword) {
 
     if (!error.length > 0) {
         user.password = password.value;
+        updateUser(currentUser, user);
         show('showchangepassword');
     }
 
 }
 
 function getBulbIcon() {
-    return user.options.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+    if (aktivo.data.user) {
+        return aktivo.data.user.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+    } else {
+        return aktivo.data.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+    }
 }
 
 function toggleLights(bulb) {
-    if (user.options.lightsOn) {
-        user.options.lightsOn = false;
+    if (aktivo.data.user.options.lightsOn) {
+        aktivo.data.user.options.lightsOn = false;
         setTheme('theme-dark');
     } else {
-        user.options.lightsOn = true;
+        aktivo.data.user.options.lightsOn = true;
         setTheme('theme-light');
     }
     setHTML(bulb, getBulbIcon());
@@ -692,7 +743,13 @@ function setTheme(themeName) {
 }
 
 function loadTheme() {
-    let lightsOn = user.options.lightsOn;
+    let lightsOn = () => {
+        if (aktivo.data.user) {
+            return aktivo.data.user.options.lightsOn;
+        } else {
+            return aktivo.data.lightsOn;
+        }
+    }
     if (lightsOn) {
         setTheme('theme-light');
     } else {
@@ -754,4 +811,4 @@ function listActivityFilters(filtersContainer) {
 
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities }
+export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser }

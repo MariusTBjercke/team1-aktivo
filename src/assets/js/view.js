@@ -1,13 +1,13 @@
 import { aktivo } from "./model";
 import { loadGoogleMaps } from "./maps";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities } from "./controller";
+import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let currentUser = aktivo.app.currentUser;
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
-show("activityFilters");
+show("home");
 loadTheme();
 function show(page, parameters) {
     if (page) currentPage = page;
@@ -311,7 +311,7 @@ function showNewActivityMembers() {
     let seeActivities = cr('div', container, 'class btn', 'Se forslag');
     seeActivities.onclick = function() {
         // show('newActivitySuggestions');
-        suggestActivities();
+        // suggestActivities();
     }
     generateMemberList(listContainer);
 }
@@ -543,6 +543,7 @@ function showEditGroup() {
                     admGroup.returnPage = '';
                 }
             }
+            updateUser(currentUser, user);
         }
     }
     generateEditGroupList(listContainer);
@@ -612,6 +613,7 @@ function showNewEditPerson() {
             admPerson.addedToTemp = false;
             show(admPerson.returnPage);
             admPerson.returnPage = '';
+            updateUser(currentUser, user);
         }
     }
 }

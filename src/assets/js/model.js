@@ -95,8 +95,8 @@ const aktivo = {
           "Bingo er et sjansespill der tilfeldige sifre trekkes, og spillerne deretter markerer de aktuelle sifrene på ferdigtrykkede ruteskjemaer med tall inni. Her er det gjerne fine premier og servering av noe søtt.",
         filters: [
           ["1", 0],
-          ["2", 0],
-          ["3", 0],
+          ["2", 10],
+          ["3", 30],
           ["4", 0],
           ["5", 0],
           ["6-7", 0],
@@ -113,8 +113,8 @@ const aktivo = {
           "Bowling er en kjent og kjær sport som passer de aller fleste (ikke bare Columbine).",
         filters: [
           ["1", 0],
-          ["2", 0],
-          ["3", 0],
+          ["2", 5],
+          ["3", 20],
           ["4", 0],
           ["5", 0],
           ["6-7", 0],
@@ -173,7 +173,7 @@ const aktivo = {
         name: "Sjakk",
         description: "Hvis du heter Bjørn eller Tarjay",
         filters: [
-          ["2", 0],
+          ["2", 40],
           ["Not stiuuupidd", 0],
         ],
         exfilters: ["stiuuupidd"],
@@ -182,7 +182,7 @@ const aktivo = {
         name: "Brettspill",
         description: "F.eks monopol",
         filters: [
-          ["3", 0],
+          ["3", 30],
           ["4", 0],
           ["5", 0],
           ["6-7", 0],
@@ -229,8 +229,8 @@ const aktivo = {
         description: "`Nuff said",
         filters: [
           ["1", 0],
-          ["2", 0],
-          ["3", 0],
+          ["2", 50],
+          ["3", 20],
           ["4", 0],
           ["5", 0],
           ["6-7", 0],
@@ -662,6 +662,7 @@ const aktivo = {
         },
       },
     ],
+    allUsers: [],
     // TODO: Add all pages to the array or rewrite method to only check for some kind of value that non auth pages requires
     pages: [
       {
@@ -685,6 +686,30 @@ const aktivo = {
           ['1', 1],
           ['2', 1],
           ['3', 1],
+          ['4', 1],
+          ['5', 1],
+          ['6-7', 1],
+          ['8-10', 0.8],
+          ['11-20', 0.1],
+        ]
+      },
+      {
+        name: '2',
+        overlap: [
+          ['1', 1],
+          ['3', 0.5],
+          ['4', 1],
+          ['5', 1],
+          ['6-7', 1],
+          ['8-10', 0.8],
+          ['11-20', 0.1],
+        ]
+      },
+      {
+        name: '3',
+        overlap: [
+          ['1', 1],
+          ['2', 0.5],
           ['4', 1],
           ['5', 1],
           ['6-7', 1],
@@ -743,6 +768,8 @@ const aktivo = {
         ]
       },
     ],
+
+    lightsOn: true,
   },
 };
 
