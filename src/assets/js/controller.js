@@ -79,25 +79,27 @@ function auth() {
         return;
     }
 
-    // DEV ONLY, REMOVE LATER
+    // TODO: Delete below code
+    // DEV ONLY, REMOVE LATER - START
     if (!user) {
 
-            const userQ = query(collection(db, 'users'), where('username', '==', 'demo'));
+        const userQ = query(collection(db, 'users'), where('username', '==', 'demo'));
 
-            onSnapshot(userQ, (querySnapshot) => {
-                querySnapshot.forEach(doc => {
-                    user = doc.data();
-                });
+        onSnapshot(userQ, (querySnapshot) => {
+            querySnapshot.forEach(doc => {
+                user = doc.data();
             });
+        });
+        // DEV ONLY, REMOVE LATER - END
 
-            const q = query(collection(db, "users"));
+        const q = query(collection(db, "users"));
 
-            onSnapshot(q, (x) => {
-                const users = [];
-                x.forEach(doc => {
-                    aktivo.data.allUsers.push(doc.data().username);
-                });
-            })
+        onSnapshot(q, (x) => {
+            const users = [];
+            x.forEach(doc => {
+                aktivo.data.allUsers.push(doc.data().username);
+            });
+        })
 
     }
 
@@ -533,7 +535,7 @@ function generateAdminList(view, listContainer, search) {
                     let index = group.members.findIndex(name => name === x.name);
                     if (index > -1) group.members.splice(index, 1);
                 });
-            updateUser(currentUser, user);
+                updateUser(currentUser, user);
             }
         }
     });
@@ -610,6 +612,7 @@ function addToTemp(type) {
 
 function toggleNav() {
     console.log(user);
+    console.log(currentUser);
     let header = app.querySelector('.header');
     let navbar = app.querySelector('.navbar');
     let btn = app.querySelector('.nav-btn');

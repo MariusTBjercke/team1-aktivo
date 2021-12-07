@@ -543,7 +543,7 @@ function showEditGroup() {
                     admGroup.returnPage = '';
                 }
             }
-            updateUser(currentUser, user);
+            updateUser(user.username, user);
         }
     }
     generateEditGroupList(listContainer);
@@ -613,7 +613,7 @@ function showNewEditPerson() {
             admPerson.addedToTemp = false;
             show(admPerson.returnPage);
             admPerson.returnPage = '';
-            updateUser(currentUser, user);
+            updateUser(user.username, user);
         }
     }
 }
