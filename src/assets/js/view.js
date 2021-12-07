@@ -9,10 +9,13 @@ let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 show("home");
 loadTheme();
 function show(page, parameters) {
+    console.log('1 '+currentPage);
     if (page) currentPage = page;
+    console.log('2 '+currentPage);
 
     // Authentication
     auth();
+    console.log('3 '+currentPage);
 
     app.innerHTML = '';
 

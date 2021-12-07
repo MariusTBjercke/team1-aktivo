@@ -85,7 +85,8 @@ function auth() {
 
         onSnapshot(userQ, (querySnapshot) => {
             querySnapshot.forEach(doc => {
-                user = doc.data();
+                aktivo.data.user = doc.data();
+                user = aktivo.data.user;
             });
         });
         // DEV ONLY, REMOVE LATER - END
@@ -97,7 +98,7 @@ function auth() {
             x.forEach(doc => {
                 aktivo.data.allUsers.push(doc.data().username);
             });
-        })
+        });
 
     }
 
@@ -105,26 +106,42 @@ function auth() {
 
 /**
  * 
- * @param {HTMLElement} username Input field from form where value can be retrieved
- * @param {HTMLElement} password Input field from form where value can be retrieved
+ * @param {HTMLElement} usernameInput Input field from form where value can be retrieved
+ * @param {HTMLElement} passwordInput Input field from form where value can be retrieved
  */
-function userLogin(username, password) {
+function userLogin(usernameInput, passwordInput) {
 
-    for (let x of [[username, 'loginUsername'], [password, 'empty']]) validateInput(x[0], x[1]);
+    let success = 0;
 
-    onSnapshot(doc(db, "users", username.value), (doc) => {
-        let xUsername = doc.data().username;
-        let xPassword = doc.data().password;
+    for (let x of [[usernameInput, 'loginUsername'], [passwordInput, 'empty']]) validateInput(x[0], x[1]);
+    
+    const loginQuery = query(collection(db, 'users'), where('username', '==', usernameInput.value));
 
-        if (username.value === xUsername && password.value === xPassword) {
-            aktivo.app.currentUser = username.value;
-            user = doc.data();
-            show('home');
-            return;
-        } else {
-            password.value = '';
-        }
+    onSnapshot(loginQuery, (querySnapshot) => {
+        querySnapshot.forEach(doc => {
+            let xUsername = doc.data().username;
+            let xPassword = doc.data().password;
+            if (usernameInput.value === xUsername && passwordInput.value === xPassword) {
+                aktivo.app.currentUser = usernameInput.value;
+                user = doc.data();
+                success = 1;
+            } else {
+                success = 2;
+            }
+        });
     });
+    
+    // Did we have to move show() out of snapshot because of some kind of eventlistener?? Who knows? Only time knows. Only time.
+    let eternal = setInterval(() => {
+        if (success !== 0) {
+            if (success == 1) {
+                show('home');
+            } else {
+                passwordInput.value = '';
+            }
+            clearInterval(eternal);
+        }
+    }, 100);
 }
 
 function userCreate(username, email, password, confirmPassword) {
@@ -534,8 +551,8 @@ function generateAdminList(view, listContainer, search) {
                     let index = group.members.findIndex(name => name === x.name);
                     if (index > -1) group.members.splice(index, 1);
                 });
-                updateUser(aktivo.app.currentUser, user);
             }
+            updateUser(aktivo.app.currentUser, user);
         }
     });
 }
@@ -630,7 +647,8 @@ function savePerson() {
 
         if (admPerson.edit) {
             user.groups.forEach(g => {
-                g.members[g.members.findIndex(member => member === user.people[admPerson.index].name)] = person.name;
+                let gIndex = g.members.findIndex(member => member === user.people[admPerson.index].name);
+                if (gIndex > -1) g.members[gIndex] = person.name;
             });
             user.people[admPerson.index] = {...admPerson.temp};
         }
@@ -638,9 +656,9 @@ function savePerson() {
         admPerson.edit = false;
         admPerson.addedToTemp = false;
         console.log(admPerson.returnPage);
+        updateUser(user.username, user);
         show(admPerson.returnPage);
         admPerson.returnPage = '';
-        updateUser(user.username, user);
     }
 }
 
