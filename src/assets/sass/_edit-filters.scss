@@ -1,0 +1,40 @@
+.edit-filters {
+    grid-template-rows: auto 1fr;
+    gap: 25px;
+    max-height: 537px;
+    margin-bottom: 0;
+
+    .btn-container {
+        display: grid;
+        gap: 20px;
+    }
+
+    .btn {
+        padding: 8px 0;
+        border: none;
+        font-size: 18px;
+        text-align: center;
+        width: 292px;
+    }
+
+    .filters-container {
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: space-between;
+        justify-items: end;
+        gap: 20px;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: auto;
+        padding: 0 10px;
+
+        .filter {
+
+            .name {
+                display: flex;
+                gap: 5px;
+            }
+        }
+    }
+
+}

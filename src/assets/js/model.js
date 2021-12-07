@@ -3,7 +3,8 @@ const aktivo = {
   app: {
     history: [],
     currentPage: "",
-    currentUser: "demo",
+    currentUser: "",
+    user: {},
   },
 
   // Input
@@ -681,11 +682,101 @@ const aktivo = {
 
     filters: [
       {
-        name: 'Barn',
+        name: '0-3år',
+        agegroup: true,
         overlap: [
-          ['1', 1],
+          ['4-6år', .6]
+        ]
+      },
+      {
+        name: '4-6år',
+        agegroup: true,
+        overlap: [
+          ['0-3år', .6],
+          ['7-12år', .7]
+        ]
+      },
+      {
+        name: '7-12år',
+        agegroup: true,
+        overlap: [
+          ['4-6år', .7],
+          ['13-15år', .7]
+        ]
+      },
+      {
+        name: '13-15år',
+        agegroup: true,
+        overlap: [
+          ['7-12år', .7],
+          ['16-17år', .85]
+        ]
+      },
+      {
+        name: '16-17år',
+        agegroup: true,
+        overlap: [
+          ['13-15år', .85],
+          ['18-19år', .9]
+        ]
+      },
+      {
+        name: '18-19år',
+        agegroup: true,
+        overlap: [
+          ['16-17år', .9],
+          ['20-29år', .8]
+        ]
+      },
+      {
+        name: '20-29år',
+        agegroup: true,
+        overlap: [
+          ['18-19år', .8],
+          ['30-49år', .8]
+        ]
+      },
+      {
+        name: '30-49år',
+        agegroup: true,
+        overlap: [
+          ['20-29år', .8],
+          ['50-69år', .8]
+        ]
+      },
+      {
+        name: '50-69år',
+        agegroup: true,
+        overlap: [
+          ['30-49år', .8],
+          ['70+år', .8]
+        ]
+      },
+      {
+        name: '70+år',
+        agegroup: true,
+        overlap: [
+          ['50-69år', .8]
+        ]
+      },
+      {
+        name: 'Mann',
+        gender: true,
+        overlap: [
+        ]
+      },
+      {
+        name: 'Kvinne',
+        gender: true,
+        overlap: [
+        ]
+      },
+      {
+        name: '1',
+        count: true,
+        overlap: [
           ['2', 1],
-          ['3', 1],
+          ['3', 0.5],
           ['4', 1],
           ['5', 1],
           ['6-7', 1],
@@ -695,6 +786,7 @@ const aktivo = {
       },
       {
         name: '2',
+        count: true,
         overlap: [
           ['1', 1],
           ['3', 0.5],
@@ -707,6 +799,7 @@ const aktivo = {
       },
       {
         name: '3',
+        count: true,
         overlap: [
           ['1', 1],
           ['2', 0.5],

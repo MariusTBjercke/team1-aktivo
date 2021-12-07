@@ -2,13 +2,12 @@ import { aktivo } from './model';
 import { show, cr, currentPage } from './view';
 import { db } from './firestore';
 import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, setDoc, getDoc, collection, query, where } from "firebase/firestore";
-let currentUser = aktivo.app.currentUser;
 let user;
 const ref = doc(db, "aktivo", "data");
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
-// If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
+// If the user is not logged in (aktivo.app.currentUser is empty) and the page requires authentication, redirect to login
 
 // Function to log aktivo.data.activities with the filters changed from string to an array with the original string as the first element, and a 0 as the second.
 // logActivities();
@@ -43,7 +42,6 @@ function suggestActivities() {
         // ...let str = matchingFilters.map(x => x[1]); if you want an array of the strengths...(this is irrelevant unless console loging)...
         matchingFilters.forEach((x, i, m) => { // m is short for matchingFilters.
             str += x[1]; // this strength is either that of the strongest filter or it has already been corrected for overlap with every stronger filter:
-            console.log(allFilters.findIndex(f => f.name === x[0]));
             let overlapfilters = allFilters[allFilters.findIndex(f => f.name === x[0])].overlap;
             // reducing the strength of successive filters if they overlap with the stronger filter x:
             m.slice(i+1).forEach((y, j) => { 
@@ -68,7 +66,7 @@ function auth() {
     let pageAuth = false;
     aktivo.data.pages.forEach(page => {
         if (page.name === currentPage) {
-            if (page.requiresAuth && !currentUser) {
+            if (page.requiresAuth && !aktivo.app.currentUser) {
                 pageAuth = true;
             }
         }
@@ -83,7 +81,7 @@ function auth() {
     // DEV ONLY, REMOVE LATER - START
     if (!user) {
 
-        const userQ = query(collection(db, 'users'), where('username', '==', 'demo'));
+        const userQ = query(collection(db, 'users'), where('username', '==', aktivo.app.currentUser));
 
         onSnapshot(userQ, (querySnapshot) => {
             querySnapshot.forEach(doc => {
@@ -119,7 +117,7 @@ function userLogin(username, password) {
         let xPassword = doc.data().password;
 
         if (username.value === xUsername && password.value === xPassword) {
-            currentUser = username.value;
+            aktivo.app.currentUser = username.value;
             user = doc.data();
             show('home');
             return;
@@ -446,6 +444,7 @@ function generateList(view, listContainer, search) {
                 admGroup.returnPage = currentPage;
                 show('editGroup');
             } else {
+                console.log('CurrentPage: ' + currentPage);
                 admPerson.edit = true;
                 admPerson.index = user.people.findIndex(p => p.name === x.name);
                 admPerson.returnPage = currentPage;
@@ -535,7 +534,7 @@ function generateAdminList(view, listContainer, search) {
                     let index = group.members.findIndex(name => name === x.name);
                     if (index > -1) group.members.splice(index, 1);
                 });
-                updateUser(currentUser, user);
+                updateUser(aktivo.app.currentUser, user);
             }
         }
     });
@@ -595,7 +594,7 @@ function addToTemp(type) {
     if (type === 'person') {
         const admPerson = aktivo.inputs.administer.person;
         if (!admPerson.addedToTemp) {
-            if (!admPerson.edit) admPerson.temp = {name:'',filters:['']};
+            if (!admPerson.edit) admPerson.temp = {name:'',filters:[]};
             else admPerson.temp = {...user.people[admPerson.index]};
             admPerson.addedToTemp = true;
         }
@@ -610,9 +609,42 @@ function addToTemp(type) {
     }
 }
 
+function savePerson() {
+    const admPerson = aktivo.inputs.administer.person;
+    const person = admPerson.temp;
+    if ((admPerson.edit || person.filters.length > 0) && person.name !== '') {
+        if (admPerson.returnPage === 'newactivitypeople' || admPerson.returnPage === 'newActivityMembers') {
+            const activityMembers = aktivo.inputs.newActivity.chosenPeople;
+            if (!admPerson.edit) activityMembers.push({name: person.name});                    
+            if (admPerson.returnPage === 'newActivityMembers') {
+                activityMembers[activityMembers.findIndex(x => x.name === user.people[admPerson.index].name)].name = person.name;
+            }
+        }
+        if (admPerson.returnPage === 'newGroup' || admPerson.returnPage === 'editGroup') {
+            const groupMembers = aktivo.inputs.administer.group.temp.members;
+            if (!admPerson.edit) groupMembers.push(person.name);
+            if (admPerson.returnPage === 'editGroup') {
+                groupMembers[groupMembers.findIndex(x => x === user.people[admPerson.index].name)] = person.name;
+            }
+        }
+
+        if (admPerson.edit) {
+            user.groups.forEach(g => {
+                g.members[g.members.findIndex(member => member === user.people[admPerson.index].name)] = person.name;
+            });
+            user.people[admPerson.index] = {...admPerson.temp};
+        }
+        else user.people.push(admPerson.temp);
+        admPerson.edit = false;
+        admPerson.addedToTemp = false;
+        console.log(admPerson.returnPage);
+        show(admPerson.returnPage);
+        admPerson.returnPage = '';
+        updateUser(user.username, user);
+    }
+}
+
 function toggleNav() {
-    console.log(user);
-    console.log(currentUser);
     let header = app.querySelector('.header');
     let navbar = app.querySelector('.navbar');
     let btn = app.querySelector('.nav-btn');
@@ -689,7 +721,7 @@ function changeEmail(password, email, repeatEmail) {
 
         user.email = email.value;
 
-        updateUser(currentUser, user);
+        updateUser(aktivo.app.currentUser, user);
 
         show('changeemail');
 
@@ -716,7 +748,7 @@ function changePassword(oldPassword, password, repeatPassword) {
 
     if (!error.length > 0) {
         user.password = password.value;
-        updateUser(currentUser, user);
+        updateUser(aktivo.app.currentUser, user);
         show('showchangepassword');
     }
 
@@ -731,11 +763,11 @@ function getBulbIcon() {
 }
 
 function toggleLights(bulb) {
-    if (aktivo.data.user.options.lightsOn) {
-        aktivo.data.user.options.lightsOn = false;
+    if (user.options.lightsOn) {
+        user.options.lightsOn = false;
         setTheme('theme-dark');
     } else {
-        aktivo.data.user.options.lightsOn = true;
+        user.options.lightsOn = true;
         setTheme('theme-light');
     }
     setHTML(bulb, getBulbIcon());
@@ -747,8 +779,8 @@ function setTheme(themeName) {
 
 function loadTheme() {
     let lightsOn = () => {
-        if (aktivo.data.user) {
-            return aktivo.data.user.options.lightsOn;
+        if (user) {
+            return user.options.lightsOn;
         } else {
             return aktivo.data.lightsOn;
         }
@@ -810,8 +842,86 @@ function listActivityFilters(filtersContainer) {
         let input = cr('input', label, 'type checkbox');
         let mark = cr('span', label, 'class checkmark');
 
-    })
+    });
 
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser }
+function listEditFilters(filtersContainer) {
+    const person = aktivo.inputs.administer.person.temp;
+
+    let filters = aktivo.data.filters;
+
+    filters.filter(x => !x.agegroup && !x.count && !x.gender).forEach(fltr => {
+
+        generateCheckbox(filtersContainer, fltr, person.filters);
+
+    });
+}
+
+function listAgegroupFilters(filtersContainer) {
+    const person = aktivo.inputs.administer.person.temp;
+
+    let filters = aktivo.data.filters;
+
+    let ageGroupInputs = [];
+    filters.filter(x => x.agegroup).forEach(fltr => {
+
+        generateCheckbox(filtersContainer, fltr, person.filters, ageGroupInputs, true);
+
+    });
+}
+
+function listGenderFilters(filtersContainer) {
+    const person = aktivo.inputs.administer.person.temp;
+
+    let filters = aktivo.data.filters;
+    let genderInputs = [];
+    filters.filter(x => x.gender).forEach(fltr => {
+
+        generateCheckbox(filtersContainer, fltr, person.filters, genderInputs, true);
+
+    });
+}
+
+function generateCheckbox(filtersContainer, fltr, list, inputs, maxOne) {
+
+    let filterContainer = cr('div', filtersContainer, 'class filter checkbox-input');
+
+    let name = cr('div', filterContainer, 'class name', fltr.name);
+
+    let label = cr('label', name);
+    let input = cr('input', label, 'type checkbox');
+    let mark = cr('span', label, 'class checkmark');
+    input.checked = list.includes(fltr.name) ? true : false;
+    if (inputs) {
+        inputs.push({inpt: input, name: fltr.name})
+    }
+
+    input.onchange = () => {
+        console.log('onchange');
+        if (input.checked) {
+            if (inputs) console.log('inputs.length before: ' + inputs.filter(xx => xx.inpt.checked).length);
+            if (maxOne && inputs.filter(xx => xx.inpt.checked).length > 1) {
+                let indx = inputs.findIndex(i => i.inpt.checked === true && i.name !== fltr.name);
+                console.log('indx ' +indx);
+                if (indx !== -1) {
+                    inputs[indx].inpt.checked = false;
+                    list.splice([list.findIndex(name => name === inputs[indx].name)], 1);
+                }
+            }
+            list.push(fltr.name);
+            if (inputs) console.log('inputs.length after: ' + inputs.filter(xx => xx.inpt.checked).length);
+            
+        } else {
+            let spliceIndex = list.findIndex(name => name === fltr.name);
+            console.log('spliceIndex, filter: ' + spliceIndex, list[spliceIndex]);
+            if (spliceIndex !== -1) list.splice([spliceIndex], 1);
+        }
+        console.log('checked filters:');
+        list.forEach(dfgh => {
+            console.log('' + dfgh);
+        });
+    }
+}
+
+export { auth, listAgegroupFilters, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser, listEditFilters, listGenderFilters, savePerson }
