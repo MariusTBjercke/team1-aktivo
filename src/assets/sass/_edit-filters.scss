@@ -28,13 +28,21 @@
         box-sizing: border-box;
         padding: 10px 0 20px 10px;
         height: 94%;
-        background: var(--list-container-bg-color);
+        background: var(--checklist-container-bg-color);
         border: .3px solid var(--activities-border-color);
         border-radius: 1px;
         overflow-x: hidden;
         overflow-y: scroll;
 
         .filter {
+
+            input:checked ~ .checkmark {
+                background-color: var(--checkmark-bg-color);
+            }
+    
+            .checkmark {
+                background-color: var(--list-checkbox-bg-color);
+            }
 
             .name {
                 display: flex;

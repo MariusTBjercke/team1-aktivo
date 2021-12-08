@@ -30,17 +30,17 @@ function suggestActivities() {
     const allFilters = aktivo.data.filters; // all the filters in the database.
     const selectedFilters = aktivo.inputs.newActivity.filters; // the list of all the filters that apply to this instance.
     const activities = aktivo.data.activities;
-    const includedActivities = activities.filter(activity => activity.exfilters.filter(xfltr => selectedFilters.includes(xfltr)).length === 0);
+    const includedActivities = activities.filter(activity => activity.exfilters.filter(xfltr => selectedFilters.includes(xfltr)).length === 0);                    //if changing filters to an array of objects: change .includes(xfltr) to .findIndex(d => d.name === xfltr) !== -1
     const suggestedActivities = [];
     // calculating the strength of every included activity before adding it to suggestedActivities:
     includedActivities.forEach(activity => {
         let str = 0;
-        let matchingFilters = activity.filters.filter(fltr => selectedFilters.includes(fltr[0]));
+        let matchingFilters = activity.filters.filter(fltr => selectedFilters.includes(fltr[0]));                                                                  //if changing filters to an array of objects: clone matchingFilters with str*=multiplier and change .includes(fltr[0]) to .findIndex(df => df.name === fltr[0]) !== -1
         // sorting the matching filters such that filters with greater strength come first:
         matchingFilters.sort(function(a, b){return b[1] - a[1]});
         // ...let str = matchingFilters.map(x => x[1]); if you want an array of the strengths...(this is irrelevant unless console loging)...
         matchingFilters.forEach((x, i, m) => { // m is short for matchingFilters.
-            str += x[1]; // this strength is either that of the strongest filter or it has already been corrected for overlap with every stronger filter:
+            str += x[1]; // this strength is either that of the strongest filter or it has already been corrected for overlap with every stronger filter:          //if changing filters to an array of objects: str += x[1] * selectedFilters[selectedFilters.findIndex(sf => sf.name === x[0])].multiplier;
             let overlapfilters = allFilters[allFilters.findIndex(f => f.name === x[0])].overlap;
             // reducing the strength of successive filters if they overlap with the stronger filter x:
             m.slice(i+1).forEach((y, j) => { 
@@ -915,13 +915,42 @@ function setActivityFilters(simple) {
     const members = aktivo.inputs.newActivity.chosenPeople;
     const filters = aktivo.inputs.newActivity.filters;
     if (!simple) {
-        setMembercount(members.length);
+        emptyActivityFilters();
+        setMembercount(members.length);        
         members.forEach(m => {
             let personIndex = user.people.findIndex(z => z.name === m.name);
             user.people[personIndex].filters.forEach(x => {
-                if (!filters.includes(x)) filters.push(x);
+                if (!filters.includes(x)) filters.push(x); // remove if the commented out code below is used.
+
+                // // adding object to filters instead of just names, and counting repeating filters:
+                // let filterIndex = filters.findIndex(t => t.name === x);
+                // if (filterIndex === -1) filters.push({
+                //     name: x.name,
+                //     count: 1,
+                //     multiplier: 1,
+                //     opposite: x.opposite
+                // });
+                // else filters[filterIndex].count++;
             });
         });
+        for (let genders of [['Mann', 'Kvinne'],['Kvinne', 'Mann']]) {
+            if (filters.includes(genders[0]) && !filters.includes(genders[1])) {
+                filters.push(genders[0] === 'Mann' ? 'Kun menn' : 'Kun kvinner');
+                console.log(filters);
+            }
+        }
+
+        // // calculating the filter multiplier from having an opposite filter:
+        // filters.filter(f => f.count && f.opposite).forEach(op1 => {
+        //     if (op1.multiplier === 1) {
+        //         let op2Index = filters.findIndex(op2 => op2.name === op1.opposite);
+        //         if (op2Index !== -1) {
+        //             let op2 = filters[op2Index];
+        //             op1.multiplier = (op1.count)/(op1.count+op2.count);
+        //             op2.multiplier = (op2.count)/(op1.count+op2.count);
+        //         }
+        //     }
+        // });
     }
     console.log(filters);
     show('activityFilters');

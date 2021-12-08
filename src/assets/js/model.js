@@ -888,72 +888,84 @@ const aktivo = {
       {
         name: 'Singel',
         person: true,
+        opposite: 'I forhold',
         overlap: [
         ]
       },
       {
         name: 'I forhold',
         person: true,
+        opposite: 'Singel',
         overlap: [
         ]
       },
       {
         name: 'Utadvendt', // (foretrekker kanskje utesteder over film/gaming)
         person: true,
+        opposite: 'Innadvendt',
         overlap: [
         ]
       },
       {
         name: 'Innadvendt', // (foretrekker kanskje film/gaming over utesteder)
         person: true,
+        opposite: 'Utadvendt',
         overlap: [
         ]
       },
       {
         name: 'Drikker alkohol',
         person: true,
+        opposite: 'Drikker ikke alkohol',
         overlap: [
         ]
       },
       {
         name: 'Drikker ikke alkohol',
         person: true,
+        opposite: 'Drikker alkohol',
         overlap: [
         ]
       },
       {
         name: 'Har god råd',
         person: true,
+        opposite: 'Har dårlig råd',
         overlap: [
         ]
       },
       {
         name: 'Har dårlig råd',
         person: true,
+        opposite: 'Har god råd',
         overlap: [
         ]
       },
       {
         name: 'Liker fysisk aktivitet',
         person: true,
+        opposite: 'Misliker fysisk aktivitet',
         overlap: [
         ]
       },
       {
         name: 'Misliker fysisk aktivitet',
         person: true,
+        opposite: 'Liker fysisk aktivitet',
         overlap: [
         ]
       },
       {
         name: 'God fysisk helse',
         person: true,
+        opposite: 'Dårlig fysisk helse',
         overlap: [
         ]
       },
       {
         name: 'Dårlig fysisk helse',
         person: true,
+        opposite: 'God fysisk helse',
         overlap: [
         ]
       },
@@ -972,264 +984,318 @@ const aktivo = {
       {
         name: 'Liker å være ute',
         person: true,
+        opposite: 'Misliker å være ute',
         overlap: [
+          
         ]
       },
       {
         name: 'Misliker å være ute',
         person: true,
+        opposite: 'Liker å være ute',
         overlap: [
+          
         ]
       },
       {
         name: 'Liker å være inne',
         person: true,
+        opposite: 'Misliker å være inne',
         overlap: [
+          
         ]
       },
       {
         name: 'Misliker å være inne',
         person: true,
+        opposite: 'Liker å være inne',
         overlap: [
+          
         ]
       },
       {
         name: 'Liker å være ute på sommeren',
         person: true,
+        opposite: 'Misliker å være ute på sommeren',
         overlap: [
+          
         ]
       },
       {
         name: 'Misliker å være ute på sommeren',
         person: true,
+        opposite: 'Liker å være ute på sommeren',
         overlap: [
+          
         ]
       },
       {
         name: 'Liker å være ute på vinteren',
         person: true,
+        opposite: 'Misliker å være ute på vinteren',
         overlap: [
+          
         ]
       },
       {
         name: 'Misliker å være ute på vinteren',
         person: true,
+        opposite: 'Liker å være ute på vinteren',
         overlap: [
+          
         ]
       },
       {
         name: 'Liker å gå tur',
         person: true,
+        opposite: 'Misliker å gå tur',
         overlap: [
+          
         ]
       },
       {
         name: 'Misliker å gå tur',
         person: true,
+        opposite: 'Liker å gå tur',
         overlap: [
+          
         ]
       },
       {
         name: 'Liker å se sport',
         person: true,
+        opposite: 'Misliker å se sport',
         overlap: [
         ]
       },
       {
         name: 'Misliker å se sport',
         person: true,
+        opposite: 'Liker å se sport',
         overlap: [
         ]
       },
       {
         name: 'Liker å delta i sport',
         person: true,
+        opposite: 'Misliker å delta i sport',
         overlap: [
         ]
       },
       {
         name: 'Misliker å delta i sport',
         person: true,
+        opposite: 'Liker å delta i sport',
         overlap: [
         ]
       },
       {
         name: 'Liker gaming',
         person: true,
+        opposite: 'Misliker gaming',
         overlap: [
         ]
       },
       {
         name: 'Misliker gaming',
         person: true,
+        opposite: 'Liker gaming',
         overlap: [
         ]
       },
       {
         name: 'Liker bøker',
         person: true,
+        opposite: 'Misliker bøker',
         overlap: [
         ]
       },
       {
         name: 'Misliker bøker',
         person: true,
+        opposite: 'Liker bøker',
         overlap: [
         ]
       },
       {
         name: 'Liker film',
         person: true,
+        opposite: 'Misliker film',
         overlap: [
         ]
       },
       {
         name: 'Misliker film',
         person: true,
+        opposite: 'Liker film',
         overlap: [
         ]
       },
       {
         name: 'Liker kino',
         person: true,
+        opposite: 'Misliker kino',
         overlap: [
         ]
       },
       {
         name: 'Misliker kino',
         person: true,
+        opposite: 'Liker kino',
         overlap: [
         ]
       },
       {
         name: 'Liker bowling',
         person: true,
+        opposite: 'Misliker bowling',
         overlap: [
         ]
       },
       {
         name: 'Misliker bowling',
         person: true,
+        opposite: 'Liker bowling',
         overlap: [
         ]
       },
       {
         name: 'Liker museum',
         person: true,
+        opposite: 'Misliker museum',
         overlap: [
         ]
       },
       {
         name: 'Misliker museum',
         person: true,
+        opposite: 'Liker museum',
         overlap: [
         ]
       },
       {
         name: 'Liker kunst',
         person: true,
+        opposite: 'Misliker kunst',
         overlap: [
         ]
       },
       {
         name: 'Misliker kunst',
         person: true,
+        opposite: 'Liker kunst',
         overlap: [
         ]
       },
       {
         name: 'Liker kort- og brettspill',
         person: true,
+        opposite: 'Misliker kort- og brettspill',
         overlap: [
         ]
       },
       {
         name: 'Misliker kort- og brettspill',
         person: true,
+        opposite: 'Liker kort- og brettspill',
         overlap: [
         ]
       },
       {
         name: 'God på data og teknologi',
         person: true,
+        opposite: 'Dårlig på data og teknologi',
         overlap: [
         ]
       },
       {
         name: 'Dårlig på data og teknologi',
         person: true,
+        opposite: 'God på data og teknologi',
         overlap: [
         ]
       },
       {
         name: 'Liker shopping',
         person: true,
+        opposite: 'Misliker shopping',
         overlap: [
         ]
       },
       {
         name: 'Misliker shopping',
         person: true,
+        opposite: 'Liker shopping',
         overlap: [
         ]
       },
       {
         name: 'Liker ski',
         person: true,
+        opposite: 'Misliker ski',
         overlap: [
         ]
       },
       {
-        name: 'Liker ski',
+        name: 'Misliker ski',
         person: true,
+        opposite: 'Liker ski',
         overlap: [
         ]
       },
       {
         name: 'Liker dans',
         person: true,
+        opposite: 'Misliker dans',
         overlap: [
         ]
       },
       {
         name: 'Misliker dans',
         person: true,
+        opposite: 'Liker dans',
         overlap: [
         ]
       },
       {
         name: 'Liker musikk',
         person: true,
+        opposite: 'Misliker musikk',
         overlap: [
         ]
       },
       {
         name: 'Misliker musikk',
         person: true,
+        opposite: 'Liker musikk',
         overlap: [
         ]
       },
       {
         name: 'Soss', // (f.eks kler seg fancy, spiser på dyre steder, tar taxi osv)
         person: true,
+        opposite: 'Anti-soss',
         overlap: [
         ]
       },
       {
         name: 'Anti-soss', // (vanlige klær, spiser på billige steder, tar kun kollektiv transport)
         person: true,
+        opposite: 'Soss',
         overlap: [
         ]
       },
       {
         name: 'Liker hjernetrim', // (f.eks sjakk, sudoku, quiz(litt mindre relevant if alone))
         person: true,
+        opposite: 'Misliker hjernetrim',
         overlap: [
         ]
       },
       {
         name: 'Misliker hjernetrim',
         person: true,
+        opposite: 'Liker hjernetrim',
         overlap: [
         ]
       },

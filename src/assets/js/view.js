@@ -6,7 +6,7 @@ let currentPage = aktivo.app.currentPage;
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
-show("activityFilters");
+show("home");
 function show(page, parameters) {
     if (page) currentPage = page;
 
