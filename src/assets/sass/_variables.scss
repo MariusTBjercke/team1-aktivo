@@ -3,7 +3,7 @@ $dark-bg-color: #343a40;
 $main-text-color: black;
 $dark-text-color: white;
 $container-margin-top: 75px;
-$container-margin-bottom: 60px;
+$container-margin-bottom: 28px;
 $btn-bg-color: linear-gradient(0deg, #dadada 0%, #d1d1d1 100%);
 $btn-bg-hover-color: linear-gradient(0deg, #c2c2c2 0%, #cccccc 100%);
 $header-height: 47px;
@@ -26,10 +26,14 @@ $header-height: 47px;
     --input-border-color: default;
     --checkmark-bg-color: #a0a0a0;
     --main-border-color: rgb(118, 118, 118);
+    --activities-border-color: rgb(216, 216, 216);
     --list-container-bg-color: white;
     --placeholder-font-color: #a0a0a0;
     --logo-background: url('../img/aktivo-logo-light.svg');
     --origin-desc-font-color: #333;
+    --activity-filters-container: var(--list-container-bg-color);
+    --list-checkbox-bg-color: var(--input-bg-color);
+    --checklist-container-bg-color: #eee;
 }
 
 .theme-dark {
@@ -48,10 +52,14 @@ $header-height: 47px;
     --header-bg-color: var(--btn-bg-color);
     --input-bg-color: #222222;
     --main-border-color: #303030;
+    --activities-border-color: #303030;
     --input-border-color: var(--main-border-color);
     --checkmark-bg-color: var(--btn-bg-color);
     --list-container-bg-color: var(--input-bg-color);
     --placeholder-font-color: #a0a0a0;
     --logo-background: url('../img/aktivo-logo-dark.svg');
     --origin-desc-font-color: #bbb;
+    --activity-filters-container: none;
+    --list-checkbox-bg-color: #101010;
+    --checklist-container-bg-color: var(--list-container-bg-color);
 }
