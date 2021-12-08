@@ -1,20 +1,21 @@
 import { aktivo } from "./model";
 import { loadGoogleMaps } from "./maps";
-import { auth, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, suggestActivities } from "./controller";
+import { auth, listAgegroupFilters, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser, listEditFilters, listGenderFilters, savePerson } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
-let currentUser = aktivo.app.currentUser;
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
 show("home");
 loadTheme();
 function show(page, parameters) {
+    console.log('1 '+currentPage);
     if (page) currentPage = page;
-    console.log(aktivo.data.users);
+    console.log('2 '+currentPage);
 
     // Authentication
     auth();
+    console.log('3 '+currentPage);
 
     app.innerHTML = '';
 
@@ -81,6 +82,18 @@ function show(page, parameters) {
         
         case 'newEditPerson':
             showNewEditPerson();
+            break;
+
+        case 'newPersonFilters':
+            showNewPersonFilters();
+            break;
+
+        case 'activitySuggestions':
+            showActivitySuggestions();
+            break;
+
+        case 'activityFilters':
+            showActivityFilters();
             break;
     
         default:
@@ -303,7 +316,7 @@ function showNewActivityMembers() {
     let seeActivities = cr('div', container, 'class btn', 'Se forslag');
     seeActivities.onclick = function() {
         // show('newActivitySuggestions');
-        suggestActivities();
+        // suggestActivities();
     }
     generateMemberList(listContainer);
 }
@@ -362,9 +375,58 @@ function showNewActivitySimple() {
 
 }
 
-// new activity's filters and suggestions
-function showNewActivityFilters() {}
-function showNewActivitySuggestions() {}
+// activity filters and suggestions
+function showActivityFilters() {
+
+    header('Ny aktivitet (filter)');
+
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container activity-filters');
+
+    let btnContainer = cr('div', container, 'class btn-container');
+
+    // TODO: Only display back btn if there is a return page (?)
+    let back = cr('div', btnContainer, 'class btn back', 'Tilbake');
+    back.onclick = () => {
+        show('home');
+    }
+
+    let suggestions = cr('div', btnContainer, 'class btn suggestions', 'Se forslag');
+    suggestions.onclick = () => {
+        show('activitySuggestions');
+    }
+
+    let filtersContainer = cr('div', container, 'class filters-container');
+    listActivityFilters(filtersContainer);
+
+}
+
+function showActivitySuggestions() {
+
+    header("Ny aktivitet (forslag)");
+
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container activity-suggestions');
+
+    let btnContainer = cr('div', container, 'class btn-container');
+
+    let back = cr('div', btnContainer, 'class btn back', 'Tilbake');
+    back.onclick = () => {
+        // TODO: Return page (?)
+        show('home');
+    }
+
+    let filters = cr('div', btnContainer, 'class btn filters', 'Filter');
+    filters.onclick = () => {
+        show('activityFilters');
+    }
+
+    let activitiesContainer = cr('div', container, 'class activities-container');
+    listActivitySuggestions(activitiesContainer);
+
+}
 
 // archive
 function showArchive() {}
@@ -486,6 +548,7 @@ function showEditGroup() {
                     admGroup.returnPage = '';
                 }
             }
+            updateUser(user.username, user);
         }
     }
     generateEditGroupList(listContainer);
@@ -508,58 +571,49 @@ function showNewEditPerson() {
     }
 
     let nameInput = cr('input', container, 'type text, placeholder Navn på personen');
-    let ageGroupInput = cr('input', container, 'type text, placeholder Aldersgruppe');
+    nameInput.value = person.name;
+    
+    let ageGroupsContainer = cr('div', container, 'class age-groups-container');
 
-    if (admPerson.edit) {
-        nameInput.value = person.name;
-        ageGroupInput.value = person.filters[0]; // a checkbox for each age group..
-    }
+    listGenderFilters(ageGroupsContainer);
+
+    listAgegroupFilters(ageGroupsContainer);
+
     nameInput.addEventListener('input', function() {
         person.name = nameInput.value;
-    });
-    ageGroupInput.addEventListener('input', function() {
-        person.filters[0] = ageGroupInput.value;
     });
 
     let filterBtn = cr('div', container, 'class btn', 'Filtre');
     filterBtn.onclick = function() {
-        console.log('Make the filter-page!')
+        show('newPersonFilters');
     }
 
     let save = cr('div', container, 'class btn', 'Lagre');
-    save.onclick = function() { // make into a save person function..
-        if ((admPerson.edit || person.filters.length > 0) && person.name !== '') {
-            if (admPerson.returnPage === 'newactivitypeople' || admPerson.returnPage === 'newActivityMembers') {
-                const activityMembers = aktivo.inputs.newActivity.chosenPeople;
-                if (!admPerson.edit) activityMembers.push({name: person.name});                    
-                if (admPerson.returnPage === 'newActivityMembers') {
-                    activityMembers[activityMembers.findIndex(x => x.name === user.people[admPerson.index].name)].name = person.name;
-                }
-            }
-            if (admPerson.returnPage === 'newGroup' || admPerson.returnPage === 'editGroup') {
-                const groupMembers = aktivo.inputs.administer.group.temp.members;
-                if (!admPerson.edit) groupMembers.push(person.name);
-                if (admPerson.returnPage === 'editGroup') {
-                    groupMembers[groupMembers.findIndex(x => x === user.people[admPerson.index].name)] = person.name;
-                }
-            }
-
-            if (admPerson.edit) {
-                user.groups.forEach(g => {
-                    g.members[g.members.findIndex(member => member === user.people[admPerson.index].name)] = person.name;
-                });
-                user.people[admPerson.index] = {...admPerson.temp};
-            }
-            else user.people.push(admPerson.temp);
-            admPerson.edit = false;
-            admPerson.addedToTemp = false;
-            show(admPerson.returnPage);
-            admPerson.returnPage = '';
-        }
+    save.onclick = () => {
+        savePerson();
     }
 }
 
-function showNewPersonFilters() {}
+function showNewPersonFilters() {
+
+    const admPerson = aktivo.inputs.administer.person;
+    const person = admPerson.temp;
+
+    header(admPerson.edit ? 'Rediger person' : 'Ny person');
+
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container edit-filters');
+
+    let back = cr('div', container, 'class btn', 'Tilbake');
+    back.onclick = () => {
+        show('newEditPerson');
+    }
+
+    let filtersContainer = cr('div', container, 'class filters-container');
+    listEditFilters(filtersContainer);
+
+}
 
 function showAdminister(view) {
     let btn;
@@ -775,4 +829,4 @@ function showMap() {
 
 }
 
-export { currentPage, currentUser, show, cr }
+export { currentPage, show, cr }

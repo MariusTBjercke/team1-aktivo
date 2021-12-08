@@ -5,7 +5,8 @@
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
-    "@googlemaps/js-api-loader": "^1.12.11"
+    "@googlemaps/js-api-loader": "^1.12.11",
+    "firebase": "^9.6.0"
   },
   "devDependencies": {
     "css-loader": "^6.5.1",

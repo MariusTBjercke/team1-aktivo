@@ -1,0 +1,61 @@
+.activity-suggestions {
+    grid-template-rows: auto 1fr;
+    gap: 25px;
+    max-height: 520px;
+    margin-bottom: 0;
+
+    .btn-container {
+        display: grid;
+        gap: 20px;
+    }
+
+    .btn {
+        padding: 8px 0;
+        border: none;
+        font-size: 18px;
+        text-align: center;
+        width: 292px;
+    }
+
+    .activities-container {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        padding: 0 40px;
+        overflow-y: scroll;
+        display: grid;
+        gap: 15px;
+
+        .row {
+            display: grid;
+            grid-template-rows: auto auto;
+            grid-template-columns: auto;
+            gap: 5px;
+
+            div:first-child {
+                display: grid;
+                grid-template-columns: auto auto;
+                justify-content: space-between;
+            }
+
+            .title {
+                font-size: 1.4em;
+                font-weight: 400;
+            }
+
+            .description {
+                font-size: .9em;
+            }
+
+            .more-btn-container {
+                background: var(--btn-bg-color);
+                color: var(--btn-color);
+                text-shadow: var(--text-shadow);
+                padding: 5px 10px;
+                cursor: pointer;
+                user-select: none;
+            }
+        }
+    }
+
+}

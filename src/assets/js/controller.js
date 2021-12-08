@@ -1,10 +1,13 @@
 import { aktivo } from './model';
 import { show, cr, currentPage } from './view';
-let currentUser = aktivo.app.currentUser;
-let user = aktivo.data.users[aktivo.data.users.findIndex(x => x.username === currentUser)];
+import { db } from './firestore';
+import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, setDoc, getDoc, collection, query, where } from "firebase/firestore";
+let user;
+const ref = doc(db, "aktivo", "data");
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
-// If the user is not logged in (currentUser is empty) and the page requires authentication, redirect to login
+
+// If the user is not logged in (aktivo.app.currentUser is empty) and the page requires authentication, redirect to login
 
 // Function to log aktivo.data.activities with the filters changed from string to an array with the original string as the first element, and a 0 as the second.
 // logActivities();
@@ -23,10 +26,10 @@ let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 //     });
 //     console.log(acitivities);
 // }
-
+suggestActivities();
 function suggestActivities() {
     const allFilters = aktivo.data.filters; // all the filters in the database.
-    const selectedFilters; // the list of all the filters that apply to this instance.     ...UNFINISHED TASK...
+    const selectedFilters = ['2','3']; // the list of all the filters that apply to this instance.     ...UNFINISHED TASK...
     const activities = aktivo.data.activities;
     const includedActivities = activities.filter(activity => activity.exfilters.filter(xfltr => selectedFilters.includes(xfltr)).length === 0);
     const suggestedActivities = [];
@@ -55,7 +58,7 @@ function suggestActivities() {
             strength: str,
         })
     });
-    suggestedActivities.sort(function(a, b){return b.strength - a.strength}); // must export...duh...
+    console.log(suggestedActivities.sort(function(a, b){return b.strength - a.strength})); // must export...duh...
 }
 
 
@@ -63,7 +66,7 @@ function auth() {
     let pageAuth = false;
     aktivo.data.pages.forEach(page => {
         if (page.name === currentPage) {
-            if (page.requiresAuth && !currentUser) {
+            if (page.requiresAuth && !aktivo.app.currentUser) {
                 pageAuth = true;
             }
         }
@@ -73,30 +76,72 @@ function auth() {
         show('login');
         return;
     }
+
+    // TODO: Delete below code
+    // DEV ONLY, REMOVE LATER - START
+    if (!user) {
+
+        const userQ = query(collection(db, 'users'), where('username', '==', aktivo.app.currentUser));
+
+        onSnapshot(userQ, (querySnapshot) => {
+            querySnapshot.forEach(doc => {
+                aktivo.data.user = doc.data();
+                user = aktivo.data.user;
+            });
+        });
+        // DEV ONLY, REMOVE LATER - END
+
+        const q = query(collection(db, "users"));
+
+        onSnapshot(q, (x) => {
+            const users = [];
+            x.forEach(doc => {
+                aktivo.data.allUsers.push(doc.data().username);
+            });
+        });
+
+    }
+
 }
 
 /**
  * 
- * @param {HTMLElement} username Input field from form where value can be retrieved
- * @param {HTMLElement} password Input field from form where value can be retrieved
+ * @param {HTMLElement} usernameInput Input field from form where value can be retrieved
+ * @param {HTMLElement} passwordInput Input field from form where value can be retrieved
  */
-function userLogin(username, password) {
+function userLogin(usernameInput, passwordInput) {
 
-    let pass = password.value;
+    let success = 0;
 
-    for (let x of [[username, 'loginUsername'], [password, 'empty']]) validateInput(x[0], x[1]);
+    for (let x of [[usernameInput, 'loginUsername'], [passwordInput, 'empty']]) validateInput(x[0], x[1]);
+    
+    const loginQuery = query(collection(db, 'users'), where('username', '==', usernameInput.value));
 
-    let users = aktivo.data.users;
-
-    users.forEach(user => {
-        if (username.value === user.username && pass === user.password) {
-            currentUser = username.value;
-            show('home');
-            return;
-        } else {
-            password.value = '';
-        }
+    onSnapshot(loginQuery, (querySnapshot) => {
+        querySnapshot.forEach(doc => {
+            let xUsername = doc.data().username;
+            let xPassword = doc.data().password;
+            if (usernameInput.value === xUsername && passwordInput.value === xPassword) {
+                aktivo.app.currentUser = usernameInput.value;
+                user = doc.data();
+                success = 1;
+            } else {
+                success = 2;
+            }
+        });
     });
+    
+    // Did we have to move show() out of snapshot because of some kind of eventlistener?? Who knows? Only time knows. Only time.
+    let eternal = setInterval(() => {
+        if (success !== 0) {
+            if (success == 1) {
+                show('home');
+            } else {
+                passwordInput.value = '';
+            }
+            clearInterval(eternal);
+        }
+    }, 100);
 }
 
 function userCreate(username, email, password, confirmPassword) {
@@ -127,7 +172,11 @@ function userCreate(username, email, password, confirmPassword) {
                 }
             ]
         };
-        aktivo.data.users.push(userObject);
+
+        // Insert data to Firestore
+        updateUser(username.value, userObject);
+
+        // aktivo.data.users.push(userObject);
         let parameters = {
             success: true,
         }
@@ -147,6 +196,7 @@ function validateInput(input, type, errorList = []) {
         type: type,
         input: input,
     }
+
     
     switch (type) {
         case 'empty':
@@ -168,11 +218,12 @@ function validateInput(input, type, errorList = []) {
 
         case 'username':
             let usernameError = true;
+            let users = aktivo.data.allUsers;
 
             if (input.value.length === 0) {
                 error.message = 'Mangler brukernavn.';
             }
-            else if (aktivo.data.users.findIndex(x => x.username === input.value) !== -1) {
+            else if (users.includes(input.value)) {
                 error.message = 'Brukernavnet er tatt.';
             }
             else {
@@ -239,10 +290,9 @@ function validateInput(input, type, errorList = []) {
             break;
         
         case 'password':
-            let passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
             error.message = 'Ugyldig passord.';
 
-            if (input.value.match(passwordPattern)) {
+            if (input.value.length > 3) {
                 removeInputError(isErrorInList, errorList, errorIndex, input);
             } else {
                 if (input.value === '') error.message = 'Mangler passord.';
@@ -411,6 +461,7 @@ function generateList(view, listContainer, search) {
                 admGroup.returnPage = currentPage;
                 show('editGroup');
             } else {
+                console.log('CurrentPage: ' + currentPage);
                 admPerson.edit = true;
                 admPerson.index = user.people.findIndex(p => p.name === x.name);
                 admPerson.returnPage = currentPage;
@@ -501,6 +552,7 @@ function generateAdminList(view, listContainer, search) {
                     if (index > -1) group.members.splice(index, 1);
                 });
             }
+            updateUser(aktivo.app.currentUser, user);
         }
     });
 }
@@ -559,7 +611,7 @@ function addToTemp(type) {
     if (type === 'person') {
         const admPerson = aktivo.inputs.administer.person;
         if (!admPerson.addedToTemp) {
-            if (!admPerson.edit) admPerson.temp = {name:'',filters:['']};
+            if (!admPerson.edit) admPerson.temp = {name:'',filters:[]};
             else admPerson.temp = {...user.people[admPerson.index]};
             admPerson.addedToTemp = true;
         }
@@ -571,6 +623,42 @@ function addToTemp(type) {
             else admGroup.temp = {...user.groups[admGroup.index]};
             admGroup.addedToTemp = true;
         }
+    }
+}
+
+function savePerson() {
+    const admPerson = aktivo.inputs.administer.person;
+    const person = admPerson.temp;
+    if ((admPerson.edit || person.filters.length > 0) && person.name !== '') {
+        if (admPerson.returnPage === 'newactivitypeople' || admPerson.returnPage === 'newActivityMembers') {
+            const activityMembers = aktivo.inputs.newActivity.chosenPeople;
+            if (!admPerson.edit) activityMembers.push({name: person.name});                    
+            if (admPerson.returnPage === 'newActivityMembers') {
+                activityMembers[activityMembers.findIndex(x => x.name === user.people[admPerson.index].name)].name = person.name;
+            }
+        }
+        if (admPerson.returnPage === 'newGroup' || admPerson.returnPage === 'editGroup') {
+            const groupMembers = aktivo.inputs.administer.group.temp.members;
+            if (!admPerson.edit) groupMembers.push(person.name);
+            if (admPerson.returnPage === 'editGroup') {
+                groupMembers[groupMembers.findIndex(x => x === user.people[admPerson.index].name)] = person.name;
+            }
+        }
+
+        if (admPerson.edit) {
+            user.groups.forEach(g => {
+                let gIndex = g.members.findIndex(member => member === user.people[admPerson.index].name);
+                if (gIndex > -1) g.members[gIndex] = person.name;
+            });
+            user.people[admPerson.index] = {...admPerson.temp};
+        }
+        else user.people.push(admPerson.temp);
+        admPerson.edit = false;
+        admPerson.addedToTemp = false;
+        console.log(admPerson.returnPage);
+        updateUser(user.username, user);
+        show(admPerson.returnPage);
+        admPerson.returnPage = '';
     }
 }
 
@@ -648,10 +736,20 @@ function changeEmail(password, email, repeatEmail) {
     }
 
     if (!error.length > 0) {
+
         user.email = email.value;
+
+        updateUser(aktivo.app.currentUser, user);
+
         show('changeemail');
+
     }
 
+}
+
+function updateUser(username, object) {
+    const docRef = doc(db, "users", username);
+    setDoc(docRef, object);
 }
 
 function changePassword(oldPassword, password, repeatPassword) {
@@ -668,13 +766,18 @@ function changePassword(oldPassword, password, repeatPassword) {
 
     if (!error.length > 0) {
         user.password = password.value;
+        updateUser(aktivo.app.currentUser, user);
         show('showchangepassword');
     }
 
 }
 
 function getBulbIcon() {
-    return user.options.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+    if (aktivo.data.user) {
+        return aktivo.data.user.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+    } else {
+        return aktivo.data.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+    }
 }
 
 function toggleLights(bulb) {
@@ -693,7 +796,13 @@ function setTheme(themeName) {
 }
 
 function loadTheme() {
-    let lightsOn = user.options.lightsOn;
+    let lightsOn = () => {
+        if (user) {
+            return user.options.lightsOn;
+        } else {
+            return aktivo.data.lightsOn;
+        }
+    }
     if (lightsOn) {
         setTheme('theme-light');
     } else {
@@ -718,4 +827,119 @@ function resetAgeGroupForm() {
     show('newActivitySimple');
 }
 
-export { auth, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, suggestActivities }
+function listActivitySuggestions(listContainer) {
+
+    let activities = aktivo.data.activities;
+
+    activities.forEach(item => {
+        let row = cr('div', listContainer, 'class row');
+
+        let subRow = cr('div', row);
+        
+        let title = cr('div', subRow, 'class title', item.name);
+
+        let moreBtnContainer = cr('div', subRow, 'class more-btn-container');
+        let moreBtnText = cr('div', moreBtnContainer, 'class more-btn-text', 'Les mer');
+
+        let description = cr('div', row, 'class description', item.description);
+    })
+
+}
+
+function listActivityFilters(filtersContainer) {
+
+    let filters = aktivo.data.filters;
+
+    filters.forEach(filter => {
+
+        let filterContainer = cr('div', filtersContainer, 'class filter checkbox-input');
+
+        let name = cr('div', filterContainer, 'class name', filter.name);
+
+        let label = cr('label', name);
+        let input = cr('input', label, 'type checkbox');
+        let mark = cr('span', label, 'class checkmark');
+
+    });
+
+}
+
+function listEditFilters(filtersContainer) {
+    const person = aktivo.inputs.administer.person.temp;
+
+    let filters = aktivo.data.filters;
+
+    filters.filter(x => !x.agegroup && !x.count && !x.gender).forEach(fltr => {
+
+        generateCheckbox(filtersContainer, fltr, person.filters);
+
+    });
+}
+
+function listAgegroupFilters(filtersContainer) {
+    const person = aktivo.inputs.administer.person.temp;
+
+    let filters = aktivo.data.filters;
+
+    let ageGroupInputs = [];
+    filters.filter(x => x.agegroup).forEach(fltr => {
+
+        generateCheckbox(filtersContainer, fltr, person.filters, ageGroupInputs, true);
+
+    });
+}
+
+function listGenderFilters(filtersContainer) {
+    const person = aktivo.inputs.administer.person.temp;
+
+    let filters = aktivo.data.filters;
+    let genderInputs = [];
+    filters.filter(x => x.gender).forEach(fltr => {
+
+        generateCheckbox(filtersContainer, fltr, person.filters, genderInputs, true);
+
+    });
+}
+
+function generateCheckbox(filtersContainer, fltr, list, inputs, maxOne) {
+
+    let filterContainer = cr('div', filtersContainer, 'class filter checkbox-input');
+
+    let name = cr('div', filterContainer, 'class name', fltr.name);
+
+    let label = cr('label', name);
+    let input = cr('input', label, 'type checkbox');
+    let mark = cr('span', label, 'class checkmark');
+    input.checked = list.includes(fltr.name) ? true : false;
+    if (inputs) {
+        inputs.push({inpt: input, name: fltr.name})
+    }
+
+    input.onchange = () => {
+        console.log('onchange');
+        if (input.checked) {
+            if (inputs) console.log('inputs.length before: ' + inputs.filter(xx => xx.inpt.checked).length);
+            if (maxOne && inputs.filter(xx => xx.inpt.checked).length > 1) {
+                let indx = inputs.findIndex(i => i.inpt.checked === true && i.name !== fltr.name);
+                console.log('indx ' +indx);
+                if (indx !== -1) {
+                    inputs[indx].inpt.checked = false;
+                    list.splice([list.findIndex(name => name === inputs[indx].name)], 1);
+                }
+            }
+            list.push(fltr.name);
+            if (inputs) console.log('inputs.length after: ' + inputs.filter(xx => xx.inpt.checked).length);
+            
+        } else {
+            let spliceIndex = list.findIndex(name => name === fltr.name);
+            console.log('spliceIndex, filter: ' + spliceIndex, list[spliceIndex]);
+            if (spliceIndex !== -1) list.splice([spliceIndex], 1);
+        }
+        console.log('checked filters:');
+        list.forEach(dfgh => {
+            console.log('' + dfgh);
+        });
+    }
+}
+
+export { auth, listAgegroupFilters, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser, listEditFilters, listGenderFilters, savePerson }

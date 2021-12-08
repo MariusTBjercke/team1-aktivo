@@ -3,7 +3,8 @@ const aktivo = {
   app: {
     history: [],
     currentPage: "",
-    currentUser: "demo",
+    currentUser: "",
+    user: {},
   },
 
   // Input
@@ -95,8 +96,8 @@ const aktivo = {
           "Bingo er et sjansespill der tilfeldige sifre trekkes, og spillerne deretter markerer de aktuelle sifrene på ferdigtrykkede ruteskjemaer med tall inni. Her er det gjerne fine premier og servering av noe søtt.",
         filters: [
           ["1", 0],
-          ["2", 0],
-          ["3", 0],
+          ["2", 10],
+          ["3", 30],
           ["4", 0],
           ["5", 0],
           ["6-7", 0],
@@ -113,8 +114,8 @@ const aktivo = {
           "Bowling er en kjent og kjær sport som passer de aller fleste (ikke bare Columbine).",
         filters: [
           ["1", 0],
-          ["2", 0],
-          ["3", 0],
+          ["2", 5],
+          ["3", 20],
           ["4", 0],
           ["5", 0],
           ["6-7", 0],
@@ -173,7 +174,7 @@ const aktivo = {
         name: "Sjakk",
         description: "Hvis du heter Bjørn eller Tarjay",
         filters: [
-          ["2", 0],
+          ["2", 40],
           ["Not stiuuupidd", 0],
         ],
         exfilters: ["stiuuupidd"],
@@ -182,7 +183,7 @@ const aktivo = {
         name: "Brettspill",
         description: "F.eks monopol",
         filters: [
-          ["3", 0],
+          ["3", 30],
           ["4", 0],
           ["5", 0],
           ["6-7", 0],
@@ -229,8 +230,8 @@ const aktivo = {
         description: "`Nuff said",
         filters: [
           ["1", 0],
-          ["2", 0],
-          ["3", 0],
+          ["2", 50],
+          ["3", 20],
           ["4", 0],
           ["5", 0],
           ["6-7", 0],
@@ -662,7 +663,8 @@ const aktivo = {
         },
       },
     ],
-    // Dersom vi skal bruke Vue så er dette unødvendig da Router løser dette for oss.
+    allUsers: [],
+    // TODO: Add all pages to the array or rewrite method to only check for some kind of value that non auth pages requires
     pages: [
       {
         name: "login",
@@ -676,67 +678,191 @@ const aktivo = {
         name: "home",
         requiresAuth: true,
       },
-      // osv...
     ],
 
     filters: [
       {
-        name: 'Barn',
+        name: '0-3år',
+        agegroup: true,
         overlap: [
-          ['1',1],
-          ['2',1],
-          ['3',1],
-          ['4',1],
-          ['5',1],
-          ['6-7',1],
-          ['8-10',0.8],
-          ['11-20',0.1],
+          ['4-6år', .6]
         ]
       },
-
-
-
-
       {
-        name: "over 100kr",
-        activities: [
-          {
-            name: "Restaurant",
-            match: 100,
-          },
-          {
-            name: "Kebabsjappe",
-            match: 50,
-          },
-        ],
+        name: '4-6år',
+        agegroup: true,
+        overlap: [
+          ['0-3år', .6],
+          ['7-12år', .7]
+        ]
       },
       {
-        name: "under 100kr",
-        activities: [
-          {
-            name: "Restaurant",
-            match: -100,
-          },
-          {
-            name: "Kebabsjappe",
-            match: 100,
-          },
-        ],
+        name: '7-12år',
+        agegroup: true,
+        overlap: [
+          ['4-6år', .7],
+          ['13-15år', .7]
+        ]
       },
       {
-        name: "vil spise",
-        activities: [
-          {
-            name: "Restaurant",
-            match: 100,
-          },
-          {
-            name: "Kebabsjappe",
-            match: 100,
-          },
-        ],
+        name: '13-15år',
+        agegroup: true,
+        overlap: [
+          ['7-12år', .7],
+          ['16-17år', .85]
+        ]
+      },
+      {
+        name: '16-17år',
+        agegroup: true,
+        overlap: [
+          ['13-15år', .85],
+          ['18-19år', .9]
+        ]
+      },
+      {
+        name: '18-19år',
+        agegroup: true,
+        overlap: [
+          ['16-17år', .9],
+          ['20-29år', .8]
+        ]
+      },
+      {
+        name: '20-29år',
+        agegroup: true,
+        overlap: [
+          ['18-19år', .8],
+          ['30-49år', .8]
+        ]
+      },
+      {
+        name: '30-49år',
+        agegroup: true,
+        overlap: [
+          ['20-29år', .8],
+          ['50-69år', .8]
+        ]
+      },
+      {
+        name: '50-69år',
+        agegroup: true,
+        overlap: [
+          ['30-49år', .8],
+          ['70+år', .8]
+        ]
+      },
+      {
+        name: '70+år',
+        agegroup: true,
+        overlap: [
+          ['50-69år', .8]
+        ]
+      },
+      {
+        name: 'Mann',
+        gender: true,
+        overlap: [
+        ]
+      },
+      {
+        name: 'Kvinne',
+        gender: true,
+        overlap: [
+        ]
+      },
+      {
+        name: '1',
+        count: true,
+        overlap: [
+          ['2', 1],
+          ['3', 0.5],
+          ['4', 1],
+          ['5', 1],
+          ['6-7', 1],
+          ['8-10', 0.8],
+          ['11-20', 0.1],
+        ]
+      },
+      {
+        name: '2',
+        count: true,
+        overlap: [
+          ['1', 1],
+          ['3', 0.5],
+          ['4', 1],
+          ['5', 1],
+          ['6-7', 1],
+          ['8-10', 0.8],
+          ['11-20', 0.1],
+        ]
+      },
+      {
+        name: '3',
+        count: true,
+        overlap: [
+          ['1', 1],
+          ['2', 0.5],
+          ['4', 1],
+          ['5', 1],
+          ['6-7', 1],
+          ['8-10', 0.8],
+          ['11-20', 0.1],
+        ]
+      },
+      {
+        name: 'Voksen',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Skadet',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Intelligent',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Sulten',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Tørst',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Glad',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Sur',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Homofil',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Heterofil',
+        overlap: [
+        ]
+      },
+      {
+        name: 'Traktor',
+        overlap: [
+        ]
       },
     ],
+
+    lightsOn: true,
   },
 };
 
