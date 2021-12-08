@@ -1,8 +1,7 @@
 .activity-filters {
     grid-template-rows: auto 1fr;
     gap: 25px;
-    max-height: 537px;
-    margin-bottom: 0;
+    margin-bottom: 28px;
 
     .btn-container {
         display: grid;
@@ -19,20 +18,37 @@
 
     .filters-container {
         display: grid;
-        grid-template-columns: auto auto;
-        justify-content: space-between;
-        justify-items: end;
-        gap: 10px;
+        grid-template-columns: auto;
+        justify-items: start;
+        gap: 20px;
         width: 100%;
         box-sizing: border-box;
-        overflow: auto;
-        padding: 0 10px;
+        padding: 10px 0 20px 10px;
+        height: 100%;
+        background: var(--list-container-bg-color);
+        border: .3px solid var(--activities-border-color);
+        border-radius: 1px;
+        overflow-x: hidden;
+        overflow-y: scroll;
 
         .filter {
 
+            input:checked ~ .checkmark {
+                background-color: var(--checkmark-bg-color);
+            }
+    
+            .checkmark {
+                background-color: var(--list-checkbox-bg-color);
+            }
+
             .name {
                 display: flex;
+                flex-direction: row-reverse;
                 gap: 5px;
+
+                label {
+                    padding-left: 30px;
+                }
             }
         }
     }

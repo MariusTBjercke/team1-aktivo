@@ -1,21 +1,17 @@
 import { aktivo } from "./model";
 import { loadGoogleMaps } from "./maps";
-import { auth, listAgegroupFilters, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser, listEditFilters, listGenderFilters, savePerson } from "./controller";
+import { auth, listAgegroupFilters, userLogin, userCreate, validateInput, generateList, toggleNav, toggleLights, getBulbIcon, generateMemberList, generateAdminList, user, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes,  resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser, listEditFilters, listGenderFilters, savePerson, setActivityFilters, emptyActivityFilters } from "./controller";
 let app = document.querySelector('#app');
 let currentPage = aktivo.app.currentPage;
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
-show("home");
-loadTheme();
+show("activityFilters");
 function show(page, parameters) {
-    console.log('1 '+currentPage);
     if (page) currentPage = page;
-    console.log('2 '+currentPage);
 
     // Authentication
     auth();
-    console.log('3 '+currentPage);
 
     app.innerHTML = '';
 
@@ -155,7 +151,9 @@ function showLogin() {
 
 function showRegister() {
 
-    let container = cr('div', app, 'class container register');
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container register');
 
     let logo = cr('div', container, 'class logo');
 
@@ -200,10 +198,14 @@ function showRecoverPassword() {}
 function showRecoverEmail() {}
 
 function showFrontPage() {
-    
+
+    emptyActivityFilters();
+
     header('Forside');
 
-    let container = cr('div', app, 'class container frontpage');
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container frontpage');
 
     let logo = cr('div', container, 'class logo');
 
@@ -218,8 +220,6 @@ function showFrontPage() {
     newActivitySimple.onclick = () => {
         show('newActivitySimple');
     }
-
-    let archive = cr('div', btnContainer, 'class btn', 'Arkiv');
 
     let groups = cr('div', btnContainer, 'class btn', 'Administrer grupper');
     groups.onclick = function() {
@@ -313,10 +313,9 @@ function showNewActivityMembers() {
     }
     let directions = cr('span', container, 'class sub-title', 'Medlemsliste:');
     let listContainer = cr('div', container, 'class list-container');
-    let seeActivities = cr('div', container, 'class btn', 'Se forslag');
-    seeActivities.onclick = function() {
-        // show('newActivitySuggestions');
-        // suggestActivities();
+    let seeActivityFilters = cr('div', container, 'class btn', 'Legg til filtre');
+    seeActivityFilters.onclick = function() {
+        setActivityFilters();
     }
     generateMemberList(listContainer);
 }
@@ -335,42 +334,24 @@ function showNewActivitySimple() {
         show('home');
     }
 
-    let description = cr('h5', container, 'class description', 'Velg antall medlemmer per aldersgruppe.');
-
     let form = cr('div', container, 'class form');
-
     generateAgeGroupForm(form);
-
-    let resetRow = cr('div', form, 'class reset-row');
-    let reset = cr('div', resetRow, 'class reset', 'Tilbakestill');
-    reset.onclick = () => {
-        resetAgeGroupForm();
-    }
 
     let genderRow = cr('div', form, 'class gender-row');
 
-    let genderTitle = cr('div', genderRow, 'class gender-title', 'Kryss av hvis: ');
+    let genderTitle = cr('div', genderRow, 'class gender-title', 'Velg det som passer: ');
 
     let genderInputRow = cr('div', genderRow, 'class gender-input-row');
 
-    let maleCol = cr('div', genderInputRow, 'class male-col checkbox-input');
-    let maleTxt = cr('div', maleCol, 'class male-text', 'Kun menn');
-    let maleInputLabel = cr('label', maleCol);
-    let maleInput = cr('input', maleInputLabel, 'type checkbox');
-    let maleInputMark = cr('span', maleInputLabel, 'class checkmark');
+    listGenderFilters(genderInputRow, true);
 
-    let femaleCol = cr('div', genderInputRow, 'class female-col checkbox-input');
-    let femaleTxt = cr('div', femaleCol, 'class female-text', 'Kun kvinner');
-    let femaleInputLabel = cr('label', femaleCol);
-    let femaleInput = cr('input', femaleInputLabel, 'type checkbox');
-    let femaleInputMark = cr('span', femaleInputLabel, 'class checkmark');
-
-    // Check one checkmark at a time
-    validateTwoCheckboxes(maleInput, femaleInput);
+    listAgegroupFilters(genderInputRow, true);
 
     let next = cr('div', container, 'class btn next', 'Neste');
     next.onclick = () => {
-        console.log(getSimpleActivityFilters(maleInput, femaleInput));
+        if (aktivo.inputs.newActivity.filters.length >= 2) {
+            setActivityFilters(true);
+        }
     }
 
 }
@@ -378,7 +359,7 @@ function showNewActivitySimple() {
 // activity filters and suggestions
 function showActivityFilters() {
 
-    header('Ny aktivitet (filter)');
+    header('Ny aktivitet (filtre)');
 
     let wrapper = cr('div', app, 'class wrapper');
 
@@ -389,7 +370,7 @@ function showActivityFilters() {
     // TODO: Only display back btn if there is a return page (?)
     let back = cr('div', btnContainer, 'class btn back', 'Tilbake');
     back.onclick = () => {
-        show('home');
+        show(aktivo.inputs.activityFilters.returnPage);
     }
 
     let suggestions = cr('div', btnContainer, 'class btn suggestions', 'Se forslag');
@@ -414,11 +395,10 @@ function showActivitySuggestions() {
 
     let back = cr('div', btnContainer, 'class btn back', 'Tilbake');
     back.onclick = () => {
-        // TODO: Return page (?)
-        show('home');
+        show(aktivo.inputs.activityFilters.returnPage);
     }
 
-    let filters = cr('div', btnContainer, 'class btn filters', 'Filter');
+    let filters = cr('div', btnContainer, 'class btn filters', 'Filtre');
     filters.onclick = () => {
         show('activityFilters');
     }
@@ -427,9 +407,6 @@ function showActivitySuggestions() {
     listActivitySuggestions(activitiesContainer);
 
 }
-
-// archive
-function showArchive() {}
 
 // create/edit group
 function showNewGroup() {
@@ -558,6 +535,7 @@ function showNewEditPerson() {
     addToTemp('person');
     const admPerson = aktivo.inputs.administer.person;
     const person = admPerson.temp;
+    console.log(person.filters);
 
     header(admPerson.edit ? 'Rediger person' : 'Ny person');
     let wrapper = cr('div', app, 'class wrapper');
@@ -664,7 +642,9 @@ function showProfile() {
 
     header('Min profil');
 
-    let container = cr('div', app, 'class container profile');
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container profile');
 
     let back = cr('div', container, 'class btn', 'Tilbake');
     back.onclick = () => {
@@ -688,7 +668,9 @@ function showChangePassword() {
 
     header('Endre passord');
 
-    let container = cr('div', app, 'class container profile');
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container profile');
 
     let back = cr('div', container, 'class btn', 'Tilbake');
     back.onclick = () => {
@@ -720,7 +702,9 @@ function showChangeEmail() {
 
     header('Endre e-post');
 
-    let container = cr('div', app, 'class container profile');
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container profile');
 
     let back = cr('div', container, 'class btn', 'Tilbake');
     back.onclick = () => {
@@ -818,7 +802,9 @@ function showMap() {
 
     header('Google Maps');
 
-    let container = cr('div', app, 'class container maps');
+    let wrapper = cr('div', app, 'class wrapper');
+
+    let container = cr('div', wrapper, 'class container maps');
 
     let map = cr('div', container, 'class map');
 

@@ -3,6 +3,7 @@
     gap: 25px;
     max-height: 537px;
     margin-bottom: 0;
+    height: 100%;
 
     .btn-container {
         display: grid;
@@ -19,20 +20,30 @@
 
     .filters-container {
         display: grid;
-        grid-template-columns: auto auto;
+        grid-template-columns: auto;
         justify-content: space-between;
-        justify-items: end;
+        justify-items: start;
         gap: 20px;
         width: 100%;
         box-sizing: border-box;
-        overflow: auto;
-        padding: 0 10px;
+        padding: 10px 0 20px 10px;
+        height: 94%;
+        background: var(--list-container-bg-color);
+        border: .3px solid var(--activities-border-color);
+        border-radius: 1px;
+        overflow-x: hidden;
+        overflow-y: scroll;
 
         .filter {
 
             .name {
                 display: flex;
-                gap: 5px;
+                flex-direction: row-reverse;
+                font-size: 1em;
+
+                label {
+                    padding-left: 30px;
+                }
             }
         }
     }

@@ -1,6 +1,6 @@
 .new-activity-simple {
-    grid-template-rows: auto auto auto 60px;
-    align-items: end;
+    grid-template-rows: auto 1fr auto;
+    gap: 20px;
 
     .btn {
         padding: 8px 0;
@@ -21,6 +21,10 @@
             grid-template-columns: 1fr auto;
             align-items: center;
 
+            .member-count {
+                font-weight: bold;
+            }
+
             .counter {
                 display: grid;
                 grid-template-columns: auto auto auto;
@@ -32,7 +36,7 @@
                     border-bottom: 1px;
                     border-style: solid;
                     border-color: black;
-                    padding: 0px 15px;
+                    padding: 0px 12px;
                     display: grid;
                     align-items: center;
                     border-radius: 4px 0 0 4px;
@@ -48,7 +52,7 @@
                 .amount {
                     border: 1px solid black;
                     text-align: center;
-                    width: 60px;
+                    width: 40px;
                     height: 25px;
                 }
 
@@ -59,7 +63,7 @@
                     border-bottom: 1px;
                     border-style: solid;
                     border-color: black;
-                    padding: 0px 15px;
+                    padding: 0px 12px;
                     display: grid;
                     align-items: center;
                     border-radius: 0 4px 4px 0;
@@ -70,6 +74,17 @@
                         background: var(--btn-hover-color);
                         cursor: pointer;
                     }
+                }
+
+                input::-webkit-outer-spin-button,
+                input::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+
+                /* Firefox */
+                input[type=number] {
+                    -moz-appearance: textfield;
                 }
             }
         }
@@ -90,25 +105,37 @@
             grid-template-columns: auto;
 
             .gender-title {
-                font-size: .8em;
+                margin-top: 20px;
+                font-size: 1em;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                font-weight: bold;
             }
         }
 
         .gender-input-row {
+            margin-top: 12px;
+            position: relative;
             display: grid;
-            grid-template-rows: auto;
             grid-template-columns: auto auto;
             justify-content: space-between;
+            justify-items: end;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            overflow: auto;
+    
+            .filter {
+                margin-bottom: 20px;
 
-            .male-col {
-                display: flex;
-                gap: 5px;
+                .name {
+                    font-size: 1em;
+                    display: flex;
+                    gap: 5px;
+                }
             }
-
-            .female-col {
-                display: flex;
-                gap: 5px;
-            }
+    
         }
     }
 }

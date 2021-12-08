@@ -3,7 +3,6 @@ import { show, cr, currentPage } from './view';
 import { db } from './firestore';
 import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, setDoc, getDoc, collection, query, where } from "firebase/firestore";
 let user;
-const ref = doc(db, "aktivo", "data");
 let addedGroups = aktivo.inputs.newActivity.chosenGroups;
 let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 
@@ -26,10 +25,10 @@ let addedPeople = aktivo.inputs.newActivity.chosenPeople;
 //     });
 //     console.log(acitivities);
 // }
-suggestActivities();
+
 function suggestActivities() {
     const allFilters = aktivo.data.filters; // all the filters in the database.
-    const selectedFilters = ['2','3']; // the list of all the filters that apply to this instance.     ...UNFINISHED TASK...
+    const selectedFilters = aktivo.inputs.newActivity.filters; // the list of all the filters that apply to this instance.
     const activities = aktivo.data.activities;
     const includedActivities = activities.filter(activity => activity.exfilters.filter(xfltr => selectedFilters.includes(xfltr)).length === 0);
     const suggestedActivities = [];
@@ -58,7 +57,7 @@ function suggestActivities() {
             strength: str,
         })
     });
-    console.log(suggestedActivities.sort(function(a, b){return b.strength - a.strength})); // must export...duh...
+    return suggestedActivities.sort(function(a, b){return b.strength - a.strength}); // must export...duh...
 }
 
 
@@ -87,6 +86,7 @@ function auth() {
             querySnapshot.forEach(doc => {
                 aktivo.data.user = doc.data();
                 user = aktivo.data.user;
+                loadTheme();
             });
         });
         // DEV ONLY, REMOVE LATER - END
@@ -109,39 +109,24 @@ function auth() {
  * @param {HTMLElement} usernameInput Input field from form where value can be retrieved
  * @param {HTMLElement} passwordInput Input field from form where value can be retrieved
  */
-function userLogin(usernameInput, passwordInput) {
-
-    let success = 0;
+async function userLogin(usernameInput, passwordInput) {
 
     for (let x of [[usernameInput, 'loginUsername'], [passwordInput, 'empty']]) validateInput(x[0], x[1]);
-    
-    const loginQuery = query(collection(db, 'users'), where('username', '==', usernameInput.value));
+    if (!usernameInput.value > 0 && !passwordInput.value > 0) return;
 
-    onSnapshot(loginQuery, (querySnapshot) => {
-        querySnapshot.forEach(doc => {
-            let xUsername = doc.data().username;
-            let xPassword = doc.data().password;
-            if (usernameInput.value === xUsername && passwordInput.value === xPassword) {
-                aktivo.app.currentUser = usernameInput.value;
-                user = doc.data();
-                success = 1;
-            } else {
-                success = 2;
-            }
-        });
-    });
-    
-    // Did we have to move show() out of snapshot because of some kind of eventlistener?? Who knows? Only time knows. Only time.
-    let eternal = setInterval(() => {
-        if (success !== 0) {
-            if (success == 1) {
-                show('home');
-            } else {
-                passwordInput.value = '';
-            }
-            clearInterval(eternal);
-        }
-    }, 100);
+    const docRef = doc(db, "users", usernameInput.value);
+
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists() && passwordInput.value === docSnap.data().password) {
+        aktivo.app.currentUser = usernameInput.value;
+        user = docSnap.data();
+        loadTheme();
+        show('home');
+    } else {
+        passwordInput.value = '';
+    }
+
 }
 
 function userCreate(username, email, password, confirmPassword) {
@@ -165,12 +150,9 @@ function userCreate(username, email, password, confirmPassword) {
             people: [],
             groups: [],
             archive: [],
-            options: [
-                {
-                    theme: 0,
-                    virgin: true
-                }
-            ]
+            options: {
+                lightsOn: true,
+            }
         };
 
         // Insert data to Firestore
@@ -364,60 +346,30 @@ function removeInputError(isErrorInList, errorList, errorIndex, input) {
 }
 
 function generateAgeGroupForm(form) {
+    let count = 0;
 
-    let ageGroups = aktivo.inputs.newActivitySimple.ageGroups;
+    let row = cr('div', form, 'class row');
 
-    ageGroups.forEach(item => {
-        
-        let row = cr('div', form, 'class row');
+    let age = cr('div', row, 'class member-count', 'Antall personer:');
 
-        let age = cr('div', row, 'class age', item.age);
+    let counter = cr('div', row, 'class counter');
+    let decrease = cr('div', counter, 'class decrease', '-');
+    let amount = cr('input', counter, `class amount, type number, value ${count}`);
+    let increase = cr('div', counter, 'class increase', '+');
 
-        let counter = cr('div', row, 'class counter');
-        let decrease = cr('div', counter, 'class decrease', '-');
-        let amount = cr('input', counter, 'class amount, type number, value ' + item.amount);
-        let increase = cr('div', counter, 'class increase', '+');
+    // Counter listeners
+    for (let x of [
+        [increase, 'click', increaseCounter],
+        [decrease, 'click', decreaseCounter],
+        [amount, 'change', checkCounter]
+    ]) {
+        x[0].addEventListener(x[1], () => {
+            x[2](amount);
+            // updateAgeGroupAmount(item.age, amount.value);
+        });
+    }
 
-        // Counter listeners
-        for (let x of [
-            [increase, 'click', increaseCounter],
-            [decrease, 'click', decreaseCounter],
-            [amount, 'change', checkCounter]
-        ]) {
-            x[0].addEventListener(x[1], () => {
-                x[2](amount);
-                updateAgeGroupAmount(item.age, amount.value);
-            });
-        }
 
-    });
-
-}
-
-/**
- * 
- * @param {HTMLInputElement} male Male checkbox input
- * @param {HTMLInputElement} female Female checkbox input
- * @returns 
- */
-function getSimpleActivityFilters(male, female) {
-    let ageGroups = aktivo.inputs.newActivitySimple.ageGroups;
-    let total = 0;
-    let obj = {
-        filters: [],
-    };
-
-    ageGroups.filter(x => x.amount > 0).forEach(x => {
-        total = Number(total) + Number(x.amount);
-        obj.filters.push(x.age);
-    });
-
-    obj.filters.push(total);
-
-    if (male.checked) obj.filters.push('Kun menn');
-    if (female.checked) obj.filters.push('Kun kvinner');
-
-    return obj;
 }
 
 function updateAgeGroupAmount(ageGroup, amount) {
@@ -433,15 +385,36 @@ function checkCounter(counter) {
     } else if (counter.value % 1 != 0) {
         counter.value = Math.round(counter.value);
     }
+    else setMembercount(counter.value);
 }
 
 function increaseCounter(counter, event) {
     counter.value++;
+    setMembercount(counter.value)
 }
 
 function decreaseCounter(counter) {
     if (counter.value > 0)
         counter.value--;
+        setMembercount(counter.value)
+}
+
+function setMembercount(count) {
+    if (count < 1) return;
+    const allCountFilters = aktivo.data.filters.filter(x => x.count);
+    const filters = aktivo.inputs.newActivity.filters;
+    const countFilters = filters.filter(f => allCountFilters.findIndex(x => x.name === f) !== -1);
+    if (countFilters.length === 1) {
+        let index = filters.findIndex(i => i === countFilters[0])
+        filters.splice(index, 1);
+    }
+    let number;
+    if (count >= 6) number = '6+';
+    else if (count >= 4) number = '4-5';
+    else if (count == 3) number = '3';
+    else if (count == 2) number = '2';
+    else if (count == 1) number = '1';
+    filters.push(number);
 }
 
 function generateList(view, listContainer, search) {
@@ -773,10 +746,10 @@ function changePassword(oldPassword, password, repeatPassword) {
 }
 
 function getBulbIcon() {
-    if (aktivo.data.user) {
-        return aktivo.data.user.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+    if (user) {
+        return user.options.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
     } else {
-        return aktivo.data.lightsOn ? '<i class="fas fa-lightbulb"></i>' : '<i class="far fa-lightbulb"></i>';
+        return '<i class="fas fa-lightbulb"></i>';
     }
 }
 
@@ -789,6 +762,7 @@ function toggleLights(bulb) {
         setTheme('theme-light');
     }
     setHTML(bulb, getBulbIcon());
+    updateUser(user.username, user);
 }
 
 function setTheme(themeName) {
@@ -796,17 +770,14 @@ function setTheme(themeName) {
 }
 
 function loadTheme() {
-    let lightsOn = () => {
-        if (user) {
-            return user.options.lightsOn;
+    if (user) {
+        if (user.options.lightsOn) {
+            setTheme('theme-light');
         } else {
-            return aktivo.data.lightsOn;
+            setTheme('theme-dark');
         }
-    }
-    if (lightsOn) {
-        setTheme('theme-light');
     } else {
-        setTheme('theme-dark');
+        setTheme('theme-light');
     }
 }
 
@@ -829,7 +800,7 @@ function resetAgeGroupForm() {
 
 function listActivitySuggestions(listContainer) {
 
-    let activities = aktivo.data.activities;
+    let activities = suggestActivities();
 
     activities.forEach(item => {
         let row = cr('div', listContainer, 'class row');
@@ -838,45 +809,40 @@ function listActivitySuggestions(listContainer) {
         
         let title = cr('div', subRow, 'class title', item.name);
 
-        let moreBtnContainer = cr('div', subRow, 'class more-btn-container');
-        let moreBtnText = cr('div', moreBtnContainer, 'class more-btn-text', 'Les mer');
+        // let moreBtnContainer = cr('div', subRow, 'class more-btn-container');
+        // let moreBtnText = cr('div', moreBtnContainer, 'class more-btn-text', 'Les mer');
 
         let description = cr('div', row, 'class description', item.description);
     })
 
 }
 
-function listActivityFilters(filtersContainer) {
-
-    let filters = aktivo.data.filters;
-
-    filters.forEach(filter => {
-
-        let filterContainer = cr('div', filtersContainer, 'class filter checkbox-input');
-
-        let name = cr('div', filterContainer, 'class name', filter.name);
-
-        let label = cr('label', name);
-        let input = cr('input', label, 'type checkbox');
-        let mark = cr('span', label, 'class checkmark');
-
-    });
-
-}
 
 function listEditFilters(filtersContainer) {
     const person = aktivo.inputs.administer.person.temp;
 
     let filters = aktivo.data.filters;
 
-    filters.filter(x => !x.agegroup && !x.count && !x.gender).forEach(fltr => {
+    filters.filter(x => x.person).forEach(fltr => {
 
         generateCheckbox(filtersContainer, fltr, person.filters);
 
     });
 }
 
-function listAgegroupFilters(filtersContainer) {
+function listActivityFilters(filtersContainer) {
+    const newActivity = aktivo.inputs.newActivity;
+
+    let filters = aktivo.data.filters;
+
+    filters.filter(x => x.activity).forEach(fltr => {
+
+        generateCheckbox(filtersContainer, fltr, newActivity.filters);
+
+    });
+}
+
+function listAgegroupFilters(filtersContainer, simple) {
     const person = aktivo.inputs.administer.person.temp;
 
     let filters = aktivo.data.filters;
@@ -884,20 +850,18 @@ function listAgegroupFilters(filtersContainer) {
     let ageGroupInputs = [];
     filters.filter(x => x.agegroup).forEach(fltr => {
 
-        generateCheckbox(filtersContainer, fltr, person.filters, ageGroupInputs, true);
-
+        generateCheckbox(filtersContainer, fltr, simple? aktivo.inputs.newActivity.filters : person.filters, ageGroupInputs, simple? false : true);
     });
 }
 
-function listGenderFilters(filtersContainer) {
+function listGenderFilters(filtersContainer, simple) {
     const person = aktivo.inputs.administer.person.temp;
 
     let filters = aktivo.data.filters;
     let genderInputs = [];
-    filters.filter(x => x.gender).forEach(fltr => {
+    filters.filter(x => simple ? x.onlygender : x.gender).forEach(fltr => {
 
-        generateCheckbox(filtersContainer, fltr, person.filters, genderInputs, true);
-
+        generateCheckbox(filtersContainer, fltr, simple? aktivo.inputs.newActivity.filters : person.filters, genderInputs, true);
     });
 }
 
@@ -932,7 +896,6 @@ function generateCheckbox(filtersContainer, fltr, list, inputs, maxOne) {
             
         } else {
             let spliceIndex = list.findIndex(name => name === fltr.name);
-            console.log('spliceIndex, filter: ' + spliceIndex, list[spliceIndex]);
             if (spliceIndex !== -1) list.splice([spliceIndex], 1);
         }
         console.log('checked filters:');
@@ -942,4 +905,26 @@ function generateCheckbox(filtersContainer, fltr, list, inputs, maxOne) {
     }
 }
 
-export { auth, listAgegroupFilters, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, getSimpleActivityFilters, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser, listEditFilters, listGenderFilters, savePerson }
+function emptyActivityFilters() {
+    const filters = aktivo.inputs.newActivity.filters;
+    filters.splice(0, filters.length);
+}
+
+function setActivityFilters(simple) {
+    aktivo.inputs.activityFilters.returnPage = currentPage;
+    const members = aktivo.inputs.newActivity.chosenPeople;
+    const filters = aktivo.inputs.newActivity.filters;
+    if (!simple) {
+        setMembercount(members.length);
+        members.forEach(m => {
+            let personIndex = user.people.findIndex(z => z.name === m.name);
+            user.people[personIndex].filters.forEach(x => {
+                if (!filters.includes(x)) filters.push(x);
+            });
+        });
+    }
+    console.log(filters);
+    show('activityFilters');
+}
+
+export { auth, listAgegroupFilters, userLogin, userCreate, validateInput, generateList, user, generateMemberList, generateAdminList, toggleNav, toggleLights, getBulbIcon, generatePeopleList, changeEmail, generateEditGroupList, changePassword, loadTheme, generateAgeGroupForm, validateTwoCheckboxes, resetAgeGroupForm, addToTemp, listActivitySuggestions, listActivityFilters, suggestActivities, updateUser, listEditFilters, listGenderFilters, savePerson, setActivityFilters, emptyActivityFilters }
