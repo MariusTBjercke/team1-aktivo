@@ -709,13 +709,9 @@ function changeEmail(password, email, repeatEmail) {
     }
 
     if (!error.length > 0) {
-
         user.email = email.value;
-
         updateUser(aktivo.app.currentUser, user);
-
         show('changeemail');
-
     }
 
 }
@@ -740,7 +736,7 @@ function changePassword(oldPassword, password, repeatPassword) {
     if (!error.length > 0) {
         user.password = password.value;
         updateUser(aktivo.app.currentUser, user);
-        show('showchangepassword');
+        show('changepassword');
     }
 
 }
@@ -927,9 +923,9 @@ function setActivityFilters(simple) {
                 // if (filterIndex === -1) filters.push({
                 //     name: x.name,
                 //     count: 1,
-                //     multiplier: 1,
-                //     opposite: x.opposite
+                //     multiplier: 1, 
                 // });
+                // if (x.opposite) filters[-1].opposite = x.opposite;
                 // else filters[filterIndex].count++;
             });
         });
@@ -941,7 +937,7 @@ function setActivityFilters(simple) {
         }
 
         // // calculating the filter multiplier from having an opposite filter:
-        // filters.filter(f => f.count && f.opposite).forEach(op1 => {
+        // filters.filter(f => f.count>1 && f.opposite).forEach(op1 => {
         //     if (op1.multiplier === 1) {
         //         let op2Index = filters.findIndex(op2 => op2.name === op1.opposite);
         //         if (op2Index !== -1) {
